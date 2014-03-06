@@ -1,0 +1,69 @@
+<include file="Public:header" />
+
+		<div class="container container-with-aside">
+			
+			<include file="Public:aside" />
+						
+			<div class="main">				<div class="main-inner">
+					
+					<div class="page-header">
+						<h4><present name="_GET.id">修改{$_module_nickname}<else/>添加{$_module_nickname}</present></h4><a href="/admin.php/{:strtolower(MODULE_NAME)}">返回</a>
+					</div>
+					
+					<form action="" method="post" class="form-horizontal">
+						<present name="_model.id">
+						<input type="hidden" name="id" value="{$_model['id']}">
+						</present>
+						
+						<div class="form-item">
+							<label class="form-label" for="name">栏目类型</label>
+							<div class="form-field">
+								<input type="radio" class="ipt-radio" checked="checked"> 内部栏目
+				          	</div>
+				        </div>
+						
+						<div class="form-item">
+							<label class="form-label" for="pid">上级栏目</label>
+							<div class="form-field">
+								<select name="pid" id="pid">
+									<option value="0">≡ 作为一级栏目 ≡</option>
+									{$options}
+								</select>
+				          	</div>
+				        </div>
+						<div class="form-item">
+							<label class="form-label" for="title">栏目中文名</label>
+							<div class="form-field">
+								<input type="text" class="ipt-text" name="title" id="title" value="<present name="_model">{$_model['title']}</present>" placeholder="例如：公司新闻">
+				          	</div>
+				        </div>
+						<div class="form-item">
+							<label class="form-label" for="name">栏目英文名</label>
+							<div class="form-field">
+								<input type="text" class="ipt-text" name="name" id="name" value='<present name="_model">{$_model["name"]}</present>' placeholder="例如：news">
+				          	</div>
+				        </div>
+						<div class="form-item">
+							<label class="form-label" for="name">关联模型</label>
+							<div class="form-field">
+								<select name="module_id" id="module_id">
+									<option value="">≡ 请选择模型 ≡</option>
+									<volist name="module_list" id="rs">
+										<option value="{$rs['id']}" <eq name="rs.id" value="$_model['module_id']">selected="selected"</eq>>{$rs['title']}</option>
+									</volist>
+								</select>
+				          	</div>
+				        </div>
+				
+										
+				        <div class="form-actions">
+							<span class="btn btn-primary"><button type="submit">保存</button></span>
+				        </div>
+					</form>
+					
+				</div>
+			</div>
+			<div class="fn-clear"></div>
+		</div>
+		
+<include file="Public:footer" />

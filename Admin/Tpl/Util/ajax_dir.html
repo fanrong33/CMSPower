@@ -1,0 +1,39 @@
+<p style="background:#F7F7F7;border:1px solid #DDD;height:26px;line-height:25px;margin-bottom:-1px;padding-left:15px;">当前目录：uploads/{$dir_path}</p>
+<div style="height:295px;overflow-y: scroll;border: 1px solid #DDDDDD;margin-bottom:20px;">
+    <table class="table">
+    	<thead>
+    		<tr>
+    			<th style="padding:0;word-wrap:break-word;overflow:hidden;"></th>
+    			<th style="width:90px;padding:0;"></th>
+    			<th style="width:90px;padding:0;"></th>
+    		</tr>
+    	</thead>
+    	<tbody>
+    		<if condition="isset($dir_path) && $dir_path">
+    			<tr>
+    				<td>
+    					<php>
+    						$parent_dir_path = substr($dir_path, 0, strrpos($dir_path, '/'));
+    					</php>
+    					<i class="icon-file-dir mr10"></i><a href="{$parent_dir_path}" onclick="ajax_dir(event);">返回上一级目录</a>
+    				</td>
+					<td></td>
+					<td></td>
+    			</tr>
+    		</if>
+    		<volist name="file_list" id="rs">
+        		<tr>
+        			<td>
+        				<if condition="isset($rs['type']) && ($rs['type'] eq 'dir')">
+        					<i class="icon-file-dir mr10"></i><a href="<if condition="isset($dir_path) && $dir_path">{$dir_path}/</if>{$rs['filename']}" onclick="ajax_dir(event);">{$rs['filename']}</a>
+						<else/>
+							<i class="icon-file-{:strtolower($rs['extension'])} mr10"></i><a class="img-preview" href="/{$rs['save_path']}{$rs['save_name']}" data-file-id="{$rs['id']}">{$rs['name']}</a>
+						</if>
+					</td>
+        			<td><if condition="!isset($rs['type'])">{:byte_format($rs['size'], 0)}</if></td>
+        			<td><if condition="!isset($rs['type'])">{:date('m月d日', $rs['create_time'])}</if></td>
+        		</tr>
+    		</volist>
+    	</tbody>
+    </table>
+</div>

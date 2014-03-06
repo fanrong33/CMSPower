@@ -1,0 +1,404 @@
+<include file="Public:header" />
+	<script type="text/javascript" src="../Public/scripts/thirdparty/jquery-ui-1.10.1.custom.min.js?t={:C('BUILD_VERSION')}"></script>
+	<script type="text/javascript">
+		
+		// 显示添加导航栏对话框
+		function navbar(){
+			
+			var dialog = new Dialog();
+		
+			dialog.show({
+				title: '添加导航栏',
+				content: $("#tpl_navbar").html(),
+				mask: true,
+				hideft: true,
+				init: function(){
+					window.running = false;
+					
+					// 表单验证
+					$(dialog.$layer).find("#form_navbar").validate({
+						submitHandler: function(form){
+							// form.submit();
+							if(!window.running){
+								window.running = true;
+								
+								$(form).ajaxSubmit({
+									url: "/admin.php/app/add_nav",
+						            dataType: "json",
+						            success: function(json){
+										if(json.status==1){
+											dialog.close();
+											
+											// ajax动态添加到tabs末尾
+											var render = template.compile(
+											'<li id="navbar_<%=id %>" class="ui-droppable">'+
+											'	<a href="#tabs_<%=name %>"><i class="<%=icon %>"></i>&nbsp;<%=title %></a>'+
+											'</li>');
+    										var html = render(json.data);//渲染
+											$("#tabs ul:first").append(html);
+										}else{
+											alert(json.info);
+										}
+										window.running = false;
+						            }
+						        });
+								
+							}
+						},
+						errorPlacement: function(error, element){
+							var $p = $(element).parent();
+							$p.children('span.error').remove();
+							
+							var name = $(element).attr('name');
+							$(element).after(error);
+						},
+						errorClass: 'error',
+						errorElement: 'p',
+						success: function(label){
+							label.remove();
+						},
+						onkeyup: false,
+						rules:{
+							icon: {required: true},
+							title: {required: true},
+							name: {required: true}
+						},
+						messages:{
+							icon: {required: 'icon样式不能为空'},
+							title: {required: '导航栏标题不能为空'},
+							name: {required: '导航栏名称不能为空'}
+						}
+						
+					});
+					
+				}
+			});
+		}
+		
+		// 显示添加页眉对话框
+		function header(){
+			var dialog = new Dialog();
+		
+			dialog.show({
+				title: '添加页眉',
+				content: $("#tpl_header").html(),
+				mask: true,
+				hideft: true,
+				init: function(){
+					window.running = false;
+					
+					// 取得当前tabs标签current状态的id,即pid
+					var $current_tab = $("#tabs ul:first").find("li.current");
+					var pid = $current_tab.attr("id");
+					pid = pid.substr(7);
+					
+					var $ul = $($current_tab.find("a").attr("href")).find("ul");
+					
+					// 表单验证
+					$(dialog.$layer).find("#form_header").validate({
+						submitHandler: function(form){
+							// form.submit();
+							if(!window.commit){
+								window.commit = true;
+								var params = $(form).serializeArray();
+								console.info(params);
+								$(form).ajaxSubmit({
+									url: "/admin.php/app/add_nav",
+						            dataType: "json",
+									data: {"pid": pid},
+						            success: function(json){
+										if(json.status==1){
+											dialog.close();
+											
+											// ajax动态添加到tabs末尾
+											var render = template.compile('<li class="app-header" id="nav_<%=id %>"><%=title %><a href="javascript:;">编辑</a></li>');
+    										var html = render(json.data);//渲染
+											$ul.append(html);
+										}else{
+											alert(json.info);
+										}
+										window.commit = false;
+						            }
+						        });
+								
+							}
+						},
+						errorPlacement: function(error, element){
+							var $p = $(element).parent();
+							$p.children('span.error').remove();
+							
+							var name = $(element).attr('name');
+							$(element).after(error);
+						},
+						errorClass: 'error',
+						errorElement: 'p',
+						success: function(label){
+							label.remove();
+						},
+						onkeyup: false,
+						rules:{
+							title: {required: true}
+						},
+						messages:{
+							title: {required: '导航栏标题不能为空'}
+						}
+						
+					});
+					
+				}
+			});
+		}
+		
+		// 直接添加分隔符
+		function divider(){
+			var params = {};
+			params['type'] = 'divider';
+			
+			// 取得当前tabs标签current状态的id,即pid
+			var $current_tab = $("#tabs ul:first").find("li.current");
+			var pid = $current_tab.attr("id");
+			pid = pid.substr(7);
+			params['pid'] = pid;
+			
+			var $ul = $($current_tab.find("a").attr("href")).find("ul");
+			$.ajax({
+				type:"POST",
+				url: "/admin.php/app/add_nav",
+				data: params,
+				dataType:"json",
+				success:function(json){
+					if(json.status==1){
+						
+						// ajax动态添加到ul末尾
+						var render = template.compile('<li class="app-divider " id="nav_<%=id %>">&nbsp;</li>');
+						var html = render(json.data);//渲染
+						
+						$ul.append(html);
+					}else{
+						alert(json.info);
+					}
+				}
+			});
+		}
+	</script>
+	
+	<div class="container">
+		<div class="main">			<div class="main-inner">
+				
+				<div class="page-header">
+					<div class="app-brief">
+						<h5>实时加速，全面加快控制台搭建的速度</h5>
+						<p>管理控制台导航栏上的应用(例：运营、应用日志、电子商务等)，你可以根据项目的需求进行定制，控制是否显示它们</p>
+						<p>显示在这里，说明控制台应用已经下载到本地并且安装成功</p>
+					</div>
+					<ul class="nav nav-pills">
+				    	<li class="current"><a href="#">应用管理</a></li>
+				    	<li><a href="javascript:;" onclick="navbar();">添加导航栏</a></li>
+				    	<li><a href="javascript:;" onclick="header();">添加页眉</a></li>
+				    	<li><a href="javascript:;" onclick="divider();">添加分隔符</a></li>
+				    	<li><a href="javascript:;" onclick="">添加应用</a></li>
+				    </ul>
+					
+				</div>
+				<script type="text/javascript">
+					 $(function() {
+					 	
+					 	// 导航栏拖动排序
+					 	$("#tabs .nav").sortable({
+							axis: "x",
+							update: function( event, ui ){
+								var result = $(this).sortable('toArray');
+								console.info(result);
+								$.ajax({
+									type: "POST",
+									url: "/admin.php/app/sort",
+									data: {'order':result, 'pid': 0},
+									dataType: "json",
+									success: function(json){
+										if(json.status==1){
+										}
+									}
+								});
+							}
+						});
+						
+						$("#tabs ul.connectedSortable").sortable({
+							update: function( event, ui ){
+								var result = $(this).sortable('toArray');
+								
+								// 获取pid
+								var tabs_id = $(this).parent().attr('id');
+								
+								var navbar_id = $("#tabs a[href=#"+tabs_id+"]").parent().attr("id");
+								navbar_id = navbar_id.substr(7);
+								
+								$.ajax({
+									type: "POST",
+									url: "/admin.php/app/sort",
+									data: {'order':result, 'pid': navbar_id},
+									dataType: "json",
+									success: function(json){
+										if(json.status==1){
+										}
+									}
+								});
+							}
+						}).disableSelection();
+						
+						// jquery tab 插件
+						$("#tabs").find(".nav li a").click(function(e){
+							e.preventDefault ? e.preventDefault() : e.returnValue = false;
+							
+							var $this = $(this);
+							$this.parent().addClass("current").siblings().removeClass("current");
+							
+							var name = $this.attr('href');
+							$(name).show().siblings(":not(.nav)").hide();
+						});
+						
+						
+						$("ul:first li", "#tabs").droppable({
+							accept: ".connectedSortable li",
+							tolerance: 'pointer',
+							drop: function(event, ui) {
+								 var $item = $(this); // droppable
+								 
+								 var $list = $($item.find("a").attr("href")).find(".connectedSortable");
+								 ui.draggable.hide("slow", function(){
+								 	$(this).appendTo($list).show("slow");
+								 })
+								 
+								 // 子nav的ID
+								 var nav_id = ui.helper.attr('id');
+								 nav_id = nav_id.substr(4);
+								 
+								 // 另一个list 父navbar的ID
+								 var navbar_id = $item.attr('id');
+								 navbar_id = navbar_id.substr(7);
+								 
+								 // 修改nav ID的父ID,并修改orderid为9999（最后一个）
+								 $.ajax({
+									type: "POST",
+									url: "/admin.php/app/recive",
+									data: {'id': nav_id, 'pid': navbar_id},
+									dataType: "json",
+									success: function(json){
+										if(json.status==1){
+										}
+									}
+								});
+							}
+					    });
+					});
+				</script>
+				<div id="tabs">
+					<ul class="nav nav-tabs">
+				    	<volist name="_nav" id="navbar">
+				    		<if condition="$navbar['type'] eq 'navbar'">
+						    <li id="navbar_{$navbar['id']}" <eq name="key" value="0">class="current"</eq>>
+								<a href="#tabs_{$navbar['name']}"><if condition="$navbar['icon']"><i class="{$navbar['icon']}"></i>&nbsp;</if>{$navbar['title']}</a>
+							</li>
+							</if>
+				    	</volist>
+						<!--
+					    <li id="navbar_1" class="current"><a href="#tabs_1">面板</a></li>
+					    <li id="navbar_2"><a href="#tabs_2">开发</a></li>
+						-->
+					</ul>
+					<volist name="_nav" id="navbar">
+						<if condition="$navbar['type'] eq 'navbar'">
+						<div id="tabs_{$navbar['name']}" <neq name="key" value="0">style="display:none;"</neq>>
+							<ul class="connectedSortable">
+								<volist name="navbar._child" id="nav">
+									<switch name="nav.type">
+										<case value="header">
+											<li id="nav_{$nav['id']}" class="app-header <if condition="$nav['disabled'] eq '1'">disabled</if>">{$nav['title']}<a href="javascript:;">编辑</a></li>
+										</case>
+										<case value="nav">
+											<li id="nav_{$nav['id']}" class="app-nav <if condition="$nav['disabled'] eq '1'">disabled</if>">{$nav['title']}<a href="javascript:;">编辑</a></li>
+										</case>
+										<case value="divider">
+											<li id="nav_{$nav['id']}" class="app-divider <if condition="$nav['disabled'] eq '1'">disabled</if>">&nbsp;</li>
+										</case>
+										<default />
+									</switch>
+								</volist>
+							</ul>
+						</div>
+						</if>
+					</volist>
+					<!--
+					<div id="tabs_1">
+						<ul id="sortable1" class="connectedSortable">							<li class="app-header">用户 MEMBER</li>							<li class="app-nav">用户管理</li>							<li class="app-nav">品类管理</li>
+							<li class="app-divider">&nbsp;</li>						</ul>
+					</div>
+					-->
+				</div>
+				
+			</div>
+		</div><!-- .main -->
+		<div class="fn-clear"></div>
+	</div>
+	
+	<!-- 导航栏对话框模板 -->
+	<script id="tpl_navbar" type="text/template">
+		<style type="text/css">
+			.form-horizontal .form-item {margin-bottom: 10px;}
+			.form-horizontal .form-item .form-label{font-size: 12px;width: 60px;}
+			.form-horizontal .form-item .form-field {margin-left: 80px;}
+		</style>
+		<form id="form_navbar" action="" method="post" class="form-horizontal" ><!-- .form 默认为垂直方向的表单样式 -->
+			<input type="hidden" name="type" value="navbar">
+			<div class="form-item">
+				<label for="icon" class="form-label">图标</label>
+				<div class="form-field">
+					<input type="text" class="ipt-text" name="icon" id="icon" placeholder="例如：icon-user" style="width:100px;">
+	          	</div>
+	        </div>
+			<div class="form-item">
+				<label for="title" class="form-label">导航栏标题</label>
+				<div class="form-field">
+					<input type="text" class="ipt-text" name="title" id="title" placeholder="例如：会员">
+	          	</div>
+	        </div>
+			<div class="form-item">
+				<label for="name" class="form-label">导航栏名称</label>
+				<div class="form-field">
+					<input type="text" class="ipt-text" name="name" id="name" placeholder="例如：member">
+	          	</div>
+	        </div>
+	
+	        <div class="form-item form-btns" style="margin-bottom:20px;">
+				<div class="form-field">
+					<span class="btn btn-primary"><button type="submit">添加</button></span>
+	          	</div>
+	        </div>
+		</form>
+	</script>
+	
+	<!-- 页眉对话框模板 -->
+	<script id="tpl_header" type="text/template">
+		<style type="text/css">
+			.form-horizontal .form-item {margin-bottom: 10px;}
+			.form-horizontal .form-item .form-label{font-size: 12px;width: 60px;}
+			.form-horizontal .form-item .form-field {margin-left: 80px;}
+		</style>
+		<form id="form_header" action="" method="post" class="form-horizontal" ><!-- .form 默认为垂直方向的表单样式 -->
+			<input type="hidden" name="type" value="header">
+			<div class="form-item">
+				<label for="title" class="form-label">页眉标题</label>
+				<div class="form-field">
+					<input type="text" class="ipt-text" name="title" id="title" placeholder="例如：内容设置">
+	          	</div>
+	        </div>
+	
+	        <div class="form-item form-btns" style="margin-bottom:20px;">
+				<div class="form-field">
+					<span class="btn btn-primary"><button type="submit">添加</button></span>
+	          	</div>
+	        </div>
+		</form>
+	</script>
+	
+	
+<include file="Public:footer" />

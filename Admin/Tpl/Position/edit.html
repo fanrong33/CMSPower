@@ -1,0 +1,49 @@
+<include file="Public:header" />
+
+	<div class="container">
+		
+		<div class="page-header">
+			<h2>推荐位管理</h2>
+			<ul class="nav nav-pills">
+		    	<li><a href="{:U('Position/index')}">推荐位管理</a></li>
+				<li <if condition="ACTION_NAME eq 'add'">class="active"</if>><a href="{:U('Position/add')}">添加推荐位</a></li>
+		    </ul>
+		</div><!-- .page-header -->
+		
+		<form action="" method="post" class="form">
+			<present name="_model">
+			<input type="hidden" name="id" value="{$_model['id']}">
+			</present>
+			
+			<div class="form-item">
+				<label class="form-label" for="name">名称</label>
+				<div class="form-field">
+					<input type="text" class="ipt-text" name="name" id="name" value="<present name="_model">{$_model["name"]}</present>" placeholder="例如：首页站长推荐">
+	          	</div>
+	        </div>
+			<div class="form-item">
+				<label class="form-label" for="module_id">所属模型</label>
+				<div class="form-field">
+					<select id="module_id" name="module_id">
+						<option value="">≡ 请选择模型 ≡</option>
+						<volist name="module_list" id="rs">
+							<option value="{$rs['id']}" title="{$rs['name']}" <if condition="isset($_model) && $rs['id'] eq $_model['module_id']">selected="selected"</if>>{$rs['title']}</option>
+						</volist>
+					</select>
+	          	</div>
+	        </div>
+			<div class="form-item">
+				<label class="form-label" for="max_number">最大保存条数</label>
+				<div class="form-field">
+					<input type="text" class="ipt-text" name="max_number" id="max_number" value="<present name="_model">{$_model["max_number"]}</present>" placeholder="" style="width:50px;"> 条
+	          	</div>
+	        </div>
+			
+	        <div class="form-actions">
+	        	<button type="submit" class="btn">保存</button>
+	        </div>
+		</form>
+		
+	</div><!-- .container -->
+
+<include file="Public:footer" />

@@ -1,0 +1,123 @@
+<div class="aside" id="aside">
+	<ul class="nav nav-list">
+		<volist name="_nav_child" id="nav">
+			<if condition="$nav['disabled'] eq '0'">
+			<switch name="nav.type">
+				<case value="header">
+					<li class="nav-header">{$nav['title']}</li>
+					<if condition="$nav['title'] eq '内容管理'">
+						<ul id="tree" class="ztree" style="width:200px;_width:145px;overflow:auto;"></ul>
+					</if>								
+				</case>
+				<case value="nav">
+					<li <?php if($nav['type']=='nav' && $nav['name']==MODULE_NAME){echo 'class="active"';} ?>><a href="{:U($nav['name'].'/index')}">{$nav['title']}</a></li>
+				</case>
+				<case value="divider">
+			    	<li class="divider"></li>
+				</case>
+				<default />
+			</switch>
+			</if>
+		</volist>
+	</ul>
+</div><!-- .aside -->
+
+<script type="text/javascript">
+	<!--
+	// 链接icon地址
+	var icon_link_url = '{:JS_PATH}thirdparty/zTree/img/diy/10.png';
+	var channel_id = "{$_channel['id']}";
+	
+	var zTree;
+	var setting = {
+		view: {
+			dblClickExpand	: false,
+			showLine		: true,
+			selectedMulti	: false
+		},
+		data: {
+			simpleData: {
+				enable	: true,
+				idKey	: "id",
+				pIdKey	: "pid",
+				rootPId	: ""
+			}
+		},
+		callback: {
+			beforeClick: function(treeId, treeNode) {
+				var zTree = $.fn.zTree.getZTreeObj("tree");
+				if (treeNode.isParent) {
+					zTree.expandNode(treeNode);
+					return false;
+				} else {
+					console.info(treeNode.file);
+					if(treeNode.file){
+						window.location.href=treeNode.file;
+					}
+					return true;
+				}
+			}
+		}
+	};
+
+	var zNodes =[
+//		{id:1, pid:0, name:"旅游", file:"/admin.php/article/index/ch/trip_news"},
+//		{id:101, pid:1, name:"旅游资讯", file:"/admin.php/article/index/ch/trip_news"},
+//		{id:102, pid:1, name:"旅游攻略", file:"/admin.php/article/index/ch/trip_guide"},
+//		{id:2, pid:0, name:"关于", open:false},
+//		{id:201, pid:2, name:"建议反馈", url:"http://www.weibo.com/1670595450/zk2jQdBFR", icon: icon_link_url },
+//		{id:202, pid:2, name:"关于我们", file:"/admin.php/page/index/ch/aboutus"},
+//		{id:203, pid:2, name:"常见问题", file:"/admin.php/page/index/ch/faq"},
+//		{id:204, pid:2, name:"隐私政策", file:"/admin.php/page/index/ch/privacy"},
+//		{id:3, pid:0, name:"thinkphp", url: "http://www.thinkphp.cn", icon: icon_link_url }
+	];
+	<volist name="_channel_tree" id="parent_rs">
+		<?php
+			// 默认文件夹折叠，若为open=true,则展开 
+			$open='false';
+			if($parent_rs['open']){
+				$open='true';
+			}else{
+				// 不在栏目内容里面，默认第一个展开
+				if(!$_channel['id'] && $key==0){
+					$open='true';
+				}
+			}
+		?>
+		<if condition="$parent_rs['type'] eq 3">
+			zNodes.push({ id:{$parent_rs['id']}, pid:{$parent_rs['pid']}, name:"{$parent_rs['title']}", url: "{$parent_rs['url']}", icon: icon_link_url });
+		<else/>
+			zNodes.push({ id:{$parent_rs['id']}, pid:{$parent_rs['pid']}, name:"{$parent_rs['title']}", open: {$open} });
+		</if>
+		<if condition="isset($parent_rs['_child'])">
+			<volist name="parent_rs._child" id="rs">
+				<switch name="rs.type">
+					<case value="1">// 栏目
+						zNodes.push({ id:{$rs['id']}, pid:{$rs['pid']}, name:"{$rs['title']}", file:"{:U($rs['module_name'].'/index', array('ch'=>$rs['name']))}"});
+					</case>
+					<case value="2">// 单网页
+						zNodes.push({ id:{$rs['id']}, pid:{$rs['pid']}, name:"{$rs['title']}", file:"{:U('Page/index', array('ch'=>$rs['name']))}" });
+					</case>
+					<case value="3">// 外部链接
+						zNodes.push({ id:{$rs['id']}, pid:{$rs['pid']}, name:"{$rs['title']}", url:"{$rs['url']}", icon: icon_link_url });
+					</case>
+				</switch>
+			</volist>
+		</if>
+	</volist>
+	
+	$(document).ready(function(){
+		if($("#tree").length > 0){
+			var t = $("#tree");
+			t = $.fn.zTree.init(t, setting, zNodes);
+			var zTree = $.fn.zTree.getZTreeObj("tree");
+			
+			// 默认选中的节点
+			if(channel_id){
+				zTree.selectNode(zTree.getNodeByParam("id", channel_id));
+			}
+		}
+	});
+
+	//-->	
+</script>

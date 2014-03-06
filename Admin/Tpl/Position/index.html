@@ -1,0 +1,70 @@
+<include file="Public:header" />
+	
+	<div class="container">
+		
+		<div class="page-header">
+			<h2>推荐位管理</h2>
+			<ul class="nav nav-pills">
+		    	<li class="active"><a href="{:U('Position/index')}">推荐位管理</a></li>
+		    	<li><a href="{:U('Position/add')}">添加推荐位</a></li>
+		    </ul>
+		</div><!-- .page-header -->
+		
+		<form action="" method="post">
+			<table class="table" cellspacing="0" cellpadding="0">
+				<thead>
+					<tr>
+						<th style="width:20px;"><input type="checkbox" class="ipt-checkbox" onclick="check_all('table tbody', this.checked);" /></th>
+						<th style="width:60px;">显示顺序</th>
+						<th>推荐位名称</th>
+						<th style="width:75px;">所属模型</th>
+						<th style="width:100px;"></th>
+					</tr>
+				</thead>
+				<tbody>
+					
+					<if condition="$list">
+					<volist name="list" id="rs">
+						<tr>
+							<td><input type="checkbox" name="ids[]" value="{$rs['id']}" /></td>
+							<td><input type="text" class="ipt-text ipt-text-orderid" name="orderid[{$rs['id']}]" value="<if condition="$rs['orderid'] neq 999999">{$rs['orderid']}</if>"></td>
+							<td>{$rs['name']}</td>
+							<td>{$rs['module_title']}</td>
+							<td>
+								<a href="{:U('Position/edit', array('id'=>$rs['id']))}">修改</a>
+								<span class="divider">|</span>
+								<a href="{:U('Position/public_item', array('position_id'=>$rs['id']))}">信息管理</a>
+								<!--
+								<a href="javascript:;" onclick="if(confirm('确定删除该广告？'))window.location.href='{:U('Sw/delete', array('id'=>$rs['id']))}'">删除</a>
+								-->
+							</td>
+						</tr>
+					</volist>
+					<else/>
+						<tr>
+							<td colspan="5">您还没有添加任何推荐位</td>
+						</tr>
+					</if>
+				</tbody>
+				<tfoot>
+					<tr>
+						<td colspan="5">
+							<a href="javascript:;" onclick="check_all('table tbody')">全选/取消</a>
+							<button type="submit" class="btn btn-small J_ajax_submit_btn" data-action="{:U('Position/sort')}">排序</button>
+							<button type="submit" class="btn btn-small J_ajax_submit_btn" data-action="{:U('Position/delete')}">批量删除</button>
+						</td>
+					</tr>
+				</tfoot>
+			</table>
+			
+		</form>
+		
+		<div class="paging">
+			<div class="paging-inner">
+				{$page}
+			</div>
+		</div>
+		
+	</div><!-- .container -->
+		
+<include file="Public:footer" />

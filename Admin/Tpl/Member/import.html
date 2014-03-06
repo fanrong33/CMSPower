@@ -1,0 +1,36 @@
+<include file="Public:header" />
+
+	<div class="container">
+		<include file="Public:aside" />
+		
+		<div class="main">
+			<div class="page-header">
+				<h5>批量导入</h5>
+			</div>
+			
+			<form action="" method="post" class="form" enctype="multipart/form-data">
+				<div class="form-item">
+					<label class="form-label">选择需要导入的文件</label>
+					<div class="form-field">
+						<input type="file" name="excel_file" value="">
+						<p class="form-explain">只支持 .xls 格式文件，<a href="/Admin/Tpl/Member/example.xls">点击下载</a>示例文件</p>
+		          	</div>
+		        </div>
+				<div class="form-item">
+					<label class="form-label">如遇到重复的记录</label>
+					<div class="form-field pt5">
+						<input type="radio" name="repeat_record" class="ipt-radio" value="1" id="repeat_record_1" checked="checked"><label for="repeat_record_1" style="margin-right:10px;"> 不导入</label>
+						<input type="radio" name="repeat_record" class="ipt-radio" value="2" id="repeat_record_2"><label for="repeat_record_2"> 覆盖</label>
+		          	</div>
+		        </div>
+				
+		        <div class="form-actions">
+		        	<button type="submit" class="btn btn-blue">确定</button>
+					<button type="button" class="btn" onclick="window.location.href='{:cookie('_currentUrl_')}'">返回</button>
+		        </div>
+			</form>
+			
+		</div><!-- .main -->
+	</div><!-- .container -->
+
+<include file="Public:footer" />

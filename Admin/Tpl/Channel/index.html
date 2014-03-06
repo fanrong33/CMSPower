@@ -1,0 +1,45 @@
+<include file="Public:header" />
+
+	<div class="container">
+		<include file="Public:aside" />
+		
+		<div class="main">
+			<div class="page-header" style="margin-bottom:10px;">
+				<h5>设计网站的核心栏目</h5>
+			</div>
+			<ul class="nav nav-pills mb20">
+		    	<li class="active"><a href="{:U('Channel/index')}">栏目管理</a></li>
+		    	<li><a href="{:U('Channel/add', array('type'=>1))}">添加栏目</a></li>
+		    	<li><a href="{:U('Channel/add', array('type'=>2))}">添加单网页</a></li>
+		    	<li><a href="{:U('Channel/add', array('type'=>3))}">添加外部链接</a></li>
+		    </ul>
+			
+			<form action="" method="post">
+				<table class="table table-compact" cellspacing="0" cellpadding="0">
+					<thead>
+						<tr>
+							<th style="width:60px;">显示顺序</th>
+							<th>栏目名称</th>
+							<th style="width:80px;">英文目录</th>
+							<th style="width:80px;">栏目类型</th>
+							<th style="width:80px;">所属模型</th>
+							<th style="width:120px;"></th>
+						</tr>
+					</thead>
+					<tbody>
+						{:R('Channel/tree', array($tree))}
+					</tbody>
+					<tfoot>
+						<tr>
+							<td colspan="6">
+								<button type="submit" class="btn btn-small J_ajax_submit_btn" data-action="{:U('Channel/sort')}">排序</button>
+							</td>
+						</tr>
+					</tfoot>
+				</table>
+			</form>
+			
+		</div><!-- .main -->
+	</div><!-- .container -->
+	
+<include file="Public:footer" />

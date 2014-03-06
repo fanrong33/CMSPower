@@ -1,0 +1,89 @@
+<include file="Public:header" />
+
+	<div class="container">
+		
+		<div class="page-header">
+			<h2>采集管理</h2>
+			<ul class="nav nav-pills">
+		    	<li><a href="{:U('Collector/index')}">采集管理</a></li>
+		    	<li><a href="{:U('Collector/add')}">添加采集点</a></li>
+		    </ul>
+		</div><!-- .page-header -->
+		
+		<ul class="nav nav-tabs" style="margin-bottom: 10px; position: absolute; top: 69px; right: 30px;">
+		    <li <if condition="!isset($_GET['status'])">class="active"</if>><a href="{:U('Collector/publist', array('id'=>$_GET['id']))}">全部</a></li>
+	    	<li <if condition="$_GET['status'] eq 1">class="active"</if>><a href="{:U('Collector/publist', array('id'=>$_GET['id'],'status'=>1))}">未采集</a></li>
+	    	<li <if condition="$_GET['status'] eq 2">class="active"</if>><a href="{:U('Collector/publist', array('id'=>$_GET['id'],'status'=>2))}">已采集</a></li>
+	    	<li <if condition="$_GET['status'] eq 3">class="active"</if>><a href="{:U('Collector/publist', array('id'=>$_GET['id'],'status'=>3))}">已导入</a></li>
+		</ul>
+				
+		<form action="" method="post">
+			<table class="table" cellspacing="0" cellpadding="0">
+				<thead>
+					<tr>
+						<th style="width:20px;"><input type="checkbox" class="ipt-checkbox" onclick="check_all('.table tbody', this.checked);" /></th>
+						<th>标题</th>
+						<th>网址</th>
+						<th style="width:50px;">状态</th>
+						<th style="width:50px;"></th>
+					</tr>
+				</thead>
+				<tbody>
+					
+					<if condition="$list">
+					<volist name="list" id="rs">
+						<tr>
+							<td><input type="checkbox" name="ids[]" value="{$rs['id']}" /></td>
+							<td>{$rs['title']}</td>
+							<td>{$rs['url']}</td>
+							<td>
+								<if condition="$rs['status'] eq '1'">未采集</if>
+								<if condition="$rs['status'] eq '2'">已采集</if>
+								<if condition="$rs['status'] eq '3'">已导入</if>
+							</td>
+							<td>
+								<if condition="isset($_GET['status']) && ($rs['status'] eq '2' || $rs['status'] eq '3')">
+									<a href="javascript:;" onclick="$(this).parent().parent().next().toggle();">查看</a>
+								</if>
+							</td>
+						</tr>
+						<if condition="isset($_GET['status']) && ($rs['status'] eq '2' || $rs['status'] eq '3')">
+						<tr style="display:none;">
+							<td align="left" colspan="5">
+								<textarea style="width:98%;height:250px;"><?php print_r(unserialize($rs['data'])); ?></textarea>
+							</td>
+						</tr>
+						
+					</volist>
+					<else/>
+						<tr>
+							<td colspan="5">
+								还没有任何采集的内容
+							</td>
+						</tr>
+					</if>
+				</tbody>
+				<tfoot>
+					<tr>
+						<td colspan="5">
+							<a href="javascript:;" onclick="check_all('.table tbody')">全选/取消</a>
+							<button type="submit" class="btn btn-small J_ajax_submit_btn" data-action="{:U(MODULE_NAME.'/delete')}">批量删除</button>
+							<if condition="isset($_GET['status']) && $_GET['status'] eq '2'">
+								<button type="button" class="btn btn-small btn-blue" onclick="window.location.href='{:U(MODULE_NAME.'/import', array('id'=>$_GET['id'],'type'=>'all'))}'">全部导入</button>
+							</if>
+						</td>
+					</tr>
+				</tfoot>
+			</table>
+			
+		</form>
+		
+		<div class="paging">
+			<div class="paging-inner">
+				{$page}
+			</div>
+		</div>
+		
+	</div><!-- .container -->
+
+<include file="Public:footer" />

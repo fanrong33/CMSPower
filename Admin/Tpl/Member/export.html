@@ -1,0 +1,29 @@
+<include file="Public:header" />
+
+	<div class="container">
+		
+		<div class="page-header">
+			<h2>用户管理</h2>
+			<ul class="nav nav-pills">
+		    	<li><a href="{:U('Member/index')}">用户管理</a></li>
+				<li><a href="{:U('Member/import')}">导入用户</a></li>
+		    	<li class="active"><a href="{:U('Member/export')}">导出全部用户</a></li>
+		    </ul>
+		</div><!-- .page-header -->
+		
+		<form action="" method="post" class="form">
+			<div class="form-item">
+				<label class="form-label" for="">选择需要导出的格式</label>
+				<div class="form-field pt5">
+					<input type="radio" name="outformat" class="ipt-radio" value="xls" id="outformat_xls" checked="checked"><label for="outformat_xls"> xls格式<span class="txt-gray">(可导入到 Outlook 或用 Excel 打开)</span></label>
+	          	</div>
+	        </div>
+			
+	        <div class="form-actions">
+	        	<button type="submit" class="btn">确定</button>
+	        </div>
+		</form>
+		
+	</div><!-- .container -->
+
+<include file="Public:footer" />

@@ -1,0 +1,51 @@
+<include file="Public:header" />
+
+	<div class="container">
+		
+		<div class="page-header">
+			<h2>采集管理</h2>
+			<ul class="nav nav-pills">
+		    	<li><a href="{:U('Collector/index')}">采集管理</a></li>
+		    	<li><a href="{:U('Collector/add')}">添加采集点</a></li>
+		    </ul>
+		</div><!-- .page-header -->
+		<div>
+			<p>采集列表：{$collector['urlpage']}</p>
+			<p>总共 	{$article_total}</p>
+			<p>重复记录 	{$repeat_total}</p>
+			<p>新入库 	{$article_total-$repeat_total}</p>
+			<!--
+			 总共： 1 条记录。重复记录：0。去除重复记录，共入库1
+			-->
+		</div>
+		<table class="table" cellspacing="0" cellpadding="0">
+			<thead>
+				<tr>
+					<th>标题</th>
+					<th>地址</th>
+				</tr>
+			</thead>
+			<tbody>
+				
+				<if condition="$article_url_list">
+				<volist name="article_url_list" id="rs">
+					<tr>
+						<td>{$rs['title']}</td>
+						<td><a href="{$rs['url']}" target="_blank">{$rs['url']}</a></td>
+					</tr>
+				</volist>
+				<else/>
+					<tr>
+						<td colspan="2">没有发现任何网址</td>
+					</tr>
+				</if>
+			</tbody>
+		</table>
+		
+	</div><!-- .container -->
+	<script type="text/javascript">
+		<?php 
+			if ($total_page > $page) { echo "window.location.href='".U('Collector/col_url_list', array("page"=>$page+1,"id"=>$_GET['id']) )."';"; } 
+		?>
+	</script>
+<include file="Public:footer" />

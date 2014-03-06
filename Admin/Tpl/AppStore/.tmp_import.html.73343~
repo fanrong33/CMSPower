@@ -1,0 +1,55 @@
+<include file="Public:header" />
+
+	<div class="container">
+		
+		<div class="page-header">
+			<h2>管理员管理</h2>
+			<ul class="nav nav-pills">
+		    	<li><a href="{:U('Admin/index')}">管理员管理</a></li>
+		    	<li <if condition="ACTION_NAME eq 'add'">class="active"</if>><a href="{:U('Admin/add')}">添加管理员</a></li>
+		    </ul>
+		</div><!-- .page-header -->
+		
+		<form action="" method="post" class="form">
+			<present name="_model">
+			<input type="hidden" name="id" value="{$_model['id']}">
+			</present>
+			
+			<div class="form-item">
+				<label class="form-label" for="role_id">角色</label>
+				<div class="form-field">
+					<select id="role_id" name="role_id" style="width:230px;">
+						<option value="">≡ 请选择角色 ≡</option>
+						<volist name="role_list" id="rs">
+							<option value="{$rs['id']}" <if condition="isset($_model) && $rs['id'] eq $_model['role_id']">selected="selected"</if>>{$rs['name']}</option>
+						</volist>
+					</select>
+	          	</div>
+	        </div>
+			<div class="form-item">
+				<label class="form-label" for="username">用户名</label>
+				<div class="form-field">
+					<input type="text" class="ipt-text" name="username" id="username" value="<present name="_model">{$_model["username"]}</present>" placeholder="例如：Pony">
+	          	</div>
+	        </div>
+			<div class="form-item">
+				<label class="form-label" for="password">新密码</label>
+				<div class="form-field">
+					<input type="password" class="ipt-text" name="password" id="password" value="" placeholder="">&nbsp;<present name="_model"><span class="txt-gray">为空表示不修改密码</span></present>
+	          	</div>
+	        </div>
+			<div class="form-item">
+				<label class="form-label" for="description">描述</label>
+				<div class="form-field">
+					<textarea name="description" id="description" cols="30" style="width:400px;height:45px;"><present name="_model">{$_model["description"]}</present></textarea>
+	          	</div>
+	        </div>
+			
+	        <div class="form-actions">
+	        	<button type="submit" class="btn">保存</button>
+	        </div>
+		</form>
+		
+	</div><!-- .container -->
+
+<include file="Public:footer" />

@@ -1,0 +1,260 @@
+<include file="Public:header" />
+	<script type="text/javascript">
+		// 选择模型，ajax获取对应模型下的模板文件
+		function get_module_tpl(object){
+			var $this = $(object);
+			var module_id = $this.val();
+			if(module_id > 0){
+				
+				$.ajax({
+					type: "GET",
+					url: PHP_FILE+'?m=channel&a=ajax_get_module_tpl',
+					dataType: 'json',
+					data: { module_id: module_id },
+					success: function(json){
+						var data = json.data;
+						if(json.status==1){
+							if(data.tpl_channel.length != 0){
+								$("#select_tpl_channel").empty();
+								var html = '';
+								for(var key in data.tpl_channel){
+									html = '<option value="'+data.tpl_channel[key]+'">'+data.tpl_channel[key]+'</option>' + html;
+								}
+								$("#select_tpl_channel").html(html);
+							}
+							if(data.tpl_index.length != 0){
+								$("#select_tpl_index").empty();
+								var html = '';
+								for(var key in data.tpl_index){
+									html = '<option value="'+data.tpl_index[key]+'">'+data.tpl_index[key]+'</option>' + html;
+								}
+								$("#select_tpl_index").html(html);
+							}
+							if(data.tpl_detail.length != 0){
+								$("#select_tpl_detail").empty();
+								var html = '';
+								for(var key in data.tpl_detail){
+									html = '<option value="'+data.tpl_detail[key]+'">'+data.tpl_detail[key]+'</option>' + html;
+								}
+								$("#select_tpl_detail").html(html);
+							}
+						}
+					}
+				});
+				
+			}
+		}
+	</script>
+	<div class="container">
+		<include file="Public:aside" />
+		
+		<div class="main">
+			<div class="page-header" style="margin-bottom:10px;">
+				<h5>设计网站的核心栏目</h5>
+			</div>
+			<ul class="nav nav-pills mb20">
+		    	<li><a href="{:U('Channel/index')}">栏目管理</a></li>
+		    	<li class="active"><a href="{:U('Channel/add', array('type'=>1))}">添加栏目</a></li>
+		    	<li><a href="{:U('Channel/add', array('type'=>2))}">添加单网页</a></li>
+		    	<li><a href="{:U('Channel/add', array('type'=>3))}">添加外部链接</a></li>
+		    </ul>
+			
+			<form action="" method="post" class="form J_ajax_submit">
+				<present name="_model">
+					<input type="hidden" name="id" value="{$_model['id']}">
+				</present>
+				<if condition="$type">
+					<input type="hidden" name="type" value="{$type}">
+				</if>
+				
+				<div id="tabs">
+					<ul class="nav nav-tabs" style="margin-bottom:30px;">
+					    <li class="active"><a href="#tabs_base">基本选项</a></li>
+					    <li><a href="#tabs_template">模板设置</a></li>
+					    <li><a href="#tabs_seo">SEO设置</a></li>
+					</ul>
+					<div id="tabs_base">
+						<div class="form-item">
+							<label class="form-label">关联模型</label>
+							<div class="form-field">
+								<select name="module_id" onchange="get_module_tpl(this);">
+									<option value="">≡ 请选择模型 ≡</option>
+									<volist name="module_list" id="rs">
+										<option value="{$rs['id']}" <if condition="isset($_model) && $rs['id'] eq $_model['module_id']">selected="selected"</if>>{$rs['title']}</option>
+									</volist>
+								</select>
+				          	</div>
+				        </div>
+						<div class="form-item">
+							<label class="form-label">上级栏目</label>
+							<div class="form-field">
+								<select name="pid" id="pid">
+									<option value="0">≡ 作为一级栏目 ≡</option>
+									{$options}
+								</select>
+								{:html_get_last_selected('#pid', 'Channel', 'pid')}
+				          	</div>
+				        </div>
+						<div class="form-item">
+							<label class="form-label">栏目名称</label>
+							<div class="form-field">
+								<input type="text" class="ipt-text" name="title" value="{$_model["title"]}" placeholder="例如：公司新闻">
+				          	</div>
+				        </div>
+						<div class="form-item">
+							<label class="form-label">英文目录</label>
+							<div class="form-field">
+								<input type="text" class="ipt-text" name="name" value="{$_model["name"]}" placeholder="例如：news">
+								<p class="form-explain">必填，因为前台的开放接口可能需要根据英文目录来获取数据</p>
+				          	</div>
+				        </div>
+						<div class="form-item">
+							<label class="form-label">启用栏目分类</label>
+							<div class="form-field pt5">
+								<input type="radio" name="is_enable_category" class="ipt-radio" value="1" id="enable_category_1" onclick="enable_category(this);" <if condition="isset($_model) && $_model['category_pid']">checked="checked"</if>><label for="enable_category_1" style="margin-right:10px;"> 是</label>
+								<input type="radio" name="is_enable_category" class="ipt-radio" value="0" id="enable_category_0" onclick="enable_category(this);" <?php  if(!isset($_model) || $_model['category_pid'] == 0) { echo 'checked="checked"'; } ?>><label for="enable_category_0"> 否</label>
+								<script type="text/javascript">
+									function enable_category(object){
+										var $this = $(object);
+										if($this.val() == 1){
+											$("#category_pid_container").show();
+										}else{
+											$("#category_pid_container").hide();
+											$("select[name=category_pid]").setSelectedIndex(0);
+										}
+									}
+								</script>
+				          	</div>
+				        </div>
+						<div class="form-item" style="display:none;" id="category_pid_container">
+							<label class="form-label">绑定分类</label>
+							<div class="form-field">
+								<select name="category_pid">
+									<option value="">≡ 选择要绑定的父分类 ≡</option>
+									{$category_options}
+								</select>
+								<p class="form-explain">可选，发布内容时可按该分类下的子分类归类</p>
+				          	</div>
+				        </div>
+						<div class="form-item">
+							<label class="form-label">是否在导航显示</label>
+							<div class="form-field pt5">
+								<input type="radio" name="is_nav" class="ipt-radio" value="1" id="is_nav_1" checked="checked"><label for="is_nav_1" style="margin-right:10px;"> 是</label>
+								<input type="radio" name="is_nav" class="ipt-radio" value="0" id="is_nav_0" <if condition="isset($_model) && $_model['is_nav'] eq '0'">checked="checked"</if>><label for="is_nav_0"> 否</label>
+				          	</div>
+				        </div>
+					</div><!-- .基本选项 -->
+					
+					<div id="tabs_template" style="display:none;">
+						<div class="form-item">
+							<label class="form-label">页面显示模式</label>
+							<div class="form-field pt5">
+								<input type="radio" name="setting[tpl_mode]" class="ipt-radio" value="1" id="tpl_mode_1" onchange="show_channel();" checked="checked" ><label for="tpl_mode_1" style="margin-right:10px;"> 频道式</label>
+								<input type="radio" name="setting[tpl_mode]" class="ipt-radio" value="2" id="tpl_mode_2" onchange="show_list();" <if condition="isset($_model) && $_model['setting']['tpl_mode'] eq '2'">checked="checked"</if>><label for="tpl_mode_2"> 列表式</label>
+				          	</div>
+				        </div>
+						<script type="text/javascript">
+							function show_channel(){
+								$("#channel_container").show();
+								$("#list_container").hide();
+							}
+							function show_list(){
+								$("#channel_container").hide();
+								$("#list_container").show();
+							}
+						</script>
+						<div id="channel_container" <if condition="isset($_model) && $_model['setting']['tpl_mode'] eq '2'">style="display:none;"</if>>
+							<div class="form-item">
+								<label class="form-label">栏目频道模板</label>
+								<div class="form-field">
+									<select name="setting[tpl_channel]" id="select_tpl_channel">
+										<if condition="$_model">
+											<if condition="$html_list['tpl_channel']">
+												<volist name="html_list.tpl_channel" id="rs">
+													<option value="{$rs}" <if condition="$rs eq $_model[setting][tpl_channel]">selected="selected"</if>>{$rs}</option>
+												</volist>
+											<else/>
+												<option value="channel.html">频道页(channel.html)</option>
+											</if>
+										<else/>
+											<option value="channel.html">频道页(channel.html)</option>
+										</if>
+									</select>
+					          	</div>
+					        </div>
+						</div>
+						<div id="list_container" <if condition="isset($_model) && $_model['setting']['tpl_mode'] eq '1'">style="display:none;"</if> <if condition="!isset($_model)">style="display:none;"</if>>
+							<div class="form-item">
+								<label class="form-label">栏目列表页模板</label>
+								<div class="form-field">
+									<select name="setting[tpl_index]" id="select_tpl_index">
+										<if condition="$_model">
+											<if condition="$html_list['tpl_index']">
+												<volist name="html_list.tpl_index" id="rs">
+													<option value="{$rs}" <if condition="$rs eq $_model[setting][tpl_index]">selected="selected"</if>>{$rs}</option>
+												</volist>
+											<else/>
+												<option value="index.html">列表页(index.html)</option>
+											</if>
+										<else/>
+											<option value="index.html">列表页(index.html)</option>
+										</if>
+									</select>
+					          	</div>
+					        </div>
+							<div class="form-item">
+								<label class="form-label">内容页模板</label>
+								<div class="form-field">
+									<select name="setting[tpl_detail]" id="select_tpl_detail">
+										<if condition="$_model">
+											<if condition="$html_list['tpl_detail']">
+												<volist name="html_list.tpl_detail" id="rs">
+													<option value="{$rs}" <if condition="$rs eq $_model[setting][tpl_detail]">selected="selected"</if>>{$rs}</option>
+												</volist>
+											<else/>
+												<option value="detail.html">内容页(detail.html)</option>
+											</if>
+										<else/>
+											<option value="detail.html">内容页(detail.html)</option>
+										</if>
+									</select>
+					          	</div>
+					        </div>
+						</div>
+					</div><!-- .模板设置 -->
+					
+					<div id="tabs_seo" style="display:none;">
+						<div class="form-item">
+							<label class="form-label">title</label>
+							<div class="form-field">
+								<input type="text" class="ipt-text" name="setting[meta_title]" value="{$_model["setting"]["meta_title"]}" placeholder="针对搜索引擎设置的标题">
+				          	</div>
+				        </div>
+						<div class="form-item">
+							<label class="form-label">keywords</label>
+							<div class="form-field">
+								<textarea name="setting[meta_keywords]" cols="30" style="width:400px;height:40px;" placeholder="关键字中间用半角逗号隔开">{$_model["setting"]["meta_keywords"]}</textarea>
+				          	</div>
+				        </div>
+						<div class="form-item">
+							<label class="form-label">description</label>
+							<div class="form-field">
+								<textarea name="setting[meta_description]" cols="30" style="width:400px;height:60px;" placeholder="针对搜索引擎设置的网页描述">{$_model["setting"]["meta_description"]}</textarea>
+				          	</div>
+				        </div>
+					</div><!-- .SEO设置 -->
+				</div><!-- #tabs_base -->
+			
+		        <div class="form-actions">
+		        	<button type="submit" class="btn btn-blue">保存</button>
+					<if condition="ACTION_NAME eq 'add'">
+						<input type="submit" class="btn btn-blue" name="submit_continue" value="保存并继续添加">
+					</if>
+					<button type="button" class="btn" onclick="window.location.href='{:cookie('_currentUrl_')}'">返回</button>
+		        </div>
+			</form>
+			
+		</div><!-- .main -->
+	</div><!-- .container -->
+		
+<include file="Public:footer" />

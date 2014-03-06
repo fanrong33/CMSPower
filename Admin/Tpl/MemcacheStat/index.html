@@ -1,0 +1,229 @@
+<include file="Public:header" />
+
+	<style type="text/css">
+		.table-compact th,
+		.table-compact td{padding:5px 8px;}
+	</style>
+	<script type="text/javascript">
+		$(function(){
+			
+			// 内存使用饼图
+	        $('#chart').highcharts({
+	            chart: {
+	                plotBackgroundColor: null,
+	                plotBorderWidth: null,
+	                plotShadow: false
+	            },
+	            title: {
+	                text: 'Cache Usage'
+	            },
+				credits: {text: ''}, // 右下角版权标志
+	            tooltip: {
+	        	    pointFormat: '<b>{point.percentage}%</b>',
+	            	percentageDecimals: 1
+	            },
+	            plotOptions: {
+	                pie: {
+	                    allowPointSelect: true,
+	                    cursor: 'pointer',
+	                    dataLabels: {
+	                        enabled: false
+	                    },
+						showInLegend: true
+	                }
+	            },
+				legend: { // 刻印文字
+	                layout: 'vertical',
+	                borderWidth: 0,
+	                y: 5
+	            },
+	            series: [{
+	                type: 'pie',
+	                name: 'Browser share',
+	                data: [
+	                    {
+	                        name: 'Free: {$free_bytes} ({$free_percentage}%)',
+	                        y: {$free_percentage},
+							color: '#058DC7'
+	                    },
+						{
+							name: 'Used: {$used_bytes} ({$used_percentage}%)',
+							y: {$used_percentage},
+							color: '#50B432'
+						}
+	                ]
+	            }]
+	        });
+			
+			// 内存使用饼图
+			$('#column_chart').highcharts({
+	            chart: {
+	                type: 'column'
+	            },
+	            title: {
+	                text: 'Hits & Misses'
+	            },
+				credits: {text: ''}, // 右下角版权标志
+	            xAxis: {
+	                gridLineWidth: 0,
+					labels: {
+						enabled: false
+					},
+					linkColor: '#FFF', 	// x轴方向线条的颜色
+					tickColor: '#FFF'	// x轴凸起标记的颜色
+	            },
+	            yAxis: {
+					title: '',
+	                max: 100,
+					gridLineColor: '#FFF',
+					gridLineWidth: 0,
+					labels: {
+						enabled: false
+					},
+					lineColor: '#FFF'
+	            },
+	            tooltip: {
+	                headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+	                pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}</td></tr>',
+	                footerFormat: '</table>',
+	                shared: false,
+	                useHTML: true
+	            },
+				legend: {
+//	                layout: 'vertical',
+//	                align: 'right',				// 精确控制legend的位置和样式
+//	                verticalAlign: 'top',
+	                x: 0,
+	                y: 5,
+	                borderWidth: 0
+	            },
+	            plotOptions: {
+	                column: {
+	                    pointPadding: 0.2,
+	                    borderWidth: 0,
+						dataLabels: {
+							enabled: true,
+							color: '#000',
+							y: 0,
+							formatter: function(){
+								return ''+this.y+' %';
+							}
+						}
+	                }
+	            },
+	            series: [{
+	                name: 'Hits: {$_stats["get_hits"]} ({$hits_percentage}%)',
+	                data: [{
+						name: 'Hits',
+						y: {$hits_percentage}
+					}],
+	    			color: '#62B312'
+	            }, {
+	                name: 'Misses: {$_stats["get_misses"]} ({$misses_percentage}%)',
+	                data: [{
+						name: 'Misses',
+						y: {$misses_percentage}
+					}],
+	    			color: '#F24947'
+	            }]
+	        });
+			
+		});
+</script>
+
+	
+	<div class="container">
+		<include file="Public:aside" />
+		
+		<div class="main">
+			<div class="page-header">
+				<h5>memcache监控</h5>
+			</div>
+			
+			<div style="overflow:hidden; padding-bottom: 30px;">
+				<div style="width: 350px; height: 300px; float:left;display:inline;">
+					<div id="chart" style="width: 300px; height: 300px; margin-bottom:30px;"></div>
+				</div>
+				
+				<div style="width: 350px; height: 300px; float:left;display:inline;">
+					<div id="column_chart" style="width: 250px; height: 300px; margin-bottom:30px;"></div>	
+				</div>
+			</div>
+					
+			<div style="overflow:hidden;margin-bottom:10px;">
+				<table class="table table-compact" cellspacing="0" cellpadding="0" style="width: 330px;float:left;margin-right:10px;">
+					<thead>
+						<tr>
+							<th colspan="2">Memcache Server Information</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td style="width:155px;">{:C('MEMCACHE_HOST')}:{:C('MEMCACHE_PORT')}</td>
+							<td><a href="{:U('MemcacheStat/index', array('op'=>'flush'))}">[Flush this server]</a></td>
+						</tr>
+						<tr class="even">
+							<td>Start Time</td>
+							<td>{:date('Y/m/d H:i:s', $_stats['time'])}</td>
+						</tr>
+						<tr>
+							<td>Uptime</td>
+							<td>{:uptime($_stats['uptime'])}</td>
+						</tr>
+						<tr class="even">
+							<td>Memcached Version</td>
+							<td>{$_stats['version']}</td>
+						</tr>
+						<tr>
+							<td>Total Cache Size</td>
+							<td>{:byte_format($_stats['limit_maxbytes'], 1)}</td>
+						</tr>
+					</tbody>
+				</table>
+				
+				<table class="table table-compact" cellspacing="0" cellpadding="0" style="width: 370px;float:left;">
+					<thead>
+						<tr>
+							<th colspan="2">Cache Information</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td style="width:165px;">Current Items(total)</td>
+							<td>{$_stats['curr_items']} ({$_stats['total_items']})</td>
+						</tr>
+						<tr class="even">
+							<td>Hits</td>
+							<td>{$_stats['get_hits']}</td>
+						</tr>
+						<tr>
+							<td>Misses</td>
+							<td>{$_stats['get_misses']}</td>
+						</tr>
+						<tr class="even">
+							<td>Request Rate(hits,misses)</td>
+							<php>$request_rate = ($_stats['get_hits']+$_stats['get_misses'])/$_stats['uptime'];</php>
+							<td>{:number_format($request_rate, 2, '.', ',')} cache requests/s</td>
+						</tr>
+						<tr>
+							<td>Hit Rate</td>
+							<php>$hit_rate = ($_stats['get_hits'])/$_stats['uptime'];</php>
+							<td>{:number_format($request_rate, 2, '.', ',')} cache requests/s</td>
+						</tr>
+						<tr class="even">
+							<td>Miss Rate</td>
+							<php>$miss_rate = ($_stats['get_misses'])/$_stats['uptime'];</php>
+							<td>{:number_format($miss_rate, 2, '.', ',')} cache requests/s</td>
+						</tr>
+						<tr>
+							<td>Set Rate</td>
+							<php>$set_rate = ($_stats['cmd_set'])/$_stats['uptime'];</php>
+							<td>{:number_format($set_rate, 2, '.', ',')} cache requests/s</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div><!-- .main -->
+	</div><!-- .container -->
+				
+<include file="Public:footer" />

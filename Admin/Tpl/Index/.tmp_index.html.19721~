@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>{:GS('base.site_title')} · 控制台</title>
+	<link rel="stylesheet" href="/csspower/csspower-0.3.2.min.css" />
+	<link rel="stylesheet" href="../Public/assets/style.css">
+	<link rel="stylesheet" href="../Public/assets/index.css">
+	<link rel="stylesheet" href="../Public/assets/scripts/thirdparty/zTree/zTreeStyle.css">
+	<script type="text/javascript" src="../Public/assets/scripts/thirdparty/jquery-1.8.3.min.js"></script>
+	<script type="text/javascript" src="../Public/assets/scripts/thirdparty/jquery.popup.min.js"></script>
+	<script type="text/javascript" src="../Public/assets/scripts/thirdparty/jquery.cookie.min.js"></script>
+	<script type="text/javascript" src="../Public/assets/scripts/thirdparty/zTree/jquery.ztree.core-3.5.min.js"></script>
+	<script type="text/javascript">
+		
+		/**
+		 * 设置frame自适应高度
+		 * 
+		 * @param {Object} object 传入iframe this对象
+		 * @version 1.1.0 build 20130801 
+		 * @test firefox、360安全浏览器6.2、Chrome 28
+		 */
+		function set_frame_height(){
+			var iframe = document.getElementById("frame");
+			try{
+				var height = iframe.contentWindow.document.documentElement.scrollHeight;
+				
+				var body_height = iframe.contentWindow.document.body.scrollHeight; // body元素的滚动高度
+				var doc_height = iframe.contentWindow.document.documentElement.scrollHeight; // 页面的滚动高度
+				if($.browser.mozilla){
+	 				height = Math.min(body_height, doc_height);
+				}else{
+	 				height = Math.max(body_height, doc_height);
+				}
+				// console.info("body_height:"+body_height+"  doc_height:"+doc_height);
+//				if(doc_height < body_height){
+//					height = body_height;
+//				} 
+				
+				if(height < 600) height = 600;
+				iframe.height = height;
+			}catch (ex){}
+			
+		}
+		window.setInterval("set_frame_height()", 200);
+
+
+		$(document).ready(function(){
+			
+			$.popup("#wallpaper_link", "#wallpaper");
+			
+			
+			// 绑定更换壁纸事件
+			$("#wallpaper li").click(function(){
+				var $this = $(this);
+				
+				if($this.hasClass('active')){
+					return;
+				}
+				
+				// 保存配置到cookie
+				var imgsrc = $this.data('imgsrc');
+				$.cookie('wallpaper', $this.attr('class')+'|'+imgsrc, { expires: 30});
+				
+				$this.addClass('active').siblings('.active').removeClass('active');
+				
+				if(typeof(imgsrc) != "undefined"){
+					$("body").css({
+						'background-image': 'url('+imgsrc+')', 
+						'background-size': 'cover, 100%', 
+						'background-attachment': 'fixed', 
+						'background-position': '50% 50%'
+					});
+				}else{
+					$("body").removeAttr('style');
+				}
+			});
+			
+			var wallpaper_str = $.cookie('wallpaper');
+			
+			if(wallpaper_str != null){
+				var wallpaper_array = wallpaper_str.split('|');
+				if(wallpaper_array[0] != 's0'){
+					$("#wallpaper li."+wallpaper_array[0]).trigger('click');
+				}
+			}
+			
+			
+			// 绑定导航栏navbar链接事件
+			$("#nav a").click(function(e){
+				e.preventDefault ? e.preventDefault() : e.returnValue = false;
+				 
+				var $this = $(this);
+				if($this.parent("li").hasClass("active")) return;
+				
+				$this.parent().addClass("active").siblings().removeClass("active");
+				
+				$($this.attr('href')).show().siblings().hide();
+			});
+			
+			// 绑定nav链接事件
+			$("#aside ul.nav li a").click(function(){
+				var $this = $(this);
+				
+				$this.parent().addClass("active").siblings().removeClass("active");
+				$this.closest(".nav").siblings().find("li.active").removeClass("active");
+				
+				if(window.localStorage){
+					localStorage.setItem("frame_current_url", $this.attr('href'));
+				}
+			});
+			
+			// 刷新iframe显示原url
+			var frame_current_url = "";
+			if(window.localStorage){
+				frame_current_url = localStorage.getItem("frame_current_url");
+			}
+			if(frame_current_url == null) frame_current_url = "/admin.php/channel";
+			if(frame_current_url == "") frame_current_url = "/admin.php/channel";
+			
+			var navbar_id = $("#aside").find("a[href='"+frame_current_url+"']").parent().addClass("active").parent().attr("id");
+			if(typeof(navbar_id) == 'undefined'){
+				navbar_id = 'navbar_content';
+			}
+			$("#nav").find("a[href=#"+navbar_id+"]").trigger('click');
+			
+			$("#frame").attr('src', frame_current_url);
+		})
+	</script>
+	<script type="text/javascript">
+	<!--
+	var zTree;
+	var $frame;
+	var setting = {
+		view: {
+			dblClickExpand: false,
+			showLine: true,
+			selectedMulti: false
+		},
+		data: {
+			simpleData: {
+				enable:true,
+				idKey: "id",
+				pIdKey: "pid",
+				rootPId: ""
+			}
+		},
+		callback: {
+			beforeClick: function(treeId, treeNode) {
+				var zTree = $.fn.zTree.getZTreeObj("tree");
+				if (treeNode.isParent) {
+					zTree.expandNode(treeNode);
+					return false;
+				} else {
+					$frame.attr("src", treeNode.file);
+					if(window.localStorage){
+						localStorage.setItem("frame_current_url", treeNode.file);
+					}
+					return true;
+				}
+			}
+		}
+	};
+
+	var zNodes =[
+//		{id:1, pid:0, name:"旅游", open:true},
+//		{id:101, pid:1, name:"旅游资讯", file:"/admin.php/article/index/ch/trip_news"},
+//		{id:102, pid:1, name:"旅游攻略", file:"/admin.php/article/index/ch/trip_guide"},
+//		{id:2, pid:0, name:"关于", open:false},
+//		{id:201, pid:2, name:"建议反馈", url:"http://www.weibo.com/1670595450/zk2jQdBFR", icon:"../Public/scripts/thirdparty/zTree/img/diy/10.png"},
+//		{id:202, pid:2, name:"关于我们", file:"/admin.php/page/index/ch/aboutus"},
+//		{id:203, pid:2, name:"常见问题", file:"/admin.php/page/index/ch/faq"},
+//		{id:204, pid:2, name:"隐私政策", file:"/admin.php/page/index/ch/privacy"},
+//		{id:205, pid:2, name:"© 2013 fanrong33.com", url:"http://fanrong33.com", icon:"../Public/scripts/thirdparty/zTree/img/diy/10.png"},
+	];
+	<volist name="_channel_tree" id="parent_rs">
+		<php>$open=$key==0?'true':'false';</php>
+		zNodes.push({ id:{$parent_rs['id']}, pid:{$parent_rs['pid']}, name:"{$parent_rs['title']}", open: {$open} });
+		<if condition="isset($parent_rs['_child'])">
+			<volist name="parent_rs._child" id="rs">
+				<switch name="rs.type">
+					<case value="1">// 栏目
+						zNodes.push({ id:{$rs['id']}, pid:{$rs['pid']}, name:"{$rs['title']}", file:"{:U($rs['module_name'].'/index', array('ch'=>$rs['name']))}" });
+					</case>
+					<case value="2">// 单网页
+						zNodes.push({ id:{$rs['id']}, pid:{$rs['pid']}, name:"{$rs['title']}", file:"{:U('Page/index', array('ch'=>$rs['name']))}" });
+					</case>
+					<case value="3">// 外部链接
+						zNodes.push({ id:{$rs['id']}, pid:{$rs['pid']}, name:"{$rs['title']}", url:"{$rs['url']}", icon:"../Public/scripts/thirdparty/zTree/img/diy/10.png" });
+					</case>
+				</switch>
+			</volist>
+		</if>
+	</volist>
+
+	
+	$(document).ready(function(){
+		var t = $("#tree");
+		t = $.fn.zTree.init(t, setting, zNodes);
+		var zTree = $.fn.zTree.getZTreeObj("tree");
+		zTree.selectNode(zTree.getNodeByParam("id", 101));
+		$frame = $("#frame");
+	});
+
+	//-->	
+	</script>
+	
+</head>
+<body class="frame">
+
+	<div class="wallpaper">
+		<a id="wallpaper_link" href="javascript:;">换壁纸</a>
+		<div class="wallpaper-container" id="wallpaper" style="display:none;">
+		    <div class="wallpaper-arrow"><em>◆</em><span>◆</span></div>
+			<div class="title">控制台壁纸：</div>
+		    <ul>
+		    	<li class="s0 active"></li>
+		    	<li class="s1" data-imgsrc="/Admin/Tpl/Public/assets/images/wallpaper/wallpaper1.jpg"></li>
+		    	<li class="s2" data-imgsrc="/Admin/Tpl/Public/assets/images/wallpaper/wallpaper2.jpg"></li>
+		    	<li class="s3" data-imgsrc="/Admin/Tpl/Public/assets/images/wallpaper/wallpaper3.jpg"></li>
+		    	<li class="s4" data-imgsrc="/Admin/Tpl/Public/assets/images/wallpaper/wallpaper4.jpg"></li>
+		    	<li class="s5" data-imgsrc="/Admin/Tpl/Public/assets/images/wallpaper/wallpaper5.jpg"></li>
+		    	<li class="s6" data-imgsrc="/Admin/Tpl/Public/assets/images/wallpaper/wallpaper6.jpg"></li>
+		    	<li class="s7" data-imgsrc="/Admin/Tpl/Public/assets/images/wallpaper/wallpaper7.jpg"></li>
+		    	
+		    </ul>
+		</div>
+		<div class="fn-clear"></div>
+	</div>
+	
+	<div class="frame-wrapper">
+		<div class="frame-header">
+			
+			<div class="navbar">
+				<div class="navbar-inner">
+					<a class="brand" href="<?php echo _PHP_FILE_; ?>">{:GS('base.site_title')}</a>
+				    <ul class="nav" id="nav">
+				    	<volist name="_nav_tree" id="navbar">
+				    		<if condition="$navbar['type'] eq 'navbar' && $navbar['disabled'] eq '0'">
+						    	<li <eq name="key" value="0">class="active"</eq>><a href="#navbar_{:strtolower($navbar['name'])}"><i class="iconfont">{$navbar['icon']}</i>&nbsp;{$navbar['title']}</a></li>
+							</if>
+				    	</volist>
+				    </ul>
+					<div style="float: right;padding: 10px 0 10px 20px;">
+						<span title="{$_admin['role_name']}" class="mr10">{$_admin['username']}</span><a href="{:U('User/logout')}">退出</a>
+					</div>
+	    		</div>
+	    	</div><!-- .navbar -->
+			
+		</div><!-- .frame-header -->
+		<div class="frame-container">
+			<div class="aside" id="aside">
+				<div style="padding: 8px 0px; border-right: 0px none; border-radius: 4px 0px 0px 4px;" class="well">
+				
+					<volist name="_nav_tree" id="navbar">
+						<if condition="$navbar['type'] eq 'navbar'">
+						<ul class="nav nav-list" id="navbar_{:strtolower($navbar['name'])}" <neq name="key" value="0">style="display:none;"</neq>>
+							<volist name="navbar._child" id="nav">
+								<if condition="$nav['disabled'] eq '0'">
+								<switch name="nav.type">
+									<case value="header">
+										<li class="nav-header">{$nav['title']}</li>
+										<if condition="$nav['title'] eq '内容 CONTENT'">
+											<ul id="tree" class="ztree" style="width:200px;_width:145px;overflow:auto;"></ul>
+										</if>								
+									</case>
+									<case value="nav">
+										<li><a href="{:U($nav['name'].'/index')}" target="frame">{$nav['title']}</a></li>
+									</case>
+									<case value="divider">
+								    	<li class="divider"></li>
+									</case>
+									<default />
+								</switch>
+								</if>
+							</volist>
+						</ul>
+						</if>
+					</volist>
+					
+				</div>
+			</div>
+			<div class="frame-main">
+				<div class="frame-main-inner">
+					<iframe name="frame" id="frame" onload="set_frame_height(this);" scrolling="auto" frameborder="0" width="100%" height="100%" src="" style="overflow:hidden;"></iframe>
+				</div>
+			</div>
+			<div class="fn-clear"></div>
+		</div>
+		<div class="frame-footer">
+			©2013 厦门尚科网络科技有限责任公司 版权所有
+		</div>
+		<div id="loading" class="loading">加载中...</div>
+	</div><!-- .frame-wrapper -->
+</body>
+</html>

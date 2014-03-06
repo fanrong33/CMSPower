@@ -1,0 +1,108 @@
+<include file="Public:header" />
+	<script type="text/javascript">
+		// 折叠展开
+		function toggle(object){
+			var $this = $(object);
+			if($this.text() == '[-]'){
+				$this.text('[+]');
+			}else{
+				$this.text('[-]');
+			}
+			
+			var $tr = $this.parent().parent();
+			fold($tr);
+		}
+		// 递归函数
+		function fold($tr){
+			var $object = $tr.next();
+			var level = $object.data('level');
+			
+			if(typeof(level)=='undefined' || level == 1){
+				return;
+			}else{
+				$object.toggle();
+				
+				fold($object);
+			}
+		}
+		
+		// 全部展开
+		function show_all(){
+			$("#table tr[data-level=1]").each(function(i){
+				// 如果是折叠的，则触发展开
+				var $a = $(this).find('td:eq(0) a');
+				if($a.text() == '[+]'){
+					$a.trigger('click');
+				}
+			});
+		}
+		// 全部折叠
+		function hide_all(){
+			$("#table tr[data-level=1]").each(function(i){
+				// 如果是展开的，则触发折叠
+				var $a = $(this).find('td:eq(0) a');
+				if($a.text() == '[-]'){
+					$a.trigger('click');
+				}
+			});
+		}
+	</script>
+	
+	<div class="container">
+		<include file="Public:aside" />
+		
+		<div class="main">
+			<a class="btn btn-orange btn-add" href="{:U('Category/add')}">添加分类</a>
+			<ul class="nav nav-tabs">
+				<li class="active"><a href="{:U('Category/index')}">分类管理</a></li>
+			</ul>
+			<div class="search-box mb10">
+				<div class="search-box-inner">
+					<form action="" method="get" id="search_form">
+						<div style="float: left; display: inline; line-height: 26px;margin-right:10px;">
+							<a href="javascript:;" onclick="show_all()">全部展开</a>
+							|
+							<a href="javascript:;" onclick="hide_all()">全部折叠</a>
+						</div>
+						<!--
+						<input type="text" class="ipt-text" name="keyword" value="{$keyword}" placeholder="分类名称关键字" style="width:160px;">
+						<button type="submit" class="btn btn-small">搜索</button>
+						-->
+					</form>
+				</div>
+			</div><!-- .search-box -->
+			
+			<form action="" method="post">
+				<table class="table" cellspacing="0" cellpadding="0" id="table">
+					<thead>
+						<tr>
+							<th style="width:20px;"></th>
+							<th style="width:60px;">显示顺序</th>
+							<th>分类名称</th>
+							<th style="width:30px;"></th>
+							<th style="width:120px;"></th>
+						</tr>
+					</thead>
+					<tbody>
+						{:R('Category/tree', array($tree))}
+					</tbody>
+					<tfoot>
+						<tr>
+							<td colspan="5">
+								<button type="submit" class="btn btn-small J_ajax_submit_btn" data-action="{:U('Category/sort')}" style="margin-left:40px;">排序</button>
+							</td>
+						</tr>
+					</tfoot>
+				</table>
+			</form>
+			
+			<div class="paging">
+				<div class="paging-inner">
+					{$page}
+				</div>
+			</div>
+			
+		</div><!-- .main -->
+	</div><!-- .container -->
+	
+<include file="Public:footer" />

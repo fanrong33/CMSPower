@@ -1,0 +1,191 @@
+<include file="Public:header" />
+
+	<style type="text/css">
+		dl{margin-bottom: 10px;overflow: hidden;padding-left: 120px;}
+		dl dt{display: inline-block;*display: inline;*zoom: 1;float: left;margin-left: -120px;width: 120px;}
+		dl dt input{vertical-align: middle; margin-top: 2px;}
+		dl dd{display: inline-block;float: left;width: 90px;}
+		dl dd input{vertical-align: middle; margin-top: 2px;}
+	</style>
+	<script type="text/javascript">
+		/**
+		 * 全选、反选
+		 * @param {Object} obj 			input:checkbox或是a链接
+		 * @param {Object} container	影响范围，对容器内的checkbox进行控制
+		 */
+		function select_all(object, container, force){
+			var checked = $(object).get(0).checked;
+			
+			if(checked==true || force){
+				$('#'+container+' input[type=checkbox]').attr('checked', true);
+			}else if(checked==false || !force){
+				$('#'+container+' input[type=checkbox]').attr('checked', false);
+			}
+			object.blur();
+		}
+		
+		/**
+		 * 选择子checkbox
+		 * @param {Object} checkbox input:checkbox
+		 */
+		function select_parent(checkbox){
+			// dl dt dd
+			var $this = $(checkbox);
+			var checked = $this.get(0).checked;
+			
+			var $parent = $this.closest('dl');
+			
+			if(checked == true){
+				
+				if($parent.find('dd').find('input:checkbox[checked]').length == $parent.find('dd').find('input:checkbox').length){
+					$parent.find('dt').find('input:checkbox').attr('checked', true);	
+				}
+			}else{
+				$parent.find('dt').find('input:checkbox').attr('checked', false);
+			}
+			
+			checkbox.blur();
+		}
+	</script>
+	
+	<div class="container">
+		
+		<include file="Public:aside" />
+		
+		<div class="main">
+			<div class="page-header">
+				<h5><if condition="ACTION_NAME eq 'add'">添加<else/>修改</if>角色</h5>
+			</div><!-- .page-header -->
+			
+			<form action="" method="post" class="form J_ajax_submit">
+				<present name="_model">
+					<input type="hidden" name="id" value="{$_model['id']}">
+				</present>
+				
+				<div class="form-item">
+					<label class="form-label" for="name">角色名</label>
+					<div class="form-field">
+						<input type="text" class="ipt-text" name="name" id="name" value="{$_model["name"]}" placeholder="例如：内容编辑">
+		          	</div>
+		        </div>
+				<div class="form-item">
+					<label class="form-label" for="description">描述</label>
+					<div class="form-field">
+						<textarea name="description" id="description" cols="30" style="width:400px;height:45px;" placeholder="">{$_model["description"]}</textarea>
+		          	</div>
+		        </div>
+				<div class="form-item">
+					<label class="form-label" for="name">选择权限</label>
+					<div class="form-field" style="padding-top: 6px;">
+						<a href="javascript:;" onclick="check_all('#resource_all')" >全选/取消</a>
+		          	</div>
+		        </div>
+				
+				<!-- 模板
+				<div>
+					<p><b>内容</b></p>
+					<dl>
+						<dt><label for="Member"><input type="checkbox" id="Member">栏目管理</label></dt>
+						<dd><label for="Member_index"><input type="checkbox" id="Member_index" name="resources[Member][index][has_right]" value="1">查看栏目</label></dd>
+					</dl>
+				</div>
+				-->
+				<div id="resource_all">
+					<volist name="_nav" id="navbar">
+					<div>
+						<p><b>{$navbar['title']}</b></p><!-- 用户 -->
+						<if condition="isset($navbar['_child'])">
+							<volist name="navbar._child" id="nav">
+								<if condition="$nav['type'] eq 'nav'"><!-- 用户管理 -->
+								<dl id="resource_{$nav['name']}">
+									<?php
+										$has_count 	= count($_model['resources'][$nav['name']]);
+										$total 		= count($_resource_map[$nav['name']]['methods']);
+										$checked = ($_model && $has_count >= $total) ? 'checked="checked"' : ''; 
+									?>
+									<dt><input type="checkbox" id="{$nav['name']}" class="ipt-checkbox" onclick="select_all(this, 'resource_{$nav['name']}')" {$checked}>&nbsp;<label for="{$nav['name']}">{$nav['title']}</label></dt>
+									<volist name="_resource_map[$nav['name']]['methods']" id="resource"><!-- add:添加用户 -->
+										<?php
+											// 解析
+											list($action_name, $action_title) = explode(':', $resource);
+										?>
+										<dd><input type="checkbox" id="{$nav['name']}_{$action_name}" name="resources[{$nav['name']}][{$action_name}][has_right]" value="1" onclick="select_parent(this);" <if condition="$_model['resources'][$nav['name']][$action_name][has_right]">checked="checked"</if>>&nbsp;<label for="{$nav['name']}_{$action_name}">{$action_title}</label></dd>
+									</volist>
+								</dl>
+								</if>
+							</volist>
+						</if>
+					</div>
+					</volist>
+				</div>
+				
+				<br/>
+				
+				<p style="display:none;"><b>栏目内容管理</b></p>
+				<table class="table table-condensed" cellspacing="0" cellpadding="0" style="display:none;">
+					<thead>
+						<tr>
+							<th style="width:15px;"><input type="checkbox" name="channels[]" value="1"></th>
+							<th>栏目名称</th>
+							<th style="width:60px;">栏目类型</th>
+							<th style="width:60px;">所属模型</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+						
+						<if condition="isset($_channel_tree) && $_channel_tree">
+						<volist name="_channel_tree" id="parent_rs">
+							<tr>
+								<td><input type="checkbox" name="channels[{$parent_rs['id']}][has_right]" value="1" <if condition="$_model['channels'][$parent_rs['id']][has_right]">checked="checked"</if>></td>
+								<td>{$parent_rs['title']}</td>
+								<php>
+									$color = '';
+									if($parent_rs['type']=='2') $color = 'color:#0000FF;';
+									if($parent_rs['type']=='3') $color = 'color:#DC0000;';
+								</php>
+								<td><span style="{$color}">{:to_status('channel', $parent_rs['type'])}</span></td>
+								<td>{$parent_rs['module_title']}</td>
+								<td>
+								</td>
+							</tr>
+							<if condition="isset($parent_rs['_child']) && $parent_rs['_child']">
+								<php> $count = count($parent_rs['_child']);</php>
+								<volist name="parent_rs._child" id="rs">
+								<tr>
+									<td><input type="checkbox" name="channels[{$rs['id']}][has_right]" value="1" <if condition="$_model['channels'][$rs['id']][has_right]">checked="checked"</if>></td>
+									<td><if condition="($key+1) eq $count">&nbsp;&nbsp;&nbsp;└─<else/>&nbsp;&nbsp;&nbsp;├─</if>&nbsp;{$rs['title']}</td>
+									<php>
+										$color = '';
+										if($rs['type']=='2') $color = 'color:#0000FF;';
+										if($rs['type']=='3') $color = 'color:#DC0000;';
+									</php>
+									<td><span style="{$color}">{:to_status('channel', $rs['type'])}</span></td>
+									<td>{$rs['module_title']}</td>
+									<td>
+									</td>
+								</tr>
+								</volist>
+							</if>
+						</volist>
+						<else/>
+							<tr>
+								<td colspan="6">您还没有添加任何栏目</td>
+							</tr>
+						</if>
+					</tbody>
+				</table>
+				
+		        <div class="form-actions">
+		        	<button type="submit" class="btn btn-blue">保存</button>
+					<if condition="ACTION_NAME eq 'add'">
+						<input type="submit" class="btn btn-blue" name="submit_continue" value="保存并继续添加">
+					</if>
+					<button type="button" class="btn" onclick="window.location.href='{:cookie('_currentUrl_')}'">返回</button>
+		        </div>
+			</form>
+			
+		</div><!-- .main -->
+	</div><!-- .container -->
+
+<include file="Public:footer" />

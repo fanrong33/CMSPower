@@ -1,0 +1,35 @@
+<div class="dialog-hd">在线应用</div>
+<div class="dialog-bd" style="height: 330px; overflow-y: auto;">
+	<ul class="app-list">
+		<volist name="app_list" id="rs">
+			<li class="app">
+				<div class="app-title">
+					<if condition="$installed_map[$rs['name']]"><!-- 已安装则显示当前版本,并且判断code,如果小于则提示升级 -->
+						{$rs['title']}<small title="更新时间{:date('Y-m-d', $installed_map[$rs['name']]['update_time'])}">{$installed_map[$rs['name']]['version']}</small>
+						<if condition="$installed_map[$rs['name']]['code'] lt $rs['code']">
+							<small class="update">→</small> <small class="update" 
+							title="更新时间{:date('Y-m-d', $rs['update_time'])}
+
+{$rs['history']}">{$rs['version']}</small>
+						</if>
+					<else/>
+						{$rs['title']}<small title="更新时间{:date('Y-m-d', $rs['update_time'])}">{$rs['version']}</small>
+					</if>
+					<if condition="$rs['name'] eq 'CMSPower'"><img src="http://a.tbcdn.cn/sys/common/icon/rank/s_cap_1.gif" alt=""></if>
+				</div>
+				<div class="app-description">{$rs['description']}</div>
+				<div class="app-actions">
+					<if condition="$installed_map[$rs['name']]">
+						<if condition="$installed_map[$rs['name']]['code'] lt $rs['code']">
+							<button type="button" class="btn btn-blue btn-small" data-id="{$rs['id']}">升级</button>
+						<else/>
+							<button type="button" class="btn btn-small" data-id="{$rs['id']}">已添加</button>
+						</if>
+					<else/>
+						<button type="button" class="btn btn-blue btn-small" data-id="{$rs['id']}">添加</button>
+					</if>
+				</div>
+			</li>
+		</volist>
+	</ul>
+</div>

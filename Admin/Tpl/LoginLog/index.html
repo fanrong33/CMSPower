@@ -1,0 +1,67 @@
+<include file="Public:header" />
+
+	<div class="container">
+		<include file="Public:aside" />
+		
+		<div class="main">
+			
+			<ul class="nav nav-tabs">				<li class="active"><a href="{:U('LoginLog/index')}">登录日志</a></li>			</ul>
+			<div class="search-box mb10">				<div class="search-box-inner">
+					<form action="{:U('LoginLog/index')}" method="get" id="search_form">
+						<input type="text" class="ipt-text" name="start_date" value="{$start_date}" onclick="WdatePicker()" readonly="" style="width:70px;"><span>~</span>
+						<input type="text" class="ipt-text" name="end_date" value="{$end_date}" onclick="WdatePicker()" readonly="" style="width:70px;">
+						<select name="status" style="width: 90px;">
+							<option value="">类别</option>
+							<option value="1" <if condition="$status eq '1'">selected="selected"</if>>登录成功</option>
+							<option value="2" <if condition="$status eq '2'">selected="selected"</if>>登录失败</option>
+						</select>
+						<input type="text" class="ipt-text" name="keyword" value="{$keyword}" placeholder="用户名,其他说明关键字或IP" style="width:160px;">
+						<button type="submit" class="btn btn-small">搜索</button>
+					</form>
+				</div>
+			</div><!-- .search-box -->
+			
+			<table class="table" cellspacing="0" cellpadding="0">
+				<thead>
+					<tr>
+						<th style="width:30px;">ID</th>
+						<th style="width:120px;">用户名</th>
+						<th style="width:80px;">状态</th>
+						<th>其他说明</th>
+						<th style="width:80px;">时间</th>
+						<th style="width:80px;">登录IP</th>
+					</tr>
+				</thead>
+				<tbody>
+					<if condition="$list">
+					<volist name="list" id="rs">
+						<tr>
+							<td>{$rs['id']}</td>
+							<td>{:highlight($rs['username'])}</td>
+							<td>
+								<if condition="$rs['status'] eq '1'">登录成功<else/><span style="color:#FF0000;">登陆失败</span></if>
+							</td>
+							<td>{:highlight($rs['ext'])}</td>
+							<td>{:date('m-d H:i', $rs['login_time'])}</td>
+							<td><span title="{$rs['http_user_agent']}">{:highlight($rs['login_ip'])}</span></td>
+						</tr>
+					</volist>
+					<else/>
+						<tr>
+							<td colspan="6">还没有登录日志</td>
+						</tr>
+					</if>
+				</tbody>
+			</table>
+			
+			<div class="paging" style="margin-top:0;">
+				<div class="paging-inner">
+					{$page}
+				</div>
+			</div>
+		</div><!-- .main -->
+		
+
+	</div><!-- .container -->
+				
+<include file="Public:footer" />

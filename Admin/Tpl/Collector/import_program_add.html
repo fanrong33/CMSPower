@@ -1,0 +1,73 @@
+<include file="Public:header" />
+	<style type="text/css">
+		.form .form-item .form-label{width:110px;}
+		.form .form-item .form-field{margin-left: 130px;}
+		.form .form-actions {padding-left: 130px;}
+		
+		fieldset {padding: 10px 10px 10px;}
+		fieldset legend {margin-left: 0;}
+	</style>
+	<div class="container">
+		
+		<div class="page-header">
+			<h2>采集管理</h2>
+			<ul class="nav nav-pills">
+		    	<li><a href="{:U('Collector/index')}">采集管理</a></li>
+		    	<li><a href="{:U('Collector/add')}">添加采集点</a></li>
+		    </ul>
+		</div><!-- .page-header -->
+		
+		<form action="{:U('Collector/import_program_add', array('id'=>$_GET['id'],'type'=>$type,'channel_id'=>$_GET['channel_id']))}" method="post" class="form">
+			<fieldset>
+				<legend>新建发布方案</legend>
+				<div class="form-item">
+					<label class="form-label" for="name">方案名称</label>
+					<div class="form-field">
+						<input type="text" class="ipt-text" name="name" id="name" value="<present name="_model">{$_model["name"]}</present>" placeholder="例如： 热门新闻 的发布方案">
+			        </div>
+				</div>
+			</fieldset>
+			<fieldset>
+				<legend>标签与数据库对应关系</legend>
+				<table class="table" cellspacing="0" cellpadding="0">
+					<thead>
+						<tr>
+							<th>原数据库字段</th>
+							<th>数据库字段说明</th>
+							<th>标签字段（采集填充结果）</th>
+							<th>当为空时填充内容</th>
+							<th style="width:100px;">处理函数</th>
+						</tr>
+					</thead>
+					<tbody>
+						<?php
+						foreach($module_field_list as $k=>$rs){
+						?>
+							<tr>
+								<td>{$rs['name']}</td>
+								<td>{$rs['comment']}</td>
+								<td>
+									<input type="hidden" name="module_fields[]" value="{$rs['name']}">
+									<select name="collector_fields[]" style="width:80px;">
+										<volist name="collector_field_list" id="rs">
+											<option value="{$key}">{$rs}</option>
+										</volist>
+									</select>
+								</td>
+								<td><textarea name="default[]" style="width:130px;"></textarea></td>
+								<td><input type="text" class="ipt-text" name="funcs[]" style="width:100px;"></td>
+							</tr>
+						<?php
+						}
+						?>
+					</tbody>
+				</table>
+			</fieldset>
+			
+		    <button type="submit" class="btn">保存</button>
+			
+		</form>
+		
+	</div><!-- .container -->
+
+<include file="Public:footer" />

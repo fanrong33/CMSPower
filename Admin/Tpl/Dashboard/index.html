@@ -1,0 +1,196 @@
+<include file="Public:header" />
+
+	<style type="text/css">
+		.mod-activity{background-color:#FDFDFD;background-image: linear-gradient(to bottom, #FFFFFF, #FBFBFB);border: 1px solid #E7ECEF;border-radius: 4px 4px 4px 4px;box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);padding: 10px;}
+		.mod-activity .mod-activity-income{display: inline;float: left;padding: 3px 0 0 10px;width: 155px;}
+		.mod-activity .mod-activity-income .txt-rmb{color: #4D8234;height:33px;font-size: 24px;font-family: 'Lucida Grande','Hiragino Sans GB','Hiragino Sans GB W3','Microsoft YaHei',helvetica,Arial;line-height:normal;}
+		.mod-activity .mod-activity-income span{color: #999999;font-size: 14px;font-weight: bold;}
+		
+		.mod-activity ul{background: none repeat scroll 0 0 #F9F8F6;border: 1px solid #EEE1DB;border-radius: 3px 3px 3px 3px;display: inline;float: right;overflow: hidden;}
+		.mod-activity ul li{border-right: 1px solid #EEE1DB;border-top: 1px solid #FFF;float: left;display: inline;font-size: 14px;font-weight: bold;height: 60px;text-align: center;width: 125px;}
+		.mod-activity ul li:hover{background-color:#F5F4F2;}
+		.mod-activity ul li.last{border-right: none;}
+		.mod-activity ul li a{color: #875E42;display:block;font-size:22px;line-height:normal;text-decoration:none;margin-top:4px;}
+		.mod-activity ul li a:hover{text-decoration:none;}
+		.mod-activity ul li span{color: #B49A89;}
+		
+		.column{width: 300px;height: 50px;overflow: hidden;position: relative;margin-left: 410px;border-bottom: 1px solid #E7ECEF;}
+		.column .col{
+			background-color: #83827D;
+			border-radius: 1px 1px 0 0;
+			float: left;
+			display: block;
+			width: 8px;
+			height: 0;
+			margin-right: 2px;
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			
+			-webkit-transition: height 0.7s ease-in-out;
+			   -moz-transition: height 0.7s ease-in-out;
+				 -o-transition: height 0.7s ease-in-out;
+					transition: height 0.7s ease-in-out;
+			
+		}
+		.column .col:hover{background-color:#73726D;}
+
+		.column .col-1{left: 0;}
+		.column .col-2{left: 10px;}
+		.column .col-3{left: 20px;}
+		.column .col-4{left: 30px;}
+		.column .col-5{left: 40px;}
+		.column .col-6{left: 50px;}
+		.column .col-7{left: 60px;}
+		.column .col-8{left: 70px;}
+		.column .col-9{left: 80px;}
+		.column .col-10{left: 90px;}
+		.column .col-11{left: 100px;}
+		.column .col-12{left: 110px;}
+		.column .col-13{left: 120px;}
+		.column .col-14{left: 130px;}
+		.column .col-15{left: 140px;}
+		.column .col-16{left: 150px;}
+		.column .col-17{left: 160px;}
+		.column .col-18{left: 170px;}
+		.column .col-19{left: 180px;}
+		.column .col-20{left: 190px;}
+		.column .col-21{left: 200px;}
+		.column .col-22{left: 210px;}
+		.column .col-23{left: 220px;}
+		.column .col-24{left: 230px;}
+		.column .col-25{left: 240px;}
+		.column .col-26{left: 250px;}
+		.column .col-27{left: 260px;}
+		.column .col-28{left: 270px;}
+		.column .col-29{left: 280px;}
+		.column .col-30{left: 290px;}
+
+		.column-description{color: #666666;padding-top: 5px;text-align:right;}
+		.column-description span{display: inline-block;min-width: 30px;}
+	</style>
+	<script type="text/javascript" src="../Public/assets/scripts/thirdparty/Highcharts-3.0.1/js/highcharts.js"></script>
+	<script type="text/javascript">
+		$(function(){
+			$('#chart').highcharts({
+	            chart: {
+	                type: 'area',
+	                marginRight: 10,
+					marginBottom: 25
+	            },
+	            title: {text: ''},
+	            subtitle: {text: ''},
+				credits: {enabled: false}, // 右下角版权标志
+	            xAxis: {
+					type: 'datetime',
+					tickInterval: 24 * 3600 * 1000 * 2, // one week
+					dateTimeLabelFormats: {
+						day: '%m-%d'
+					}
+	            },
+	            yAxis: {
+	                title: {text: ''},
+					showFirstLabel: false,
+					gridLineColor: '#F1F1F1',
+		  			gridLineWidth: 1,
+	                labels: {
+						style: {
+				            color: '#666', // y轴方向标签样式
+							font: 'normal 12px "georgia", Verdana, sans-serif',
+							align: 'left',
+							x: 10,
+							y: 26
+				         },
+	                    formatter: function() {
+	                        return this.value;
+	                    }
+	                }
+	            },
+				tooltip: {
+					shared: true,
+					crosshairs: {
+						color: '#D91E76'
+					}
+			    },
+				legend: {enabled: false},
+	            plotOptions: {
+	                area: {
+	                    fillOpacity: 0.5
+	                }
+	            },
+	            series: [{
+	                name: '收入',
+	                data: [{$income}], // output: 353.00,340.00,0,0,313.00,288.00,466.00,278.00,86.00,0,0,516.00,436.00,252.00,100.00,216.00,0,0,0,0,0,0,0,0,0,244.00,172.00,256.00,410.00,208.00
+					color: '#008CD8',
+					fillOpacity: .1,
+	                marker: {
+	                    radius: 4
+	                },
+					pointStart: Date.UTC({$recent_30day_date_utc}), // output: 2013,4,2 (month-1)
+					pointInterval: 24 * 3600 * 1000 // one day
+	            }]
+	        });
+		});
+	</script>
+	
+	<div class="container">
+		
+		<div class="page-header" style="border:none;margin:0;">
+			<h2>面板</h2>
+		</div><!-- .page-header -->
+		
+		<div class="mod-activity mb30" style="overflow:hidden;zoom:1;">
+			<div class="mod-activity-income">
+				<div class="txt-rmb">￥{:number_format($total_income, 2, '.', ',')}</div>
+				<span>总收入</span>
+			</div>
+			<ul>
+				<li>
+					<a href="" <if condition="$todo_count gt 0">style="color:#BF0000;"</if>>{$todo_count}</a>
+					<span>待确认订单</span>
+				</li>
+				<li>
+					<a href="">{$new_count}</a>
+					<span>新增订单</span>
+				</li>
+				<li>
+					<a href="">{$complete_count}</a>
+					<span>完成的订单</span>
+				</li>
+				<li class="last">
+					<a href="">{$member_count}</a>
+					<span>新注册用户</span>
+				</li>			</ul>
+		</div>
+		
+		<div id="chart" class="mb30" style="width: 710px; height: 150px;overflow:hidden;"></div>
+		
+		<div class="mb20">
+			<div class="column">
+				<volist name="order_count_list" id="rs">
+					<div class="col col-{$key+1}" title="{$rs[0]}" style="height: {$rs[1]}%;"></div>
+				</volist>
+				<!--
+				<div class="col col-1" style="height: 60%;" title="3"></div>
+				<div class="col col-30" style="height: 40%;" title="2"></div>
+				-->
+			</div>
+			<div class="column-description">30 天 / 平均每天 <span>{:round($order_avg, 1)}</span> 个订单</div>
+		</div>
+		
+		<div class="mb20">
+			<div class="column">
+				<volist name="member_count_list" id="rs">
+					<div class="col col-{$key+1}" title="{$rs[0]}" style="height: {$rs[1]}%;"></div>
+				</volist>
+				<!--
+				<div class="col col-1" style="height: 60%;" title="3"></div>
+				<div class="col col-30" style="height: 40%;" title="2"></div>
+				-->
+			</div>
+			<div class="column-description">30 天 / 平均每天 <span>{:round($member_avg, 1)}</span> 个用户</div>
+		</div>
+		
+	</div><!-- .container -->
+		
+<include file="Public:footer" />

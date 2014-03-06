@@ -1,0 +1,118 @@
+<include file="Public:header" />
+	
+	<script type="text/javascript">
+		// 删除内容模块
+		function delete_module(module_id){
+			$.dialog.show({
+				remote: {
+					url: PHP_FILE+'?m=module&a=paglet_delete_module',
+					data: "module_id="+module_id,
+					success: function(){
+						
+					}
+				}
+			});
+		}
+		
+		$(function(){
+			var paglet_module_url 	= '{:U("Module/paglet_module")}';
+			// 显示添加在线内容模块对话框
+			$("#add_online_module").dialog({
+				remote: {
+					url: paglet_module_url,
+					success: function($object){
+						
+					}
+				}
+			});
+		});
+	</script>
+	
+	<div class="container">
+		<include file="Public:aside" />
+		
+		<div class="main">
+			<div class="page-header" style="margin-bottom:10px;">				<h5>内容模块管理</h5>			</div>
+			
+			<ul class="nav nav-pills mb20">
+		    	<li class="active"><a href="{:U('Module/index')}">内容模块管理</a></li>
+		    	<li><a href="{:U('Module/add')}">添加内容模块</a></li>
+				<li><a href="javascript:;" id="add_online_module">在线内容模块</a></li>
+		    </ul>
+			
+			<form action="" method="post">
+				<table class="table" cellspacing="0" cellpadding="0">
+					<thead>
+						<tr>
+							<th style="width:60px;">显示顺序</th>
+							<th>模块名称</th>
+							<th style="width:90px;" title="系统内唯一">模块英文名</th>
+							<th style="width:60px;">当前版本</th>
+							<th style="width:120px;"></th>
+						</tr>
+					</thead>
+					<tbody>
+						<if condition="$list">
+						<volist name="list" id="rs">
+							<tr>
+								<td><input type="text" class="ipt-text ipt-text-orderid" name="orderid[{$rs['id']}]" value="<if condition="$rs['orderid'] neq 0">{$rs['orderid']}</if>"></td>
+								<td><b>{$rs['title']}</b><br/><span style="color:gray;">{$rs['description']}</span></td>
+								<td>{$rs['name']}</td>
+								<td><span title="更新时间{:date('Y-m-d',$rs['update_time'])}">{$rs['version']}</span></td>
+								<td>
+									<a href="{:U('Module/edit', array('id'=>$rs['id']))}">修改</a>
+									<span class="divider">|</span>
+									<a href="javascript:;" onclick="delete_module({$rs['id']});">删除</a>
+									<!--
+									<a href="javascript:;" onclick="if(confirm('确定删除该内容模块？'))window.location.href='{:U('Module/delete', array('id'=>$rs['id']))}'">删除</a>
+									-->
+								</td>
+							</tr>
+						</volist>
+						<else/>
+							<tr>
+								<td colspan="5">还没有添加任何内容模块</td>
+							</tr>
+						</if>
+					</tbody>
+					<tfoot>
+						<tr>
+							<td colspan="5">
+								<button type="submit" class="btn btn-small J_ajax_submit_btn" data-action="{:U('Module/sort')}">排序</button>
+							</td>
+						</tr>
+					</tfoot>
+				</table>
+			</form>
+			
+			<div class="paging">
+				<div class="paging-inner">
+					{$page}
+				</div>
+			</div>
+		</div><!-- .main -->
+	</div><!-- .container -->
+	
+	
+	<!-- 应用对话框模板 -->
+	<script id="tpl_sql" type="text/html">
+		<div class="dialog-hd">创建表结构</div>
+		<div class="dialog-bd" style="overflow: auto; height: 330px;">
+			<div style="overflow: hidden; padding-bottom: 10px;">
+				<pre><%= sql %></pre>
+			</div>
+		</div>
+		<div class="dialog-ft" style="overflow: hidden;">
+			<div id="sql_explain" class="txt-impt" style="float: left;display: inline;line-height: 25px;">
+				<!--数据库中已存在表"t_ad"！-->
+			</div>
+			<div class="dialog-confirm">
+				<a class="dialog-btn-orange" href="javascript:;" onclick="execute_sql(this);">执行选中的sql</a>
+			</div>
+			<div class="dialog-cancel" data-role="confirm">
+				<a class="dialog-btn-white">取消</a>
+			</div>
+		</div>
+	</script>
+
+<include file="Public:footer" />

@@ -1,0 +1,159 @@
+<include file="Public:header" />
+	<script type="text/javascript">
+		$(function(){
+			// jquery tab 插件
+			$("#tabs").tabs();
+		})
+	</script>
+	<div class="container">
+		
+		<div class="page-header">
+			<div class="app-brief">
+				<h5>快速设计网站的主题内容</h5>
+				<p>到底什么是CMS（将属于CMS的东西封装起来，让开发者只关心业务）？栏目对应关联模型？</p>
+				<p>方法：10秒变成一个PHP傻瓜初学者，来使用产品</p>
+				<p>比如文章模型：后台对应的就是文章的管理功能，前台对应的就是文章模型</p>
+				<p>文章模型-》文章页面，只处理该文章模型的业务逻辑，其他的全部应该属于挂件，挂件widget(淘宝SDK)</p>
+				<p>英文目录 一旦确定，即不能更改，因为前台的模板文件可能已经在使用（引用）</p>
+				<p>前端开放接口 getChannelList 使用缓存，若更改栏目，不立即生效，请到后台工具中删除内存缓存</p>
+			</div>
+			<ul class="nav nav-pills">
+		    	<li><a href="/admin.php/{:strtolower(MODULE_NAME)}">栏目管理</a></li>
+				<li <if condition="ACTION_NAME eq 'add' && $_GET['type'] eq 1">class="current"</if>><a href="/admin.php/{:strtolower(MODULE_NAME)}/add/type/1">添加栏目</a></li>
+		    	<li <if condition="ACTION_NAME eq 'add' && $_GET['type'] eq 2">class="current"</if>><a href="/admin.php/{:strtolower(MODULE_NAME)}/add/type/2">添加单网页</a></li>
+		    	<li <if condition="ACTION_NAME eq 'add' && $_GET['type'] eq 3">class="current"</if>><a href="/admin.php/{:strtolower(MODULE_NAME)}/add/type/3">添加外部链接</a></li>
+		    </ul>
+		</div>
+		
+		
+		<form action="" method="post" class="form-horizontal">
+			<present name="_model">
+			<input type="hidden" name="id" value="{$_model['id']}">
+			</present>
+			
+			<present name="_GET.type">
+			<input type="hidden" name="type" value="{$_GET['type']}">
+			</present>
+			
+			<div id="tabs">
+				<ul class="nav nav-tabs" style="margin-bottom:20px;">
+				    <li class="current"><a href="#tabs_base">基本选项</a></li>
+					<if condition="(isset($_model) && $_model['type'] neq '3') or (isset($_GET['type']) && $_GET['type'] neq '3')">
+				    <li><a href="#tabs_template">模板设置</a></li>
+					</if>
+					<if condition="(isset($_model) && $_model['type'] neq '3') or (isset($_GET['type']) && $_GET['type'] neq '3')">
+				    <li><a href="#tabs_seo">SEO设置</a></li>
+					</if>
+				</ul>
+				<div id="tabs_base"><!-- .基本选项 -->
+					
+					<if condition="(isset($_model) && $_model['type'] eq '1') or $_GET['type'] eq '1'">
+					<div class="form-item">
+						<label class="form-label" for="module_id">关联模型</label>
+						<div class="form-field">
+							<select name="module_id" id="module_id">
+								<option value="">≡ 请选择模型 ≡</option>
+								<volist name="module_list" id="rs">
+									<option value="{$rs['id']}" <if condition="isset($_model) && $rs['id'] eq $_model['module_id']">selected="selected"</if>>{$rs['title']}</option>
+								</volist>
+							</select>
+			          	</div>
+			        </div>
+					</if>
+					<div class="form-item">
+						<label class="form-label" for="pid">上级栏目</label>
+						<div class="form-field">
+							<select name="pid" id="pid">
+								<option value="0">≡ 作为一级栏目 ≡</option>
+								{$options}
+							</select>
+			          	</div>
+			        </div>
+					<div class="form-item">
+						<label class="form-label" for="title">栏目名称</label>
+						<div class="form-field">
+							<input type="text" class="ipt-text" name="title" id="title" value="<present name="_model">{$_model["title"]}</present>" placeholder="例如：公司新闻">
+			          	</div>
+			        </div>
+					<div class="form-item">
+						<label class="form-label" for="name">英文目录</label>
+						<div class="form-field">
+							<input type="text" class="ipt-text" name="name" id="name" value="<present name="_model">{$_model["name"]}</present>" placeholder="例如：news">
+			          	</div>
+			        </div>
+					<if condition="(isset($_model) && $_model['type'] eq '3') or (isset($_GET['type']) && $_GET['type'] eq '3')">
+					<div class="form-item">
+						<label class="form-label" for="url">链接地址</label>
+						<div class="form-field">
+							<input type="text" class="ipt-text" name="url" id="url" value="<present name="_model">{$_model["url"]}</present>" placeholder="">
+			          	</div>
+			        </div>
+					</if>
+					<div class="form-item">
+						<label class="form-label" for="isnav">是否在导航显示</label>
+						<div class="form-field">
+							<input type="radio" name="isnav" value="1" id="isnav_1" checked="checked"><label for="isnav_1" style="margin-right:10px;">是</label>
+							<input type="radio" name="isnav" value="0" id="isnav_0" <if condition="isset($_model) && $_model['isnav'] eq '0'">checked="checked"</if>><label for="isnav_0">否</label>
+			          	</div>
+			        </div>
+					
+				</div>
+				<if condition="(isset($_model) && $_model['type'] neq '3') or $_GET['type'] neq '3'">
+				<div id="tabs_template" style="display:none;"><!-- .模板设置 -->
+					
+					<if condition="(isset($_model) && $_model['type'] eq '1') or $_GET['type'] eq '1'">
+					<div class="form-item">
+						<label class="form-label" for="setting[tpl_index]">栏目首页模板</label>
+						<div class="form-field">
+							<select name="setting[tpl_index]" id="setting[tpl_index]">
+								<option value="index.html">文章频道页(index.html)</option>
+							</select>
+			          	</div>
+			        </div>
+					<div class="form-item">
+						<label class="form-label" for="setting[tpl_list]">栏目列表页模板</label>
+						<div class="form-field">
+							<select name="setting[tpl_list]" id="setting[tpl_list]">
+								<option value="list.html">列表页(list.html)</option>
+							</select>
+			          	</div>
+			        </div>
+					<div class="form-item">
+						<label class="form-label" for="setting[tpl_show]">内容页模板</label>
+						<div class="form-field">
+							<select name="setting[tpl_show]" id="setting[tpl_show]">
+								<option value="show.html">文章内容页(show.html)</option>
+							</select>
+			          	</div>
+			        </div>
+					</if>
+					
+					<if condition="(isset($_model) && $_model['type'] eq '2') or $_GET['type'] eq '2'">
+					<div class="form-item">
+						<label class="form-label" for="setting[tpl_page]">单网页模板</label>
+						<div class="form-field">
+							<select name="setting[tpl_page]" id="setting[tpl_page]">
+								<option value="page.html">单网页(page.html)</option>
+							</select>
+			          	</div>
+			        </div>
+					</if>
+					
+				</div>
+				</if>
+				<if condition="(isset($_model) && $_model['type'] neq '3') or $_GET['type'] neq '3'">
+				<div id="tabs_seo" style="display:none;"><!-- .SEO设置 -->
+				
+				</div>
+				</if>
+			</div>
+		
+		
+	        <div class="form-actions">
+				<span class="btn btn-primary"><button type="submit">保存</button></span>
+	        </div>
+		</form>
+				
+	</div><!-- .container -->
+		
+<include file="Public:footer" />

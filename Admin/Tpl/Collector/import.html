@@ -1,0 +1,60 @@
+<include file="Public:header" />
+	<style type="text/css">
+		.form .form-item .form-label{width:110px;}
+		.form .form-item .form-field{margin-left: 130px;}
+		.form .form-actions {padding-left: 130px;}
+	</style>
+	<div class="container">
+		
+		<div class="page-header">
+			<h2>采集管理</h2>
+			<ul class="nav nav-pills">
+		    	<li><a href="{:U('Collector/index')}">采集管理</a></li>
+		    	<li <if condition="ACTION_NAME eq 'add'">class="active"</if>><a href="{:U('Collector/add')}">添加采集点</a></li>
+		    </ul>
+		</div><!-- .page-header -->
+	
+		<fieldset>
+			<legend>新建发布方案</legend>
+			<form action="{:U('Collector/import_program_add')}" method="get" class="form">
+				<input type="hidden" name="id" value="{$_GET['id']}" />
+				<input type="hidden" value="all" name="type" />
+				<div class="form-item" style="padding-bottom:10px;">
+					<label class="form-label" for="channel_id">栏目</label>
+					<div class="form-field">
+						<select name="channel_id" id="channel_id">
+							{$options}
+						</select>
+			        </div>
+				</div>
+				<div class="form-item">
+					<div class="form-field">
+						<button type="submit" class="btn btn-small btn-blue">提交</button>
+			        </div>
+				</div>
+			</form>
+		</fieldset>
+		<fieldset>
+			<legend>发布方案列表</legend>
+			<form action="{:U('Collector/import_content')}" method="get" class="form">
+				<input type="hidden" name="id" value="{$_GET['id']}">
+				<div class="form-item" style="padding-bottom:10px;">
+					<label class="form-label">选择发布方案</label>
+					<volist name="program_list" id="rs">
+						<div class="form-field pt5">
+							<label class="mr10"><input type="radio" name="program_id" value="{$rs['id']}"> {$rs['name']}</label>
+							<a href="">删除</a>
+			        	</div>
+					</volist>
+				</div>
+				<div class="form-item">
+					<div class="form-field">
+						<button type="submit" class="btn btn-small btn-blue">提交</button>
+			        </div>
+				</div>
+			</form>
+		</fieldset>
+
+	</div><!-- .container -->
+
+<include file="Public:footer" />

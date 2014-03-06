@@ -1,0 +1,44 @@
+<include file="Public:header" />
+	
+	<div class="container">
+		<include file="Public:aside" />
+		
+		<div class="main">
+			<div class="page-header">
+				<h5>更新缓存</h5>
+			</div><!-- .page-header -->
+			
+			<form class="form J_ajax_submit" method="post" action="">
+				
+				<div class="form-item">
+					<label class="form-label"><a href="javascript:;" onclick="check_all('form');" style="color:#333333;text-decoration:none;" title="全选/取消">选择项目</a></label>
+					<div class="form-field">
+						<div class="form-text">
+							<span class="mr10">
+								<input type="checkbox" class="ipt-checkbox" name="config[cache]" value="1" id="cache">&nbsp;<label for="cache" title="修改了头尾部模板或修改了模板编译缓存配置">模板缓存目录</label>
+							</span>
+							<span class="mr10">
+								<input type="checkbox" class="ipt-checkbox" name="config[data]" value="1" id="data">&nbsp;<label for="data" title="修改了数据库结构">数据目录</label>
+							</span>
+							<span>
+								<input type="checkbox" class="ipt-checkbox" name="config[runtime]" value="1" id="runtime">&nbsp;<label for="runtime" title="修改了配置文件">编译缓存文件</label>
+							</span>
+						</div>
+						<p class="form-explain">当站点进行了数据恢复、升级或者工作出现异常的时候，您可以使用本功能重新生成缓存。更新缓存的时候，可能让服务器负载升高，请尽量避开会员访问的高峰时间。</p>
+						<p class="form-explain">1、模板缓存：更新模板等缓存文件，当您修改了模板或模板编译缓存配置，但是没有立即生效的时候使用</p>
+						<p class="form-explain">2、数据目录：更新项目数据目录，当您新增或修改了数据库表结构，但是没有立即生效的时候使用</p>
+						<p class="form-explain">3、编译缓存文件：更新项目编译缓存文件，当您修改了配置文件，但是没有立即生效的时候使用</p>
+					</div>
+				</div>
+					
+		        <div class="form-actions">
+		        	<button type="submit" class="btn btn-blue">进行更新</button>
+		        </div>
+				
+			</form>
+		</div><!-- .main -->
+		
+		
+	</div><!-- .container -->
+		
+<include file="Public:footer" />

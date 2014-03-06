@@ -1,0 +1,153 @@
+<include file="Public:header" />
+	<script type="text/javascript">
+		// 选择模型，ajax获取对应模型下的模板文件
+		function test(object){
+			var $this = $(object);
+			var module_id = $this.val();
+			if(module_id > 0){
+				
+				$.ajax({
+					type: "GET",
+					url: PHP_FILE+'?m=channel&a=test',
+					dataType: 'json',
+					success: function(json){
+						var data = json.data;
+						if(json.status==1){
+							if(data.tpl_channel.length != 0){
+								$("#select_tpl_channel").empty();
+								var html = '';
+								for(var key in data.tpl_channel){
+									html = '<option value="'+data.tpl_channel[key]+'">'+data.tpl_channel[key]+'</option>' + html;
+								}
+								$("#select_tpl_channel").html(html);
+							}
+							if(data.tpl_index.length != 0){
+								$("#select_tpl_index").empty();
+								var html = '';
+								for(var key in data.tpl_index){
+									html = '<option value="'+data.tpl_index[key]+'">'+data.tpl_index[key]+'</option>' + html;
+								}
+								$("#select_tpl_index").html(html);
+							}
+							if(data.tpl_detail.length != 0){
+								$("#select_tpl_detail").empty();
+								var html = '';
+								for(var key in data.tpl_detail){
+									html = '<option value="'+data.tpl_detail[key]+'">'+data.tpl_detail[key]+'</option>' + html;
+								}
+								$("#select_tpl_detail").html(html);
+							}
+						}
+					}
+				});
+				
+			}
+		}
+	</script>
+	<div class="container">
+		<include file="Public:aside" />
+		
+		<div class="main">
+			<div class="page-header" style="margin-bottom:10px;">
+				<h5>设计网站的核心栏目</h5>
+			</div>
+			<ul class="nav nav-pills mb20">
+		    	<li><a href="{:U('Channel/index')}">栏目管理</a></li>
+		    	<li><a href="{:U('Channel/add', array('type'=>1))}">添加栏目</a></li>
+		    	<li class="active"><a href="{:U('Channel/add', array('type'=>2))}">添加单网页</a></liclass>
+		    	<li><a href="{:U('Channel/add', array('type'=>3))}">添加外部链接</a></li>
+		    </ul>
+			
+			<form action="" method="post" class="form J_ajax_submit">
+				<present name="_model">
+					<input type="hidden" name="id" value="{$_model['id']}">
+				</present>
+				<if condition="$type">
+					<input type="hidden" name="type" value="{$type}">
+				</if>
+				
+				<div id="tabs">
+					<ul class="nav nav-tabs" style="margin-bottom:30px;">
+					    <li class="active"><a href="#tabs_base">基本选项</a></li>
+				    	<li><a href="#tabs_template">模板设置</a></li>
+				    	<li><a href="#tabs_seo">SEO设置</a></li>
+					</ul>
+					<div id="tabs_base">
+						<div class="form-item">
+							<label class="form-label">上级栏目</label>
+							<div class="form-field">
+								<select name="pid" id="pid">
+									<option value="0">≡ 作为一级栏目 ≡</option>
+									{$options}
+								</select>
+								{:html_get_last_selected('#pid', 'Channel', 'pid')}
+				          	</div>
+				        </div>
+						<div class="form-item">
+							<label class="form-label">栏目名称</label>
+							<div class="form-field">
+								<input type="text" class="ipt-text" name="title" id="title" value="{$_model["title"]}" placeholder="例如：关于我们">
+				          	</div>
+				        </div>
+						<div class="form-item">
+							<label class="form-label">英文目录</label>
+							<div class="form-field">
+								<input type="text" class="ipt-text" name="name" value="{$_model["name"]}" placeholder="例如：about">
+								<p class="form-explain">必填，因为前台的开放接口可能需要根据英文目录来获取数据</p>
+				          	</div>
+				        </div>
+						<div class="form-item">
+							<label class="form-label">是否在导航显示</label>
+							<div class="form-field pt5">
+								<input type="radio" name="is_nav" class="ipt-radio" value="1" id="is_nav_1" checked="checked"><label for="is_nav_1" style="margin-right:10px;"> 是</label>
+								<input type="radio" name="is_nav" class="ipt-radio" value="0" id="is_nav_0" <if condition="isset($_model) && $_model['is_nav'] eq '0'">checked="checked"</if>><label for="is_nav_0"> 否</label>
+				          	</div>
+				        </div>
+					</div><!-- .基本选项 -->
+					
+					<div id="tabs_template" style="display:none;">
+						<div class="form-item">
+							<label class="form-label" for="setting[tpl_page]">单网页模板</label>
+							<div class="form-field">
+								<select name="setting[tpl_page]" id="select_tpl_page">
+									<option value="page.html">单网页(page.html)</option>
+								</select>
+				          	</div>
+				        </div>
+					</div><!-- .模板设置 -->
+					
+					<div id="tabs_seo" style="display:none;">
+						<div class="form-item">
+							<label class="form-label">title</label>
+							<div class="form-field">
+								<input type="text" class="ipt-text" name="setting[meta_title]" value="{$_model["setting"]["meta_title"]}" placeholder="针对搜索引擎设置的标题">
+				          	</div>
+				        </div>
+						<div class="form-item">
+							<label class="form-label">keywords</label>
+							<div class="form-field">
+								<textarea name="setting[meta_keywords]" cols="30" style="width:400px;height:60px;" placeholder="关键字中间用半角逗号隔开">{$_model["setting"]["meta_keywords"]}</textarea>
+				          	</div>
+				        </div>
+						<div class="form-item">
+							<label class="form-label">description</label>
+							<div class="form-field">
+								<textarea name="setting[meta_description]" cols="30" style="width:400px;height:60px;" placeholder="针对搜索引擎设置的网页描述">{$_model["setting"]["meta_description"]}</textarea>
+				          	</div>
+				        </div>
+					</div><!-- .SEO设置 -->
+				</div>
+			
+		        <div class="form-actions">
+		        	<button type="submit" class="btn btn-blue">保存</button>
+					<if condition="ACTION_NAME eq 'add'">
+						<input type="submit" class="btn btn-blue" name="submit_continue" value="保存并继续添加">
+					</if>
+					<button type="button" class="btn" onclick="window.location.href='{:cookie('_currentUrl_')}'">返回</button>
+		        </div>
+			</form>
+			
+		</div><!-- .main -->
+	</div><!-- .container -->
+		
+<include file="Public:footer" />

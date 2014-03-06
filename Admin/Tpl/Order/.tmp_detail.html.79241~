@@ -1,0 +1,119 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>七匹狼多媒体机 · 管理后台</title>
+	<link rel="stylesheet" href="/csspower/csspower-0.3.3.min.css" />
+	<link rel="stylesheet" href="/cp/assets/style.css?v=1123" />
+	
+	<script type="text/javascript" src="/cp/assets/scripts/thirdparty/jquery-1.8.3.min.js"></script>
+	<script type="text/javascript" src="/cp/assets/scripts/thirdparty/jquery.tabs.min.js"></script>
+	<script type="text/javascript" src="/cp/assets/scripts/thirdparty/jquery.template.min.js"></script>
+	<script type="text/javascript" src="/cp/assets/scripts/thirdparty/jquery.dialog.min.js"></script>
+	<script type="text/javascript" src="/cp/assets/scripts/thirdparty/jquery.validate.min.js"></script>
+	<script type="text/javascript" src="/cp/assets/scripts/thirdparty/jquery.validate.extend.js"></script>
+	<script type="text/javascript" src="/cp/assets/scripts/thirdparty/jquery.form.min.js"></script>
+	<script type="text/javascript" src="/cp/assets/scripts/thirdparty/jquery.preview.min.js"></script>
+	<script type="text/javascript" src="/cp/assets/scripts/common.js?v=1124"></script>
+	<script type="text/javascript">
+		// 全局常量
+		var PHP_FILE = '<?php echo _PHP_FILE_; ?>'; // 返回 /admin.php
+	</script>
+</head>
+<body>
+	
+	<div class="header">
+		<div class="header-inner">
+			<div class="logo">
+				<a href="<?php echo _PHP_FILE_; ?>"><img src="/cp/assets/images/logo.png" alt=""></a>
+			</div>
+			<div class="top-links">
+				您好，蔡繁荣 [<a href="">退出</a>]
+			</div>
+			<div class="navbar">
+				<div class="navbar-inner">
+					<ul class="nav">
+						<li><a href="#">管理首页</a></li>
+						<li><a href="{:U('Product/index')}">产品管理</a></li>
+						<li class="active"><a href="{:U('Order/index')}">交易管理</a></li>
+						<li><a href="#">营销管理</a></li>
+						<li><a href="#">客户管理</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div><!-- .header -->
+	
+	<div class="container">
+		<div class="aside">
+			<ul class="nav nav-list">
+			    <li class="nav-header">交易管理</li>
+			    <li class="active"><a href="{:U('Order/index')}">订单管理</a></li>
+			</ul>
+		</div><!-- .aside -->
+		
+		<div class="main">
+			<div class="page-header">
+				<h5>订单详情</h5>
+			</div><!-- .page-header -->
+			
+			<table>
+				<tbody>
+					
+				</tbody>
+			</table>
+				<img src="/uploads/product/201311/131113001405261.jpg" alt="">
+				<div class="form-item">
+					<label class="form-label">订单号：</label>
+					<div class="form-field">
+						<div class="form-text">
+							{$_model['number']}
+							（<?php
+								$status_map = array('1'=>'未付款', '2'=>'已付款', '3'=>'已取消');
+								echo $status_map[$_model['status']];
+							?>）
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;下单时间：{:date('Y-m-d H:i:s', $_model['create_time'])}
+						</div>
+		          	</div>
+		        </div>
+				<div class="form-item">
+					<label class="form-label">名称：</label>
+					<div class="form-field">
+						<div class="form-text">{$_model['name']}</div>
+		          	</div>
+		        </div>
+				<div class="form-item">
+					<label class="form-label">颜色：</label>
+					<div class="form-field">
+						<div class="form-text">{$_model['color']}</div>
+		          	</div>
+		        </div>
+				<div class="form-item">
+					<label class="form-label">尺寸：</label>
+					<div class="form-field">
+						<div class="form-text">{$_model['size']}</div>
+		          	</div>
+		        </div>
+				<div class="form-item">
+					<label class="form-label">价格：</label>
+					<div class="form-field">
+						<div class="form-text">&yen; {$_model['price']}</div>
+		          	</div>
+		        </div>
+				
+		        <div class="form-actions">
+		        	<if condition="$_model['status'] eq '1'">
+			        	<a href="{:U('Order/confirm', array('id'=>$_GET['id']))}" class="btn btn-small">确认付款</a>
+			        	<a href="{:U('Order/cancel', array('id'=>$_GET['id']))}" class="btn btn-small">取消订单</a>
+					<else/>
+						<a href="javascript:;" class="btn btn-small" onclick="window.location.href='{:cookie('_currentUrl_')}'">返回</a>
+		        	</if>
+					
+		        </div>
+			</form>
+			
+		</div><!-- .main -->
+		
+	</div><!-- .container -->
+
+<include file="Public:footer" />

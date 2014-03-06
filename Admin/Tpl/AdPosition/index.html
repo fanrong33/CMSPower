@@ -1,0 +1,75 @@
+<include file="Public:header" />
+
+	<div class="container">
+		<include file="Public:aside" />
+		
+		<div class="main">
+			<a class="btn btn-orange btn-add" href="{:U('AdPosition/add')}">添加广告位</a>
+			<ul class="nav nav-tabs">
+		    	<li class="active"><a href="{:U('AdPosition/index')}">广告位管理</a></li>
+		    </ul>
+			<div class="search-box mb10">
+				<div class="search-box-inner">
+					<form action="" method="get" id="search_form">
+						<input type="text" class="ipt-text" name="keyword" value="{$keyword}" placeholder="广告位名称关键字" style="width:150px;">
+						<button type="submit" class="btn btn-small">搜索</button>
+					</form>
+				</div>
+			</div><!-- .search-box -->
+			
+			<form action="" method="post">
+				<table class="table" cellspacing="0" cellpadding="0">
+					<thead>
+						<tr>
+							<th style="width:20px;"><!--<input type="checkbox" class="ipt-checkbox" onclick="check_all('.table tbody', this.checked);" />--></th>
+							<th style="width:60px;">显示顺序</th>
+							<th>广告位名称</th>
+							<th style="width:80px;">英文名</th>
+							<th style="width:100px;"></th>
+						</tr>
+					</thead>
+					<tbody>
+						
+						<if condition="$list">
+						<volist name="list" id="rs">
+							<tr>
+								<td><input type="checkbox" name="ids[]" value="{$rs['id']}" /></td>
+								<td><input type="text" class="ipt-text ipt-text-orderid" name="orderid[{$rs['id']}]" value="<if condition="$rs['orderid'] neq 0">{$rs['orderid']}</if>"></td>
+								<td>{:highlight($rs['title'])}<br/><span class="txt-gray">{$rs['description']}</span></td>
+								<td><span title='调用代码：{&#58;W("Ad", "英文名")}'>{:highlight($rs['name'])}</span></td>
+								<td>
+									<a href="{:U('AdPosition/edit', array('id'=>$rs['id']))}">修改</a>
+									<!--
+									<span class="divider">|</span>
+									<a href="javascript:;" onclick="if(confirm('确定删除该广告位？'))window.location.href='{:U('AdPosition/delete', array('id'=>$rs['id']))}'">删除</a>
+									-->
+								</td>
+							</tr>
+						</volist>
+						<else/>
+							<tr>
+								<td colspan="5">您还没有添加任何广告位</td>
+							</tr>
+						</if>
+					</tbody>
+					<tfoot>
+						<tr>
+							<td colspan="5">
+								<a href="javascript:;" onclick="check_all('.table tbody')">全选/取消</a>
+								<button type="submit" class="btn btn-small J_ajax_submit_btn" data-action="{:U(MODULE_NAME.'/sort')}">排序</button>
+								<button type="submit" class="btn btn-small J_ajax_submit_btn" data-action="{:U(MODULE_NAME.'/delete')}" data-check="1">批量删除</button>
+							</td>
+						</tr>
+					</tfoot>
+				</table>
+			</form>
+			
+			<div class="paging">
+				<div class="paging-inner">
+					{$page}
+				</div>
+			</div>
+		</div><!-- .main -->
+	</div><!-- .container -->
+		
+<include file="Public:footer" />

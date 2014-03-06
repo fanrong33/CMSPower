@@ -1,0 +1,79 @@
+<include file="Public:header" />
+
+	<div class="container">
+		
+		<div class="main">			<div class="main-inner">
+				
+				<div class="page-header">
+					<div class="app-brief">
+						<h5>快速设计网站的主题内容</h5>
+						<p>到底什么是CMS（将属于CMS的东西封装起来，让开发者只关心业务）？栏目对应关联模型？</p>
+						<p>比如文章模型：后台对应的就是文章的管理功能，前台对应的就是文章模型</p>
+						<p>文章模型-》文章页面，只处理该文章模型的业务逻辑，其他的全部应该属于挂件，挂件widget(淘宝SDK)</p>
+					</div>
+					<ul class="nav nav-pills">
+				    	<li><a href="/admin.php/{:strtolower(MODULE_NAME)}">栏目管理</a></li>
+						<php>
+							$class = (strtolower(ACTION_NAME)=='add') ? 'current' : '';
+						</php>
+				    	<li class="{$class}"><a href="/admin.php/{:strtolower(MODULE_NAME)}/add">添加栏目</a></li>
+				    </ul>
+				</div>
+				
+				<form action="" method="post" class="form-horizontal">
+					<present name="_model">
+					<input type="hidden" name="id" value="{$_model['id']}">
+					</present>
+					
+					<div class="form-item">
+						<label class="form-label" for="name">栏目类型</label>
+						<div class="form-field">
+							<input type="radio" class="ipt-radio" checked="checked"> 内部栏目
+			          	</div>
+			        </div>
+					
+					<div class="form-item">
+						<label class="form-label" for="pid">上级栏目</label>
+						<div class="form-field">
+							<select name="pid" id="pid">
+								<option value="0">≡ 作为一级栏目 ≡</option>
+								{$options}
+							</select>
+			          	</div>
+			        </div>
+					<div class="form-item">
+						<label class="form-label" for="title">栏目中文名</label>
+						<div class="form-field">
+							<input type="text" class="ipt-text" name="title" id="title" value="<present name="_model">{$_model['title']}</present>" placeholder="例如：公司新闻">
+			          	</div>
+			        </div>
+					<div class="form-item">
+						<label class="form-label" for="name">栏目英文名</label>
+						<div class="form-field">
+							<input type="text" class="ipt-text" name="name" id="name" value='<present name="_model">{$_model["name"]}</present>' placeholder="例如：news">
+			          	</div>
+			        </div>
+					<div class="form-item">
+						<label class="form-label" for="name">关联模型</label>
+						<div class="form-field">
+							<select name="module_id" id="module_id">
+								<option value="">≡ 请选择模型 ≡</option>
+								<volist name="module_list" id="rs">
+									<option value="{$rs['id']}" <if condition="isset($_model) && $rs['id'] eq $_model['module_id']">selected="selected"</if>>{$rs['title']}</option>
+								</volist>
+							</select>
+			          	</div>
+			        </div>
+			
+									
+			        <div class="form-actions">
+						<span class="btn btn-primary"><button type="submit">保存</button></span>
+			        </div>
+				</form>
+				
+			</div>
+		</div>
+		<div class="fn-clear"></div>
+	</div>
+		
+<include file="Public:footer" />

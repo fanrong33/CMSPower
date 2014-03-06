@@ -1,0 +1,39 @@
+<style type="text/css">
+	.form .form-item .form-label{width: 100px;}
+	.form .form-item .form-field {margin-left: 120px;} 
+</style>
+<div class="dialog-hd">信息推送</div>
+<div class="dialog-bd">
+	<form action="{:U($module_name.'/push', array('ch'=>$ch))}" method="post" class="form" id="push_form">
+		
+    	<div class="form-item">
+			<label class="form-label">推荐位：</label>
+        	<div class="form-field pt5">
+        		<volist name="position_list" id="rs">
+					<label class="mr10"><input type="checkbox" name="position_id[]" value="{$rs['id']}"/>&nbsp;{$rs['name']}</label>
+        		</volist>
+        	</div>
+    	</div>
+		<div style="padding-bottom:20px;" class="form-item">
+			<div class="form-field">
+				<button class="btn" type="submit">确定</button>
+          	</div>
+        </div>
+		
+	</form>
+</div>
+<script type="text/javascript">
+	$("#push_form").ajaxForm({
+		dataType: "json",
+		success: function(json){
+			if(json.status==1){
+				$("#push_form").closest('.dialog').find('.dialog-close').trigger('click');
+				
+				// 刷新
+				window.location.href=window.location.href;
+			}else{
+				alert(json.info);
+			}
+		}
+	});
+</script>

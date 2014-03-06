@@ -1,0 +1,75 @@
+<include file="Public:header" />
+	<div class="container">
+		
+		<div class="page-header">
+			<h2>订单管理</h2>
+			<ul class="nav nav-pills">
+		    	<li class="active"><a href="{:U('Order/index')}">订单管理</a></li>
+		    </ul>
+			<div style="position:absolute;right:0px;bottom:10px;">
+				<form action="" method="get" id="search_form">
+					<input type="text" class="ipt-text" name="keyword" value="<if condition="isset($_GET['keyword']) && $_GET['keyword']">{$_GET['keyword']}</if>" placeholder="输入想搜索的订单号" style="border-radius: 2px 0px 0px 2px; padding: 4px 9px 5px; width: 160px;"><a class="btn btn-blue btn-small" style="border-radius: 0px 3px 3px 0px;" onclick="$('#search_form').submit();">搜索</a>
+				</form>
+			</div>
+		</div><!-- .page-header -->
+		
+		<form action="" method="post">
+			<table class="table" cellspacing="0" cellpadding="0">
+				<thead>
+					<tr>
+						<th style="width:20px;"><input type="checkbox" class="ipt-checkbox" onclick="check_all('.table tbody', this.checked);" /></th>
+						<th>订单编号</th>
+						<th>商品名称</th>
+						<th style="width:50px;">价格</th>
+						<th style="width:70px;">下单时间</th>
+						<th style="width:40px;">状态</th>
+						<th style="width:100px;"></th>
+					</tr>
+				</thead>
+				<tbody>
+					
+					<if condition="$list">
+					<volist name="list" id="rs">
+						<tr>
+							<td><input type="checkbox" name="ids[]" value="{$rs['id']}" /></td>
+							<td>{:highlight($rs['number'])}</td>
+							<td>{$rs['name']}<if condition="$rs['thumb_image_url']"><a class="img-preview" href="/{$rs['thumb_image_url']}"><i class="iconfont ml5">&#x47;</i></a></if></td>
+							<td>&yen; {$rs['price']}</td>
+							<td>{:date('Y-m-d', $rs['create_time'])}</td>
+							<td>
+								<?php
+									$status_map = array('1'=>'未付款', '2'=>'已付款', '3'=>'已取消');
+									echo $status_map[$rs['status']];
+								?>
+							</td>
+							<td>
+								<a href="{:U('Order/detail', array('id'=>$rs['id']))}">查看</a>
+							</td>
+						</tr>
+					</volist>
+					<else/>
+						<tr>
+							<td colspan="7">还没有任何订单</td>
+						</tr>
+					</if>
+				</tbody>
+				<tfoot>
+					<tr>
+						<td colspan="7">
+							<a href="javascript:;" onclick="check_all('.table tbody')">全选/取消</a>
+							<button type="submit" class="btn btn-small J_ajax_submit_btn" data-action="{:U('Order/delete')}">批量删除</button>
+						</td>
+					</tr>
+				</tfoot>
+			</table>
+		</form>
+		
+		<div class="paging">
+			<div class="paging-inner">
+				{$page}
+			</div>
+		</div>
+		
+	</div><!-- .container -->
+		
+<include file="Public:footer" />

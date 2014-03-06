@@ -1,0 +1,89 @@
+<include file="Public:header" />
+	
+	<div class="container">
+		<include file="Public:aside" />
+		
+		<div class="main">
+			<a href="{:U('AppStore/add')}" class="btn btn-orange btn-add">添加在线应用</a>
+			<ul class="nav nav-tabs">
+				<li class="active"><a href="{:U('AppStore/index')}">在线应用</a></li>
+			</ul>
+			<div class="search-box mb10">
+				<div class="search-box-inner">
+					<form action="{:U('AppStore/index')}" method="get" id="search_form">
+						<input type="text" class="ipt-text" name="keyword" value="{$keyword}" placeholder="在线应用关键字" style="width:150px;">
+						<button type="submit" class="btn btn-small">搜索</button>
+					</form>
+				</div>
+			</div><!-- .search-box -->
+			
+			<form action="" method="post">
+				<table class="table" cellspacing="0" cellpadding="0">
+					<thead>
+						<tr>
+							<th style="width:60px;">显示顺序</th>
+							<th>应用名称</th>
+							<th style="width:50px;">
+								<?php
+									$count_direction = ($_REQUEST['order_by'] == 'update_time') ? $sort : 'asc'; // 默认点击为升序
+									$count_alt = ($_REQUEST['order_by'] == 'update_time') ? $sort_alt : '';
+								?>
+								<a href="{:U('AppStore/index', array('order_by'=>'update_time', 'direction'=>$count_direction))}">当前版本 {$count_alt}</a>
+							</th>
+							<th style="width:60px;">文件大小</th>
+							<th style="width:120px;"></th>
+						</tr>
+					</thead>
+					<tbody>
+						
+						<if condition="$list">
+						<volist name="list" id="rs">
+							<tr>
+								<td><input type="text" class="ipt-text ipt-text-orderid" name="orderid[{$rs['id']}]" value="<if condition="$rs['orderid'] neq 0">{$rs['orderid']}</if>"></td>
+								<td>
+									<b>{:highlight($rs['title'])}</b> {:highlight($rs['name'])}
+									<if condition="$rs['depend']">[depend]</if>
+									<if condition="$rs['structure']">[structure]</if>
+									<if condition="$rs['sql']">[sql]</if>
+									<br/>
+									<span class="txt-gray">{$rs['description']}</span>
+								</td>
+								<td>
+									<span class="txt-gray" title="更新时间 {:date('Y-m-d', $rs['update_time'])}
+
+{$rs['history']}">{$rs['version']}</span>
+								</td>
+								<td><span class="txt-gray">{:byte_format($rs['file_size'])}</span></td>
+								<td>
+									<a href="{:U('AppStore/edit', array('id'=>$rs['id']))}">修改</a>
+									<span class="divider">|</span>
+									<a href="javascript:;" onclick="if(confirm('确定删除该在线应用？'))window.location.href='{:U('AppStore/delete', array('id'=>$rs['id']))}'">删除</a>
+								</td>
+							</tr>
+						</volist>
+						<else/>
+							<tr>
+								<td colspan="5">您还没有添加任何在线应用</td>
+							</tr>
+						</if>
+					</tbody>
+					<tfoot>
+						<tr>
+							<td colspan="5">
+								<button type="submit" class="btn btn-small J_ajax_submit_btn" data-action="{:U('AppStore/sort')}">排序</button>
+							</td>
+						</tr>
+					</tfoot>
+				</table>
+			</form>
+			
+			<div class="paging">
+				<div class="paging-inner">
+					{$page}
+				</div>
+			</div>
+			
+		</div><!-- .main -->
+	</div><!-- .container -->
+		
+<include file="Public:footer" />

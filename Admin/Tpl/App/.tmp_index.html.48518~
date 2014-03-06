@@ -1,0 +1,563 @@
+<include file="Public:header" />
+	<style type="text/css">
+		/* iframe内透明遮层，防止被点击 */
+		.mask{background-color: #FFFFFF !important;opacity: 0 !important;}
+	</style>
+	<script type="text/javascript" src="../Public/assets/scripts/thirdparty/jquery-ui-1.10.1.custom.min.js"></script>
+	<script type="text/javascript">
+		// 删除分隔符
+		function delete_nav(object){
+			var $this = $(object);
+			var type = $this.data('type');
+			var type_map = {
+				'header': '页眉',
+				'nav': '应用',
+				'divider':'分隔符'
+			}
+			if(confirm('确定删除该'+type_map[type]+'？')){
+				var params = {};
+				params['id'] = $this.data('id');
+				
+				$.ajax({
+					type:"POST",
+					url: "/admin.php/app/delete_nav",
+					data: params,
+					dataType:"json",
+					success:function(json){
+						if(json.status==1){
+							$this.parent().slideUp('fast', function(){
+								$(this).remove();
+							});
+						}else{
+							alert(json.info);
+						}
+					}
+				});
+			}
+		}
+		
+		// 禁用应用
+		function disable_nav(object){
+			var $this = $(object);
+			var params = {};
+			params['id'] = $this.data('id');
+			params['disabled'] = $this.data('disabled')==1 ? 0 : 1;
+			
+			if(confirm('确定'+(params['disabled']==1?'禁用':'启用')+'该应用？')){
+				 
+				$.ajax({
+					type:"POST",
+					url: "/admin.php/app/disable_nav",
+					data: params,
+					dataType:"json",
+					success:function(json){
+						if(json.status==1){
+							if(params['disabled']==1){
+								$this.parent().addClass('disabled');
+								$this.data('disabled', params['disabled']);
+								$this.text('启用');
+							}else{
+								$this.parent().removeClass('disabled');
+								$this.data('disabled', params['disabled']);
+								$this.text('禁用');
+							}
+						}else{
+							alert(json.info);
+						}
+					}
+				});
+			}
+		}
+		
+		$(function() {
+			// 显示添加导航栏对话框
+			$("#add_navbar").dialog({
+				content: $("#tpl_navbar").html(),
+				onShow: function($object){
+					$object.find('#form_navbar').validate({
+						submitHandler: function(form){
+							// form.submit();
+							$(form).ajaxSubmit({
+								url: "/admin.php/app/add_nav",
+					            dataType: "json",
+					            success: function(json){
+									if(json.status==1){
+										$object.find('.dialog-close').trigger('click');
+										
+										// ajax动态添加到tabs末尾
+										var render = template.compile(
+										'<li id="navbar_<%=id %>" class="ui-droppable">'+
+										'	<a href="#tabs_<%=name %>"><i class="iconfont"><%=icon %></i>&nbsp;<%=title %></a>'+
+										'</li>');
+										var html = render(json.data);//渲染
+										$("#tabs ul:first").append(html);
+									}else{
+										alert(json.info);
+									}
+					            }
+					        });
+						},
+						errorPlacement: function(error, element){
+							var $p = $(element).parent();
+							$p.children('span.error').remove();
+							
+							var name = $(element).attr('name');
+							$(element).after(error);
+						},
+						errorClass: 'error',
+						errorElement: 'p',
+						success: function(label){
+							label.remove();
+						},
+						onkeyup: false,
+						rules:{
+							icon: {required: true},
+							title: {required: true},
+							name: {required: true}
+						},
+						messages:{
+							icon: {required: 'iconfont不能为空'},
+							title: {required: '导航栏标题不能为空'},
+							name: {required: '导航栏名称不能为空'}
+						}
+					});
+				}
+			});
+			
+			// 显示添加页眉对话框
+			$("#add_header").dialog({
+				content: $("#tpl_header").html(),
+				onShow: function($object){
+					
+					// 取得当前tabs标签current状态的id,即pid
+					var $current_tab = $("#tabs ul:first").find("li.active");
+					var pid = $current_tab.attr("id");
+					pid = pid.substr(7);
+					
+					var $ul = $($current_tab.find("a").attr("href")).find("ul");
+					
+					// 表单验证
+					$($object).find("#form_header").validate({
+						submitHandler: function(form){
+							// form.submit();
+							var params = $(form).serializeArray();
+							
+							$(form).ajaxSubmit({
+								url: "/admin.php/app/add_nav",
+					            dataType: "json",
+								data: {"pid": pid},
+					            success: function(json){
+									if(json.status==1){
+										$object.find('.dialog-close').trigger('click');
+										
+										// ajax动态添加到tabs末尾
+										var render = template.compile('<li class="app-header" id="nav_<%=id %>"><%=title %><a href="javascript:;" onclick="delete_nav(this);" data-id="<%=id %>" data-type="header">删除</a></li>');
+										var html = render(json.data);//渲染
+										$ul.append(html);
+									}else{
+										alert(json.info);
+									}
+					            }
+					        });
+						},
+						errorPlacement: function(error, element){
+							var $p = $(element).parent();
+							$p.children('span.error').remove();
+							
+							var name = $(element).attr('name');
+							$(element).after(error);
+						},
+						errorClass: 'error',
+						errorElement: 'p',
+						success: function(label){
+							label.remove();
+						},
+						onkeyup: false,
+						rules:{
+							title: {required: true}
+						},
+						messages:{
+							title: {required: '页眉标题不能为空'}
+						}
+						
+					});
+					
+				}
+			});
+			
+			// 直接添加分隔符
+			$("#add_divider").click(function(){
+				var params = {};
+				params['type'] = 'divider';
+				
+				// 取得当前tabs标签current状态的id,即pid
+				var $current_tab = $("#tabs ul:first").find("li.active");
+				var pid = $current_tab.attr("id");
+				pid = pid.substr(7);
+				params['pid'] = pid;
+				
+				var $ul = $($current_tab.find("a").attr("href")).find("ul");
+				$.ajax({
+					type:"POST",
+					url: "/admin.php/app/add_nav",
+					data: params,
+					dataType:"json",
+					success:function(json){
+						if(json.status==1){
+							
+							// ajax动态添加到ul末尾
+							var render = template.compile('<li class="app-divider " id="nav_<%=id %>">&nbsp;<a href="javascript:;" onclick="delete_nav(this);" data-id="<%=id %>" data-type="divider">删除</a></li>');
+							var html = render(json.data);//渲染
+							
+							$ul.append(html);
+						}else{
+							alert(json.info);
+						}
+					}
+				});
+			});
+			
+			// 显示添加应用对话框
+			$("#add_app").dialog({
+				content: $("#tpl_app").html(),
+				onShow: function($object){
+					
+					// 取得当前tabs标签current状态的id,即pid
+					var $current_tab = $("#tabs ul:first").find("li.active");
+					var pid = $current_tab.attr("id");
+					pid = pid.substr(7);
+					
+					var $ul = $($current_tab.find("a").attr("href")).find("ul");
+					
+					// 表单验证
+					$($object).find("#form_app").validate({
+						submitHandler: function(form){
+							// form.submit();
+							var params = $(form).serializeArray();
+							
+							$(form).ajaxSubmit({
+								url: "/admin.php/app/add_nav",
+					            dataType: "json",
+								data: {"pid": pid},
+					            success: function(json){
+									if(json.status==1){
+										$object.find('.dialog-close').trigger('click');
+										
+										// ajax动态添加到tabs末尾
+										var render = template.compile('<li class="app-nav" id="nav_<%=id %>"><%=title %><a href="javascript:;" onclick="delete_nav(this);" data-id="<%=id %>" data-type="nav">删除</a>&nbsp;&nbsp;<a href="javascript:;" onclick="disable_nav(this);" data-id="<%=id %>" data-disabled="0" style="margin-right: 5px;">禁用</a></li>');
+										var html = render(json.data);//渲染
+										$ul.append(html);
+									}else{
+										alert(json.info);
+									}
+					            }
+					        });
+						},
+						errorPlacement: function(error, element){
+							var $p = $(element).parent();
+							$p.children('span.error').remove();
+							
+							var name = $(element).attr('name');
+							$(element).after(error);
+						},
+						errorClass: 'error',
+						errorElement: 'p',
+						success: function(label){
+							label.remove();
+						},
+						onkeyup: false,
+						rules:{
+							title: {required: true},
+							name: {required: true}
+						},
+						messages:{
+							title: {required: '应用标题不能为空'},
+							name: {required: '应用名称不能为空'}
+						}
+					});
+					
+				}
+			});
+			
+			// 显示添加应用对话框
+			$("#add_online_app").dialog({
+				remote: {
+					url: "/admin.php/app/paglet_app",
+					success: function($object){
+						// 取得当前tabs标签current状态的id,即pid
+						var $current_tab = $("#tabs ul:first").find("li.active");
+						var pid = $current_tab.attr("id");
+						pid = pid.substr(7);
+						
+						$object.find("button").click(function(){
+							var $this = $(this);
+							var params = {};
+							params['id'] = $this.data('id');
+							params['pid']= pid;
+							$.ajax({
+								type:"POST",
+								url:"/admin.php/app/install_app",
+								dataType:"json",
+								data: params,
+								success: function(json){
+									if(json && json.status==1){
+										$object.find('.dialog-close').trigger('click');
+										
+										// ajax动态添加到ul末尾
+										var render = template.compile('<li class="app-nav " id="nav_<%=id %>"><%=title %><a href="javascript:;" onclick="delete_nav(this);" data-id="<%=id %>" data-type="nav">删除</a>&nbsp;&nbsp;<a href="javascript:;" onclick="disable_nav(this);" data-id="<%=id%>" data-disabled="0" style="margin-right: 5px;">禁用</a></li>');
+										var html = render(json.data);//渲染
+										
+										$ul.append(html);
+										alert(json.info);
+									}else{
+										alert(json.info);
+									}
+								}
+							});
+						});
+						
+						var $ul = $($current_tab.find("a").attr("href")).find("ul");
+			        }
+				}
+			});
+			
+			$("#tabs").tabs();
+			
+		 	// 导航栏拖动排序
+		 	$("#tabs .nav").sortable({
+				axis: "x",
+				update: function(event, ui){
+					var result = $(this).sortable('toArray');
+					// console.info(result);
+					$.ajax({
+						type: "POST",
+						url: "/admin.php/app/sort",
+						data: {'order':result, 'pid': 0},
+						dataType: "json",
+						success: function(json){
+							if(json.status==1){
+							}
+						}
+					});
+				}
+			});
+			
+			$("#tabs ul.connectedSortable").sortable({
+				update: function( event, ui ){
+					// 获取排序后的顺序ID
+					var result = $(this).sortable('toArray');
+					
+					// 获取pid
+					var tabs_id = $(this).parent().attr('id');
+					
+					var navbar_id = $("#tabs a[href=#"+tabs_id+"]").parent().attr("id");
+					navbar_id = navbar_id.substr(7);
+					
+					$.ajax({
+						type: "POST",
+						url: "/admin.php/app/sort",
+						data: {'order':result, 'pid': navbar_id},
+						dataType: "json",
+						success: function(json){
+							if(json.status==1){
+							}
+						}
+					});
+				}
+			}).disableSelection();
+			
+			$("ul:first li", "#tabs").droppable({
+				accept: ".connectedSortable li",
+				tolerance: 'pointer',
+				drop: function(event, ui) {
+					 var $item = $(this); // droppable
+					 
+					 var $list = $($item.find("a").attr("href")).find(".connectedSortable");
+					 ui.draggable.hide("slow", function(){
+					 	$(this).appendTo($list).show("slow");
+					 })
+					 
+					 // 子nav的ID
+					 var nav_id = ui.helper.attr('id');
+					 nav_id = nav_id.substr(4);
+					 
+					 // 另一个list 父navbar的ID
+					 var navbar_id = $item.attr('id');
+					 navbar_id = navbar_id.substr(7);
+					 
+					 // 修改nav ID的父ID,并修改orderid为9999（最后一个）
+					 $.ajax({
+						type: "POST",
+						url: "/admin.php/app/recive",
+						data: {'id': nav_id, 'pid': navbar_id},
+						dataType: "json",
+						success: function(json){
+							if(json.status==1){
+							}
+						}
+					});
+				}
+		    });
+		});
+	</script>
+	<div class="container">
+				
+		<div class="page-header">
+			<h2>全面加快控制台搭建的速度</h2>
+			<ul class="nav nav-pills">
+		    	<li class="active"><a href="#">应用管理</a></li>
+		    	<li><a id="add_navbar" href="javascript:;">添加导航栏</a></li>
+		    	<li><a id="add_header" href="javascript:;">添加页眉</a></li>
+		    	<li><a id="add_divider" href="javascript:;">添加分隔符</a></li>
+		    	<li><a id="add_app" href="javascript:;">添加应用</a></li>
+		    </ul>
+		</div><!-- .page-header -->
+		
+		<div id="tabs">
+			<ul class="nav nav-tabs">
+		    	<volist name="_nav" id="navbar">
+		    		<if condition="$navbar['type'] eq 'navbar'">
+				    <li id="navbar_{$navbar['id']}" <eq name="key" value="0">class="active"</eq>>
+						<a href="#tabs_{$navbar['name']}"><if condition="$navbar['icon']"><i class="iconfont">{$navbar['icon']}</i>&nbsp;</if>{$navbar['title']}</a>
+					</li>
+					</if>
+		    	</volist>
+				<!--
+			    <li id="navbar_1" class="current"><a href="#tabs_1">面板</a></li>
+			    <li id="navbar_2"><a href="#tabs_2">开发</a></li>
+				-->
+			</ul>
+			<volist name="_nav" id="navbar">
+				<if condition="$navbar['type'] eq 'navbar'">
+				<div id="tabs_{$navbar['name']}" <neq name="key" value="0">style="display:none;"</neq>>
+					<ul class="connectedSortable">
+						<volist name="navbar._child" id="nav">
+							<switch name="nav.type">
+								<case value="header">
+									<li id="nav_{$nav['id']}" class="app-header <if condition="$nav['disabled'] eq '1'">disabled</if>">{$nav['title']}<if condition="$nav['title'] neq '内容 CONTENT'"><a href="javascript:;" onclick="delete_nav(this);" data-id="{$nav['id']}" data-type="header">删除</a></if></li>
+								</case>
+								<case value="nav">
+									<li id="nav_{$nav['id']}" class="app-nav <if condition="$nav['disabled'] eq '1'">disabled</if>">{$nav['title']}<a href="javascript:;" onclick="delete_nav(this);" data-id="{$nav['id']}" data-type="nav">删除</a>&nbsp;&nbsp;<a href="javascript:;" onclick="disable_nav(this);" data-id="{$nav['id']}" data-disabled="{$nav['disabled']}" style="margin-right: 5px;"><if condition="$nav['disabled'] eq '1'">启用<else/>禁用</if></a></li>
+								</case>
+								<case value="divider">
+									<li id="nav_{$nav['id']}" class="app-divider <if condition="$nav['disabled'] eq '1'">disabled</if>">&nbsp;<a href="javascript:;" onclick="delete_nav(this);" data-id="{$nav['id']}" data-type="divider">删除</a></li>
+								</case>
+								<default />
+							</switch>
+						</volist>
+					</ul>
+				</div>
+				</if>
+			</volist>
+			<!--
+			<div id="tabs_1">
+				<ul id="sortable1" class="connectedSortable">					<li class="app-header">用户 MEMBER</li>					<li class="app-nav">用户管理</li>					<li class="app-nav">品类管理</li>
+					<li class="app-divider">&nbsp;</li>				</ul>
+			</div>
+			-->
+		</div>
+				
+	</div><!-- .container -->
+	
+	
+	<!-- 导航栏对话框模板 -->
+	<script id="tpl_navbar" type="text/html">
+		<style type="text/css">
+			.form .form-item {padding-bottom: 10px;}
+			.form .form-item .form-label{width: 100px;}
+			.form .form-item .form-field {margin-left: 120px;}
+		</style>
+		<div class="dialog-hd">添加导航栏</div>
+		<div class="dialog-bd">
+			<form id="form_navbar" action="" method="post" class="form">
+				<input type="hidden" name="type" value="navbar">
+				<div class="form-item">
+					<label for="icon" class="form-label">图标</label>
+					<div class="form-field">
+						<input type="text" class="ipt-text" name="icon" id="icon" placeholder="例如：&amp;#x2e;" style="width:100px;">
+		          	</div>
+		        </div>
+				<div class="form-item">
+					<label for="title" class="form-label">导航栏标题</label>
+					<div class="form-field">
+						<input type="text" class="ipt-text" name="title" id="title" placeholder="例如：会员">
+		          	</div>
+		        </div>
+				<div class="form-item">
+					<label for="name" class="form-label">导航栏名称</label>
+					<div class="form-field">
+						<input type="text" class="ipt-text" name="name" id="name" placeholder="例如：User">
+		          	</div>
+		        </div>
+		
+		        <div class="form-item" style="padding-bottom:20px;">
+					<div class="form-field">
+						<button type="submit" class="btn">添加</button>
+		          	</div>
+		        </div>
+			</form>
+		</div>
+	</script>
+	
+	<!-- 页眉对话框模板 -->
+	<script id="tpl_header" type="text/html">
+		<style type="text/css">
+			.form .form-item {padding-bottom: 10px;}
+			.form .form-item .form-label{width: 100px;}
+			.form .form-item .form-field {margin-left: 120px;}
+		</style>
+		<div class="dialog-hd">添加页眉</div>
+		<div class="dialog-bd">
+			<form id="form_header" action="" method="post" class="form">
+				<input type="hidden" name="type" value="header">
+				<div class="form-item">
+					<label for="title" class="form-label">页眉标题</label>
+					<div class="form-field">
+						<input type="text" class="ipt-text" name="title" id="title" placeholder="例如：内容 CONTENT">
+		          	</div>
+		        </div>
+		
+		        <div class="form-item" style="padding-bottom:20px;">
+					<div class="form-field">
+						<button type="submit" class="btn">添加</button>
+		          	</div>
+		        </div>
+			</form>
+		</div>
+	</script>
+	
+	<!-- 应用对话框模板 -->
+	<script id="tpl_app" type="text/html">
+		<style type="text/css">
+			.form .form-item {padding-bottom: 10px;}
+			.form .form-item .form-label{width: 100px;}
+			.form .form-item .form-field {margin-left: 120px;}
+		</style>
+		<div class="dialog-hd">添加应用</div>
+		<div class="dialog-bd">
+			<form id="form_app" action="" method="post" class="form">
+				<input type="hidden" name="type" value="nav">
+				<div class="form-item">
+					<label for="title" class="form-label">应用标题</label>
+					<div class="form-field">
+						<input type="text" class="ipt-text" name="title" id="title" placeholder="例如：栏目管理">
+		          	</div>
+		        </div>
+				<div class="form-item">
+					<label for="name" class="form-label">应用名称</label>
+					<div class="form-field">
+						<input type="text" class="ipt-text" name="name" id="name" placeholder="例如：Channel">
+		          	</div>
+		        </div>
+		
+		        <div class="form-item" style="padding-bottom:20px;">
+					<div class="form-field">
+						<button type="submit" class="btn">添加</button>
+						<button type="button" class="btn">在线应用</button>
+		          	</div>
+		        </div>
+			</form>
+		</div>
+	</script>
+	
+<include file="Public:footer" />

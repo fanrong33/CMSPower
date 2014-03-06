@@ -1,0 +1,52 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>{:GS('base.site_name')} · 管理后台</title>
+	<link rel="stylesheet" href="{:HTDOC_PATH}csspower/csspower-0.3.3.min.css" />
+	<link rel="stylesheet" href="{:CSS_PATH}style.css?v=1126" />
+	
+	<script type="text/javascript" src="{:JS_PATH}thirdparty/jquery-1.8.3.min.js"></script>
+	<script type="text/javascript" src="{:JS_PATH}thirdparty/jquery.tabs.min.js"></script>
+	<script type="text/javascript" src="{:JS_PATH}thirdparty/jquery.template.min.js"></script>
+	<script type="text/javascript" src="{:JS_PATH}thirdparty/jquery.dialog.min.js"></script>
+	<script type="text/javascript" src="{:JS_PATH}thirdparty/jquery.validate.min.js"></script>
+	<script type="text/javascript" src="{:JS_PATH}thirdparty/jquery.validate.extend.js"></script>
+	<script type="text/javascript" src="{:JS_PATH}thirdparty/jquery.form.min.js"></script>
+	<script type="text/javascript" src="{:JS_PATH}thirdparty/jquery.select.js"></script>
+	<script type="text/javascript" src="{:JS_PATH}thirdparty/jquery.notify.min.js"></script>
+	<script type="text/javascript" src="{:JS_PATH}thirdparty/jquery.preview.min.js"></script>
+	<script type="text/javascript" src="{:JS_PATH}thirdparty/jquery.fixed.min.js"></script>
+	<link rel="stylesheet" href="{:JS_PATH}thirdparty/zTree/zTreeStyle.css">
+	<script type="text/javascript" src="{:JS_PATH}thirdparty/zTree/jquery.ztree.core-3.5.min.js"></script>
+	<script type="text/javascript" src="{:JS_PATH}thirdparty/My97DatePicker/WdatePicker.js"></script>
+	<script type="text/javascript" src="{:JS_PATH}thirdparty/Highcharts-3.0.1/js/highcharts.js"></script>
+	<script type="text/javascript" src="{:JS_PATH}common.js?v=1203"></script>
+	<script type="text/javascript">
+		// 全局常量
+		var PHP_FILE = '<?php echo _PHP_FILE_; ?>'; // 返回 /admin.php
+	</script>
+</head>
+<body>
+
+	<div class="header">
+		<div class="header-inner">
+			<div class="logo">
+				<a href="<?php echo _PHP_FILE_; ?>"><img src="{:IMG_PATH}logo.png" alt=""></a>
+			</div>
+			<div class="top-links">
+				您好，{$_admin['username']} / {$_admin['role_name']} [<a href="{:U('User/logout')}">退出</a>]
+			</div>
+			<div class="navbar">
+				<div class="navbar-inner">
+					<ul class="nav">
+						<volist name="_nav_tree" id="navbar">
+				    		<if condition="$navbar['type'] eq 'navbar' && $navbar['disabled'] eq '0'">
+						    	<li <if condition="$navbar['active']">class="active"</if>><a href="{$navbar['url']}">{$navbar['title']}</a></li>
+							</if>
+				    	</volist>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div><!-- .header -->

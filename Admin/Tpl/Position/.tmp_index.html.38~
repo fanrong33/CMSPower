@@ -1,0 +1,109 @@
+<include file="Public:header" />
+	<script type="text/javascript">
+		/**
+		 * 更新广告位广告
+		 * @param {Object} object
+		 */
+		function update_ad_position(object){
+			var $this = $(object);
+			var ad_position_id = $this.val();
+			
+			window.location.href="{:U('Sw/index')}"+"/ad_position_id/"+ad_position_id;
+		}
+	</script>
+	
+	<div class="container">
+		
+		<div class="page-header">
+			<h2>广告管理</h2>
+			<ul class="nav nav-pills">
+		    	<li class="active"><a href="{:U('Sw/index')}">广告管理</a></li>
+		    	<li><a href="{:U('Sw/add')}">添加广告</a></li>
+		    </ul>
+			<div style="position: absolute; right: 0px; bottom: 6px;">
+				广告位&nbsp;<select name="ad_position_id" style="width: 120px;" onchange="update_ad_position(this);">
+					<option value="">全部</option>
+					<volist name="ad_position_list" id="rs">
+						<option value="{$rs['id']}" <if condition="$_GET['ad_position_id'] eq $rs['id']">selected="selected"</if>>{$rs['title']}</option>
+					</volist>
+				</select>
+			</div>
+		</div><!-- .page-header -->
+		
+		<form action="" method="post">
+			<table class="table" cellspacing="0" cellpadding="0">
+				<thead>
+					<tr>
+						<th style="width:20px;"><input type="checkbox" class="ipt-checkbox" onclick="check_all('.table tbody', this.checked);" /></th>
+						<th style="width:60px;">显示顺序</th>
+						<th>标题</th>
+						<th style="width:75px;">位置</th>
+						<th style="width:75px;">开始日期</th>
+						<th style="width:75px;">结束日期</th>
+						<th style="width:30px;"></th>
+						<th style="width:100px;"></th>
+					</tr>
+				</thead>
+				<tbody>
+					
+					<if condition="$list">
+					<volist name="list" id="rs">
+						<tr>
+							<td><input type="checkbox" name="ids[]" value="{$rs['id']}" /></td>
+							<td><input type="text" class="ipt-text ipt-text-orderid" name="orderid[{$rs['id']}]" value="<if condition="$rs['orderid'] neq 999999">{$rs['orderid']}</if>"></td>
+							<td><present name="rs.image_url"><a class="img-preview" href="/{$rs['image_url']}"><i class="iconfont mr5">&#x47;</i></a></present>{$rs['title']}</td>
+							<td><span title="{$rs['ad_position_description']}">{$rs['ad_position_title']}</span></td>
+							<td>{$rs['start_date']}</td>
+							<td>{$rs['end_date']}</td>
+							<td>
+								<php>
+									$new_value = $rs['is_show'] ? 0 : 1;
+								</php>
+								<a href="javascript:;" onclick="toggle_field(this);"
+									data-table="ad"
+									data-field="is_show"
+									data-id="{$rs['id']}"
+									data-value="{$new_value}"
+									data-open-iconfont="&#x45;"
+									data-close-iconfont="&#x46;"
+									>
+									<eq name="rs.is_show" value="1"><i class="iconfont">&#x45;</i><else/><i class="iconfont">&#x46;</i></eq>
+								</a>
+							</td>
+							<td>
+								<a href="{:U('Sw/edit', array('id'=>$rs['id']))}">修改</a>
+								<!--
+								<span class="divider">|</span>
+								<a href="javascript:;" onclick="if(confirm('确定删除该广告？'))window.location.href='{:U('Sw/delete', array('id'=>$rs['id']))}'">删除</a>
+								-->
+							</td>
+						</tr>
+					</volist>
+					<else/>
+						<tr>
+							<td colspan="8">您还没有添加任何广告</td>
+						</tr>
+					</if>
+				</tbody>
+				<tfoot>
+					<tr>
+						<td colspan="8">
+							<a href="javascript:;" onclick="check_all('.table tbody')">全选/取消</a>
+							<button type="submit" class="btn btn-small J_ajax_submit_btn" data-action="{:U('Sw/sort')}">排序</button>
+							<button type="submit" class="btn btn-small J_ajax_submit_btn" data-action="{:U('Sw/delete')}">批量删除</button>
+						</td>
+					</tr>
+				</tfoot>
+			</table>
+			
+		</form>
+		
+		<div class="paging">
+			<div class="paging-inner">
+				{$page}
+			</div>
+		</div>
+		
+	</div><!-- .container -->
+		
+<include file="Public:footer" />

@@ -1,0 +1,143 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>{:GS('base.site_name', 'CMSPower')} · 管理后台</title>
+	<link rel="stylesheet" href="{:HTDOC_PATH}csspower/csspower-0.3.3.min.css" />
+	<link rel="stylesheet" href="{:CSS_PATH}login.css">
+	<script type="text/javascript" src="{:JS_PATH}thirdparty/jquery-1.8.3.min.js"></script>
+	<script type="text/javascript" src="{:JS_PATH}thirdparty/jquery.form.min.js"></script>
+	<script type="text/javascript" src="{:JS_PATH}thirdparty/jquery.notify.min.js"></script>
+	<script type="text/javascript">
+		var $last_ipt = null;
+		$(function(){
+			
+			// 获取表单输入框焦点
+			$("#login_form input").each(function(){
+				if($last_ipt == null && $(this).val() == ''){
+					$last_ipt = $(this);
+				}
+			});
+			
+			$last_ipt.get(0).focus();
+			
+			// ajax登录
+			$("#login_form").ajaxForm({
+	            dataType: "json",
+				beforeSend: function(){
+				},
+	            success: function(json){
+	                if(json.status==1){
+						$.notify('登录成功，正在为您登录...', 'success');
+	                    window.location.href=json.data;
+	                }else{
+	                    //alert(json.info);
+						$.notify(json.info, 'warn');
+						if(json.info == '验证码错误'){
+							$("#login_form input[name='verify']").val('').get(0).focus();
+							$("#image_verify").trigger('click');
+						}
+	                }
+	            }
+	        });
+			
+			// 云动
+			move($(".cloud").get(0));
+			var $cloud2 = $(".cloud").clone();
+			$cloud2.css({left:'100%'});
+			$(".cloud").after($cloud2);
+			move($cloud2.get(0));
+		})
+		
+		function move(o){
+			if($.browser.msie && $.browser.version <= 6){
+				return;
+			}
+			setInterval(function(){
+				o.style.left = o.offsetLeft - 1 + 'px';
+				if(o.offsetLeft <= -o.offsetWidth){
+					o.style.left = '100%';
+				}
+			}, 68);
+		}
+		
+		/**
+		 * 添加到收藏夹代码
+		 */
+		function add_favorite(){
+			if (document.all){
+				window.external.addFavorite('{:get_domain()}',"{:GS('base.site_name', 'CMSPower')} · 管理后台");
+			}else if (window.sidebar){
+				try{
+					window.sidebar.addPanel("{:GS('base.site_name', 'CMSPower')} · 管理后台", '{:get_domain()}', '');
+				}catch(e){}
+			}
+		}
+	</script>
+</head>
+<body>
+	
+	<div class="header">
+		<div class="header-inner">
+			<h1 class="logo"><a href="<?php echo _PHP_FILE_; ?>" title="{:GS('base.site_name')}"><img src="{:IMG_PATH}logo.png" alt=""></a></h1>
+		</div>
+	</div>
+	<div class="container">
+		<div class="container-inner">
+			<div class="cloud"></div>
+			<img class="front" src="{:IMG_PATH}front.png" alt="">
+			
+			<div class="mod-login">
+				<div class="mod-login-hd">管理后台登录</div>
+				<div class="mod-login-bd">
+					
+					<form action="" method="post" class="form" id="login_form">
+						<div class="form-item">
+							<div class="form-label">用户名：</div>
+							<div class="form-field">
+								<input type="text" class="ipt-text" name="username" id="username" value="{:cookie('remember')}" placeholder="用户名" title="请输入帐号" style="">
+				          	</div>
+				        </div>
+				        <div class="form-item">
+				        	<div class="form-label">密　码：</div>
+				          	<div class="form-field">
+				            	<input type="password" class="ipt-text" name="password" id="password" placeholder="密　码" title="请输入密码">
+				          	</div>
+				        </div>
+				        <div class="form-item">
+				        	<div class="form-label">验证码：</div>
+				          	<div class="form-field">
+				            	<input type="text" class="ipt-text" name="verify" value="" style="ime-mode:disabled;width: 50px;" maxlength="4">
+								<img id="image_verify" src="{:U('Util/image_verify')}" alt="" onclick="this.src='{:U("Util/image_verify")}'+'?t='+Date.parse(new Date())" style="cursor: pointer;" title="点击刷新验证码">
+				          	</div>
+				        </div>
+				        <div class="form-item" style="padding-bottom:0;">
+				          	<div class="form-field">
+								<button type="submit" class="btn btn-blue">登&nbsp;&nbsp;录</button>
+				          	</div>
+				        </div>
+					</form>
+					
+				</div>
+			</div><!-- .mod-login -->
+			
+			<a class="add-favorite" rel="sidebar" href="{:get_domain()}" title="{:GS('base.site_name', 'CMSPower')} · 管理后台" onclick="add_favorite();"><img src="{:IMG_PATH}icon_favorite.png" alt=""></a>
+			
+		</div>
+	</div><!-- .container -->
+	
+	<div class="compat">
+		<p class="mb20">本站使用了最新的HTML5及CSS3技术，IE6,7内核浏览器可能会影响使用体验，为了能获得更好的用户体验，推荐您使用以下浏览器。</p>
+		<span class="browser">
+            <a class="w1" target="_blank" href="https://www.google.com/intl/zh-CN/chrome/browser/">Chrome</a>
+            <a class="w2" target="_blank" href="http://firefox.com.cn/">火狐</a>
+            <a class="w3" target="_blank" href="http://www.microsoft.com/zh-cn/download/internet-explorer-10-details.aspx">IE9及以上</a>
+        </span>
+	</div><!-- .compat -->
+	
+	<div class="footer" style="text-align:center;">
+		{:GS('base.copyright', '©2013 <a href="http://www.cmspower.me" target="_blank">CMSPower</a> 版权所有')}
+	</div>
+	
+</body>
+</html>

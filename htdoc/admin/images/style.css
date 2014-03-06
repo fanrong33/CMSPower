@@ -1,0 +1,203 @@
+html{overflow-y:scroll;}
+body{background-color:#FFFFFF;}
+
+.txt-gray{color:#999999;}
+.txt-impt{color: #F26C4F;}
+.txt-rmb{color: #C30000;font-family: "微软雅黑";}
+.txt-require{color:red;vertical-align: middle;}
+/* 溢出文本 */
+.txt-ellipsis{
+       display: block;
+       overflow: hidden;/*注意不要写在最后了*/
+       white-space: nowrap;
+}
+.ipt-text-date{width: 100px;background: url("icon_date.png") no-repeat scroll 95% center transparent;}
+.ipt-text-ruler{background: url("bg_input_ruler.png") repeat-x scroll 0 0 transparent;} /* 输入框尺子 */
+
+.table-hover{background-color:#FAFAFA;}
+.table tbody tr.table-selected{background-color:#FFFFCA;}
+
+/**
+ * 表单 extra
+ */
+.required{color: #FF0000;vertical-align: middle;}
+.form p.error{color:#EE0000;margin-top:0;margin-bottom:0;}
+
+.btn-add{
+position:absolute !important;
+right:0;top:0;	
+}
+
+.nav-pills {
+    height: 26px;
+}
+	
+.header {border-bottom: 3px solid #EEEEEE;color: #3693CF;margin-bottom:10px;background-color:#3693CF;}
+.header-inner{width: 1000px;margin: 0 auto;position: relative;}
+.logo{padding: 10px 0;}
+.logo h1{margin: 0;}
+.top-links{bottom: 45px;color: #F0F0F0;position: absolute;right: 5px;}
+.top-links a,
+.top-links a:hover{color: #FFFFFF;}
+
+.navbar{margin: 0;}
+.navbar-inner {padding-left: 0;}
+.navbar .nav li a {padding: 0 20px;}
+
+.container{width: 1000px;margin: 0 auto;overflow:hidden;}
+.aside{float:left;display:inline;width: 170px;}
+.main{float: right;display: inline;width: 820px;position:relative;}
+.footer{
+	color:#999999;
+	border-top: 2px solid #EEEEEE;
+	text-align:center;
+	width: 1000px;
+	margin: 0px auto;
+	padding: 20px 0;
+	overflow:hidden;
+}
+.footer a{
+	color:#999999;
+}
+
+
+
+.search-box .search-box-inner span {
+  display: inline;
+  float: left;
+  margin-right: 5px;
+}
+
+.table th {padding: 10px;}
+.table .ipt-text {padding: 4px 9px;}
+.table tfoot td{
+	overflow:hidden;
+}
+.table tfoot td a,
+.table tfoot td button{
+	float:left;
+	display:inline;
+	margin-right:5px;
+}
+
+.form .form-item .form-label{font-size: 12px;}
+
+/* 分页 */
+.paging {line-height: 28px;margin: -45px 0 20px;text-align: right;}
+.paging a{border: none;line-height: 28px;padding:0;font-family: tahoma,宋体;}
+.paging form{display:inline;}
+.paging form input,
+.paging form button{vertical-align:middle;}
+.paging a:hover {background: none;color: #1391EB;text-decoration: underline;}
+.paging input{padding: 4px 9px;}
+
+/* 页头 */
+.page-header {padding: 0 12px;}
+
+/* 顶部 notify */
+#notify_wrapper{height: 0;margin: 0 auto;position: fixed;text-align: center;top: 28px;width: 100%;z-index:65535;}
+.notify{border-radius: 5px;padding: 2px 15px 3px;text-align: center;width: auto;display: inline-block;*display: inline;*zoom: 1;}
+.notify a{color:#FFFFFF;}
+.notify-success{background-color: #68AF02;color: #FFFFFF;}
+.notify-warn{background-color: #FC9608;color: #FFFFFF;}
+.notify-error{background-color: #FF0000;color: #FFFFFF;}
+
+/* 上传列表 */
+.uploaded-list{overflow: hidden;}
+.uploaded-list li{
+	padding:5px 8px;
+	background-color:#E8ECF2;
+	border-bottom: 1px solid #F4F6F8;
+}
+.uploaded-list li.selected {
+  background-color: #FFFFCA;
+}
+.uploaded-list li i{
+	vertical-align: text-bottom;
+}
+.uploaded-list li a.delete{
+	line-height:normal;
+	display: none;
+}
+.uploaded-list li.hover a.delete{
+	display: inline-block;
+}
+.uploaded-list li a.delete:hover{
+	text-decoration: none;
+}
+.uploaded-list li a.delete i.iconfont{
+	color: #999999;cursor:pointer;
+}
+.uploaded-list li a.delete:hover i.iconfont{
+	color: #EE4A4A;
+}
+
+
+.uploaded-preview{overflow:hidden;}
+.uploaded-preview li{float: left;display: inline;position: relative;margin:10px 0 0 10px;}
+.uploaded-preview li .preview{border: 1px solid #DDDDDD;height: 100px;width: 100px;display: table-cell; vertical-align:middle;   text-align:center;  *display: block;  *font-size: 87px;*font-family:Arial;  }
+.uploaded-preview li.selected .preview{border: 1px solid #0088CC;outline: 1px solid #0088CC;}
+.uploaded-preview li .preview img{vertical-align:middle;max-width:100px; max-height:100px;}
+
+.uploaded-preview li input{padding: 0;width: 100px;vertical-align: top;}
+
+.uploaded-preview li .file-name{padding-right: 20px;}
+.uploaded-preview li a.delete{bottom: 5px;right: 5px;position: absolute;display: none;}
+.uploaded-preview li.hover a.delete{display: block;}
+.uploaded-preview li a.delete:hover{text-decoration:none;}
+.uploaded-preview li a.delete i.iconfont{color: #999999;cursor:pointer;}
+.uploaded-preview li a.delete:hover i.iconfont{color: #EE4A4A;}
+
+
+/* img preview */
+a.img-preview{cursor: pointer;text-decoration: none;}
+a.img-preview .iconfont{cursor: pointer;}
+#imgPreviewContainer {background: #FFFFE0;padding: 2px;z-index: 999;border: 1px solid #7EABCD;border-radius:0 0 3px 3px;}
+#imgPreviewContainer img{max-width:200px; max-height:200px;}
+#imgPreviewContainer span {color: #000;padding: 5px 0 2px;text-align: center;display: block;}
+
+/* 文件图标 */
+.icon-file-7z,
+.icon-file-rar,
+.icon-file-zip,
+.icon-file-dir,
+.icon-file-jpg,
+.icon-file-jpeg,
+.icon-file-png{background:url(file_icon.png);background-position:-385px -32px;width: 16px;height: 16px;display: inline-block;*display: inline;*zoom: 1;}
+.icon-file-7z{background-position:-128px 0;}
+.icon-file-rar{background-position:-160px 0;}
+.icon-file-zip{background-position:-192px 0;}
+.icon-file-jpg{background-position:0 -32px;}
+.icon-file-jpeg{background-position:0 -32px;}
+.icon-file-png{background-position:-64px -32px;}
+
+
+
+/* 应用管理 */
+.connectedSortable li{ background-color: #F5F5F5;border: 1px solid #DCDCDC;float: none;font-size: 12px;margin: 0 5px 5px 0;padding: 5px 8px;width: 198px;height:20px;overflow:hidden;}
+.connectedSortable li a{float: right;font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;font-weight:normal;}
+.connectedSortable li.disabled{/* 禁用，未启用 */background-color: #FAFAFA;border-style: dashed;}
+
+/* app应用管理标签 */
+.app-header{color: #333333;display: block;font-size: 12px;font-weight: 700;line-height: 20px;padding: 3px 15px;}
+.app-nav{color:#0756AA;}
+.app-divider{background-color: #E5E5E5;border-bottom: 1px solid #FFFFFF;height: 1px;margin: 9px 1px;overflow: hidden;}
+
+/* app文案说明描述 */
+.app-brief{}
+.app-brief p{color: #999999;font-size: 12px;line-height: normal;}
+
+.app-list{}
+.app{border-bottom: 1px solid #DDDDDD;padding: 8px 15px;position: relative;}
+.app .app-title{font-weight:bold;}
+.app .app-title small{font-weight: normal;padding-left: 5px;}
+.app .app-title small.update{color: #EC8204;font-size: 12px;}
+.app .app-description{color: gray;padding-bottom:5px;margin-right:90px;}
+.app-actions {position: absolute;right: 0;top: 10px;}
+
+
+/* 订单回顾页面 */
+.order-review{overflow:hidden;}
+.order-review .order-review-img{border: 1px solid #CCCCCC; float:left;display: inline;}
+.order-review img{max-width:60px; max-height:60px;}
+.order-review .order-review-content{margin-left: 75px;}

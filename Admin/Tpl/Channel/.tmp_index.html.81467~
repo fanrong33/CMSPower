@@ -1,0 +1,87 @@
+<include file="Public:header" />
+	<style type="text/css">
+		.table td{padding:3px 8px;}
+	</style>
+	<div class="container">
+		
+		<div class="page-header">
+			<div class="app-brief">
+				<h5>快速设计网站的主题内容</h5>
+				<p>到底什么是CMS（将属于CMS的东西封装起来，让开发者只关心业务）？栏目对应关联模型？</p>
+				<p>方法：10秒变成一个PHP傻瓜初学者，来使用产品</p>
+				<p>比如文章模型：后台对应的就是文章的管理功能，前台对应的就是文章模型</p>
+				<p>文章模型-》文章页面，只处理该文章模型的业务逻辑，其他的全部应该属于挂件，挂件widget(淘宝SDK)</p>
+				<p>英文目录 一旦确定，即不能更改，因为前台的模板文件可能已经在使用（引用）</p>
+				<p>前端开放接口 getChannelList 使用缓存，若更改栏目，不立即生效，请到后台工具中删除内存缓存</p>
+			</div>
+			<ul class="nav nav-pills">
+		    	<li class="current"><a href="/admin.php/{:strtolower(MODULE_NAME)}">栏目管理</a></li>
+		    	<li><a href="/admin.php/{:strtolower(MODULE_NAME)}/add/type/1">添加栏目</a></li>
+		    	<li><a href="/admin.php/{:strtolower(MODULE_NAME)}/add/type/2">添加单网页</a></li>
+		    	<li><a href="/admin.php/{:strtolower(MODULE_NAME)}/add/type/3">添加外部链接</a></li>
+		    </ul>
+		</div>
+		
+		<form action="" method="post">
+			<table class="table" cellspacing="0" cellpadding="0">
+				<thead>
+					<tr>
+						<th style="width:60px;">显示顺序</th>
+						<th>栏目名称</th>
+						<th style="width:80px;">英文目录</th>
+						<th style="width:60px;">栏目类型</th>
+						<th style="width:60px;">所属模型</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					
+					<if condition="isset($tree) && $tree">
+					<volist name="tree" id="parent_rs">
+						<tr>
+							<td><input type="text" class="ipt-text ipt-text-orderid" name="orderid[{$parent_rs['id']}]" value="<if condition="$parent_rs['orderid'] neq 999999">{$parent_rs['orderid']}</if>"></td>
+							<td>{$parent_rs['title']}</td>
+							<td>{$parent_rs['name']}</td>
+							<php>
+								$style=$parent_rs['type']=='3'?'style="color:#CC0000;"':'';
+							</php>
+							<td>{:to_status('channel', $parent_rs['type'])}</td>
+							<td>{$parent_rs['module_title']}</td>
+							<td>
+								<a href="{:U(MODULE_NAME.'/edit', array('id'=>$parent_rs['id']))}">修改</a>
+								<span class="separator">|</span>
+								<a href="javascript:;" onclick="if(confirm('确定删除该栏目？'))window.location.href='{:U(MODULE_NAME.'/delete', array('id'=>$parent_rs['id']))}'">删除</a>
+							</td>
+						</tr>
+						<if condition="isset($parent_rs['_child']) && $parent_rs['_child']">
+							<php> $count = count($parent_rs['_child']);</php>
+							<volist name="parent_rs._child" id="rs">
+							<tr>
+								<td><input type="text" class="ipt-text ipt-text-orderid" name="orderid[{$rs['id']}]" value="<if condition="$rs['orderid'] neq 999999">{$rs['orderid']}</if>"></td>
+								<td><if condition="($key+1) eq $count">&nbsp;&nbsp;&nbsp;└─<else/>&nbsp;&nbsp;&nbsp;├─</if>&nbsp;{$rs['title']}</td>
+								<td>{$rs['name']}</td>
+								<td>{:to_status('channel', $rs['type'])}</td>
+								<td>{$rs['module_title']}</td>
+								<td>
+									<a href="{:U(MODULE_NAME.'/edit', array('id'=>$rs['id']))}">修改</a>
+									<span class="separator">|</span>
+									<a href="javascript:;" onclick="if(confirm('确定删除该栏目？'))window.location.href='{:U(MODULE_NAME.'/delete', array('id'=>$rs['id']))}'">删除</a>
+								</td>
+							</tr>
+							</volist>
+						</if>
+					</volist>
+					<else/>
+						<tr>
+							<td colspan="6">您还没有添加任何栏目</td>
+						</tr>
+					</if>
+				</tbody>
+			</table>
+			
+			<span class="btn"><button type="submit">保存</button></span>
+		</form>
+				
+	</div><!-- .container -->
+		
+<include file="Public:footer" />

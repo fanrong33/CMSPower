@@ -1,0 +1,56 @@
+<include file="Public:header" />
+	
+	<div class="container">
+		<include file="Public:aside" />
+		
+		<div class="main">
+			<div class="page-header">
+				<h5>订单详情</h5>
+			</div><!-- .page-header -->
+			
+			<div class="mb20 ml10">
+				<b>订单编号</b>：{$_model['number']}（{$status}）
+				<b>下单时间</b>：{:date('Y-m-d H:i:s', $_model['create_time'])}
+			</div>
+			
+			<table class="table">
+				<thead>
+					<tr>
+						<th>商品名称</th>
+						<th style="width:80px;">数量</th>
+						<th style="width:80px;">价格</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>
+							<div class="order-review">
+								<div class="order-review-img">
+									<a href=""><img src="/{$_model['thumb_image_url']}" alt=""></a>
+								</div>
+								<div class="order-review-content">
+									<a href="">{$_model['name']} {$_model['color']} {$_model['size']}</a><if condition="$_model['code']"><br/>商品编号：{$_model['code']}</if>
+								</div>
+							</div>
+						</td>
+						<td>1</td>
+						<td>&yen;{$_model['price']}</td>
+					</tr>
+				</tbody>
+			</table>
+				
+		        <div class="form-actions">
+		        	<if condition="$_model['status'] eq '1'">
+			        	<a href="{:U('Order/confirm', array('id'=>$_GET['id']))}" class="btn btn-small">确认付款</a>
+			        	<a href="{:U('Order/cancel', array('id'=>$_GET['id']))}" class="btn btn-small">取消订单</a>
+					<else/>
+						<a href="javascript:;" class="btn btn-small" onclick="window.location.href='{:cookie('_currentUrl_')}'">返回</a>
+		        	</if>
+					
+		        </div>
+			
+		</div><!-- .main -->
+		
+	</div><!-- .container -->
+
+<include file="Public:footer" />

@@ -1,0 +1,129 @@
+<include file="Public:header" />
+
+	<link rel="stylesheet" href="{:JS_PATH}thirdparty/uploadify/uploadify.css" />
+	<script type="text/javascript" src="{:JS_PATH}thirdparty/uploadify/jquery.uploadify-3.1.min.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			
+			// 显示pressed_image_url上传图片uploadify
+			$("#file_upload_pressed_image_url").uploadify({
+	
+				'buttonImage' : '{:IMG_PATH}btn_uploadify.png',
+		        width		: 90,
+		        height		: 30,
+				
+		        swf			: '{:JS_PATH}thirdparty/uploadify/uploadify.swf',
+		        uploader	: PHP_FILE+'?m=util&a=uploadify',
+				formData	: { '<?php echo session_name();?>' : '<?php echo session_id();?>', 'dir':'product'},
+				
+				fileTypeDesc: 'Image Files',
+				fileTypeExts: '*.jpg; *.jpeg; *.png',
+				//queueID		: 'queue',
+				multi       : false,
+				
+				//uploadLimit : UPLOAD_LIMIT,
+				'onUploadSuccess' : function(file, data, response) {
+					/* data:服务器返回的数据, response:成功的状态200 */
+					//console.info(data);
+					
+					var json = eval('('+data+')');
+					var data = json.data;
+					
+					if(json.status==1){
+						
+						var tpl =  
+						'<li>'+
+						'	<input type="hidden" name="pressed_image_url" value="<%=image_url %>">'+
+						//'	<input type="hidden" name="file_id" value="<%=file_id %>">'+
+						'	<div class="preview">'+
+						'		<img <% if(width>height) {%>width="100"<% }else{ %>height="100"<% } %> src="/<%=image_url %>">'+
+						'	</div>'+
+						'	<a class="delete" href="javascript:;" onclick="delete_img(this);"><i class="iconfont">&#x49;</i></a>'+
+						'</li>';
+						
+						var render = template.compile(tpl);
+						var html = render(data);
+						
+						$("#cmspower_image_pressed_image_url ul.uploaded").append(html);
+						
+					}else{
+						alert(json.info);
+					}
+			    }
+		    });
+			
+		});
+	</script>
+	
+	<div class="container">
+		
+		<include file="Public:aside" />
+		
+		<div class="main">
+			<div class="page-header">
+				<h5>添加类别</h5>
+			</div><!-- .page-header -->
+			
+			<form action="" method="post" class="form">
+				<present name="_model">
+					<input type="hidden" name="id" value="{$_model['id']}">
+				</present>
+				
+				<div class="form-item">
+					<label class="form-label" for="pid">上级类别</label>
+					<div class="form-field">
+						<select name="pid" id="pid">
+							<option value="0">≡ 作为一级类别 ≡</option>
+							{$options}
+						</select>
+		          	</div>
+		        </div>
+				<div class="form-item">
+					<label class="form-label" for="title">类别名称</label>
+					<div class="form-field">
+						<input type="text" class="ipt-text" name="title" id="title" value="<present name="_model">{$_model["title"]}</present>" placeholder="例如：衬衫">
+		          	</div>
+		        </div>
+				<div class="form-item">
+					<label class="form-label" for="name">英文名</label>
+					<div class="form-field">
+						<input type="text" class="ipt-text" name="name" id="name" value="<present name="_model">{$_model["name"]}</present>" placeholder="例如：shirt">
+		          	</div>
+		        </div>
+				<div class="form-item">
+				    <label class="form-label" for="image_url">默认图片</label>
+				    <div class="form-field">
+				        <include file="Public:uploadify" dir="category" multi="false" image_size="图片尺寸：120x120"/>
+				    </div>
+				</div>
+				<div class="form-item">
+					<label class="form-label">按下状态图片</label>
+					<div class="form-field">
+						<input type="file" name="pressed_image_url" id="file_upload_pressed_image_url">
+						<p style="margin-bottom:5px;" class="form-explain">图片尺寸：120x120</p>
+						<div id="cmspower_image_pressed_image_url">
+							<ul class="uploaded">
+								<if condition="$_model['pressed_image_url']">
+								<li>
+									<input type="hidden" name="pressed_image_url" value="{$_model['pressed_image_url']}">
+									<div class="preview"><img src="/{$_model['pressed_image_url']}"></div>
+									<a class="delete" href="javascript:;" onclick="delete_img(this);"><i class="iconfont">&#x49;</i></a>
+								</li>
+								</if>
+							</ul>	
+						</div>
+				  	</div>
+				</div>
+						
+		        <div class="form-actions">
+		        	<button type="submit" class="btn btn-blue">保存</button>
+					<button type="button" class="btn" onclick="window.location.href='{:U('Category/index')}'">返回</button>
+		        </div>
+			</form>
+			
+		</div><!-- .main -->
+		
+				
+	</div><!-- .container -->
+		
+<include file="Public:footer" />

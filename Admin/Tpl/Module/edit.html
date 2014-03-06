@@ -1,0 +1,45 @@
+<include file="Public:header" />
+	
+	<div class="container">
+		<include file="Public:aside" />
+		
+		<div class="main">
+			<div class="page-header">
+				<h5>添加内容模块</h5>
+			</div>
+			
+			<form action="" method="post" class="form J_ajax_submit" id="form">
+				<if condition="$_model">
+					<input type="hidden" name="id" value="{$_model['id']}">
+				</if>
+				
+				<div class="form-item">
+					<label class="form-label">名称</label>
+					<div class="form-field">
+						<input type="text" class="ipt-text" name="title" value="{$_model["title"]}" placeholder="例如：文章模型">
+		          	</div>
+		        </div>
+				<div class="form-item">
+					<label class="form-label">英文名</label>
+					<div class="form-field">
+						<input type="text" class="ipt-text" name="name" value="{$_model["name"]}" placeholder="例如：Article">
+		          	</div>
+		        </div>
+				<div class="form-item">
+					<label class="form-label">描述</label>
+					<div class="form-field">
+						<textarea name="description" cols="30" style="width:400px;height:60px;">{$_model["description"]}</textarea>
+						<p class="form-explain">内容模块 需继承自 ContentParentAction，所属栏目$_channel</p>
+		          	</div>
+		        </div>
+				
+		        <div class="form-actions">
+		        	<button type="submit" class="btn btn-blue">保存</button>
+					<button type="button" class="btn" onclick="window.location.href='{:cookie('_currentUrl_')}'">返回</button>
+		        </div>
+			</form>
+				
+		</div><!-- .main -->
+	</div><!-- .container -->
+	
+<include file="Public:footer" />

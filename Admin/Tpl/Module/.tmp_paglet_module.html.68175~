@@ -1,0 +1,133 @@
+<div class="dialog-hd">在线内容模块</div>
+<div class="dialog-bd" style="height: 330px; overflow-y: auto;">
+	<ul id="app_list" class="app-list">
+		<volist name="module_list" id="rs">
+			<li class="app">
+				<div class="app-title">
+					<if condition="$installed_map[$rs['name']]"><!-- 已安装则显示当前版本,并且判断code,如果小于则提示升级 -->
+						{$rs['title']}<small title="更新时间{:date('Y-m-d', $installed_map[$rs['name']]['update_time'])}">{$installed_map[$rs['name']]['version']}</small>
+						<if condition="$installed_map[$rs['name']]['code'] lt $rs['code']">
+							<small class="update">→</small> <small class="update" 
+							title="更新时间{:date('Y-m-d', $rs['update_time'])}
+
+{$rs['history']}">{$rs['version']}</small>
+						</if>
+					<else/>
+						{$rs['title']}<small title="更新时间{:date('Y-m-d', $rs['update_time'])}">{$rs['version']}</small>
+					</if>
+				</div>
+				<div class="app-description">{$rs['description']}</div>
+				<div class="app-actions">
+					<if condition="$installed_map[$rs['name']]">
+						<if condition="$installed_map[$rs['name']]['code'] lt $rs['code']">
+							<button type="button" class="btn btn-blue btn-small" data-id="{$rs['id']}">升级</button>
+						<else/>
+							<button type="button" class="btn btn-small" data-id="{$rs['id']}">已添加</button>
+						</if>
+					<else/>
+						<button type="button" class="btn btn-blue btn-small" data-id="{$rs['id']}">添加</button>
+					</if>
+				</div>
+			</li>
+		</volist>
+	</ul>
+</div>
+<script type="text/javascript">
+	// 将远程页面内绑定事件移动到远程页面中，职责分开
+	
+	// 获取鼠标选定的内容
+	function get_selected_text(){
+		if (window.getSelection){
+			return window.getSelection().toString(); 
+		}else if (document.getSelection) {  
+			return document.getSelection();  
+		}else if (document.selection) {  
+			return document.selection.createRange().text;
+		}
+	}
+	
+	// 执行sql语句
+	function execute_sql(object){
+		var $this = $(object);
+		
+		// 获取选中的sql语句，并ajax执行sql语句（危险！）
+		var sql = get_selected_text();
+		if(sql == ''){
+			$.notify('你没有选中任何内容', 'warn');
+			return;
+		}
+		
+		$.ajax({
+			type: "POST",
+			url: PHP_FILE+'?m=module&a=execute_sql',
+			dataType: 'json',
+			data: { sql: sql },
+			success: function(json){
+				if(json.status==1){
+					$.notify(json.info);
+				}else{
+					$.notify(json.info, 'warn');
+				}
+			}
+		});
+	}
+	
+	$(function(){
+		var install_module_url 	= PHP_FILE+'?m=module&a=install_module';
+		var module_url 			= PHP_FILE+'?m=module&a=index';
+		
+		$('#app_list button').click(function(){
+			var $this = $(this);
+			var params = {};
+			params['module_id'] = $this.data('id');
+			$.ajax({
+				type	: "POST",
+				url		: install_module_url,
+				dataType: "json",
+				data	: params,
+				success	: function(json){
+					if(json && json.status==1){
+						$this.closest('.dialog').find('.dialog-close').trigger('click');
+
+						$.notify(json.info, 'success');
+						
+						// 如果有创建表结构，显示创建table 和 insert sql语句
+						if(json.data.sql != '' && json.data.sql != null){
+							$.dialog.show({
+								content: template.render('tpl_sql', json.data),
+								onShow: function($object){
+									// 判断该模型对应的表是否已经存在
+									$.ajax({
+										type: "GET",
+										url: PHP_FILE+'?m=module&a=exist_table',
+										dataType: "json",
+										data: { module_name: json.data.name },
+										success: function(json){
+											if(json.status == 1){
+												$object.find('#sql_explain').text(json.info).hide().fadeIn('fast');
+											}
+										}
+									});
+									
+									$this.closest('.dialog').find('[data-role=cancel]').click(function(){
+										window.location.href=module_url;
+									});
+								},
+								onConfirm: function(){
+									this.close();
+									window.location.href=module_url;
+								}
+							});
+						}else{
+							window.location.href=module_url;
+						}
+						
+					}else{
+						alert(json.info);
+					}
+				}
+			});
+		});
+		
+	});
+</script>

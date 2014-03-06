@@ -1,0 +1,281 @@
+<include file="Public:header" />
+	<style type="text/css">
+		.form .form-item .form-label{width:110px;}
+		.form .form-item .form-field{margin-left: 130px;}
+		.form .form-actions {padding-left: 130px;}
+	</style>
+	<script type="text/javascript">
+		$(function(){
+			$("#tabs").tabs();
+		})
+	</script>
+	<div class="container">
+		
+		<div class="page-header">
+			<h2>采集管理</h2>
+			<ul class="nav nav-pills">
+		    	<li><a href="{:U('Collector/index')}">采集管理</a></li>
+		    	<li <if condition="ACTION_NAME eq 'add'">class="active"</if>><a href="{:U('Collector/add')}">添加采集点</a></li>
+		    </ul>
+		</div><!-- .page-header -->
+	
+		<form action="" method="post" class="form">
+			<present name="_model">
+				<input type="hidden" name="id" value="{$_model['id']}">
+			</present>
+			
+			<div id="tabs">
+				<ul class="nav nav-tabs" style="margin-bottom:30px;">
+				    <li class="active"><a href="#tabs_url">网址规则</a></li>
+			    	<li><a href="#tabs_content">内容规则</a></li>
+			    	<li><a href="#tabs_customize">自定义规则</a></li>
+			    	<li><a href="#tabs_advanced">高级配置</a></li>
+				</ul>
+				<div id="tabs_url"><!-- 网址规则 -->
+					<fieldset>
+						<legend>基本信息</legend>
+						<div class="form-item" style="padding-bottom:10px;">
+							<label class="form-label" for="title">采集项目名</label>
+							<div class="form-field">
+								<input type="text" class="ipt-text" name="title" id="title" value="<present name="_model">{$_model["title"]}</present>" placeholder="例如：网易数读">
+					        </div>
+						</div>
+						<div class="form-item">
+							<label class="form-label" for="source_charset">采集页面编码</label>
+							<div class="form-field pt5">
+								<input type="radio" name="source_charset" class="ipt-radio" value="gbk" id="_gbk" checked="checked"><label for="_gbk" class="mr10"> GBK</label>
+								<input type="radio" name="source_charset" class="ipt-radio" value="utf-8" id="_utf-8" <if condition="isset($_model) && $_model['source_charset'] eq 'utf-8'">checked="checked"</if>><label for="_utf-8" class="mr10"> UTF-8</label>
+								<input type="radio" name="source_charset" class="ipt-radio" value="big5" id="_big5" <if condition="isset($_model) && $_model['source_charset'] eq 'big5'">checked="checked"</if>><label for="_big5"> BIG5</label>
+				          	</div>
+						</div>
+					</fieldset>
+					<fieldset>
+						<legend>网址采集</legend>
+						<div class="form-item" style="padding-bottom:10px;">
+							<label class="form-label" for="source_type">网址类型</label>
+							<div class="form-field pt5">
+								<input type="radio" name="source_type" class="ipt-radio" value="1" id="_1" onclick="show_url_type(this.value)" checked="checked"><label for="_1" class="mr10"> 序列网址</label>
+								<input type="radio" name="source_type" class="ipt-radio" value="2" id="_2" onclick="show_url_type(this.value)" <if condition="isset($_model) && $_model['source_type'] eq 2">checked="checked"</if>><label for="_2" class="mr10"> 多个网页</label>
+								<input type="radio" name="source_type" class="ipt-radio" value="3" id="_3" onclick="show_url_type(this.value)" <if condition="isset($_model) && $_model['source_type'] eq 3">checked="checked"</if>><label for="_3"> 单一网页</label>
+				          	</div>
+							<script type="text/javascript">
+								function show_url_type(value){
+									$("#urlpage_"+value).show().siblings().hide();
+								}
+							</script>
+						</div>
+						<div class="form-item" style="padding-bottom:10px;">
+							<label class="form-label">网址配置</label>
+							<div class="form-field">
+								<div id="urlpage_1" <if condition="isset($_model) && $_model['source_type'] neq 1">style="display:none;"</if>>
+									<input type="text" class="ipt-text" name="urlpage1" value="<if condition="isset($_model) && $_model['source_type'] eq 1">{$_model['urlpage']}</if>" placeholder="" style="width:400px;">
+									<p class="form-explain"> (如：http://www.abc3210.com/list-(*).html,页码使用(*)做为通配符。</p>
+									页码从:
+									<input type="text" class="ipt-text" size="4" value="<if condition="isset($_model) && $_model['source_type'] eq 1">{$_model['pagesize_start']}</if>" name="pagesize_start" style="width:30px">
+									到
+									<input type="text" class="ipt-text" size="4" value="<if condition="isset($_model) && $_model['source_type'] eq 1">{$_model['pagesize_end']}</if>" name="pagesize_end" style="width:30px">
+									每次增加
+									<input type="text" class="ipt-text" size="4" value="<if condition="isset($_model) && $_model['source_type'] eq 1">{$_model['par_num']}</if>" name="par_num" style="width:30px">
+								</div>
+								<div id="urlpage_2" <if condition="!isset($_model) || (isset($_model) && $_model['source_type'] neq 2)">style="display:none;"</if>>
+									<textarea id="url_regular" name="urlpage2" cols="30" style="width:400px;height:50px;" placeholder=""><if condition="isset($_model) && $_model['source_type'] eq 2">{$_model['urlpage']}</if></textarea>
+									<p class="form-explain">每行一条</p>
+								</div>
+								<div id="urlpage_3" <if condition="!isset($_model) || (isset($_model) && $_model['source_type'] neq 3)">style="display:none;"</if>>
+									<input type="text" class="ipt-text" name="urlpage3" value="<if condition="isset($_model) && $_model['source_type'] eq 3">{$_model['urlpage']}</if>" placeholder="" style="width:400px;">
+								</div>
+					        </div>
+						</div>
+						<div class="form-item" style="padding-bottom:10px;">
+							<label class="form-label" for="url_contain">网址配置</label>
+							<div class="form-field">
+								网址中必须包含
+              					<input type="text" class="ipt-text" name="url_contain" id="url_contain" value="<present name="_model">{$_model["url_contain"]}</present>" style="width:100px;">
+              					网址中不得包含
+             					<input type="text" class="ipt-text" name="url_except" value="<present name="_model">{$_model["url_except"]}</present>" style="width:100px;">
+					        </div>
+						</div>
+						<div class="form-item" style="padding-bottom:10px;">
+							<label class="form-label" for="url_start">网址区域</label>
+							<div class="form-field" style="vertical-align:top;">
+								从
+              					<textarea style="width:172px;height:50px;" cols="30" id="url_start" name="url_start"><present name="_model">{$_model["url_start"]}</present></textarea>
+              					到
+             					<textarea style="width:172px;height:50px;" cols="30" name="url_end"><present name="_model">{$_model["url_end"]}</present></textarea>
+								结束
+								<p class="form-explain">通过限定采集网址的开始和结束点，更进一步对要采集的网址缩小范围</p>
+					        </div>
+						</div>
+						<div class="form-item">
+							<label class="form-label" for="url_regular">网址</label>
+							<div class="form-field">
+								<textarea placeholder="" style="width:400px;height:50px;" cols="30" name="url_regular" id="url_regular"><present name="_model">{$_model["url_regular"]}</present></textarea>
+								<p class="form-explain">截取的地方加上[网址]，如&lt;a href="链接"&gt;标题&lt;/a&gt; 正则就是：&lt;a href="[网址]"&gt;*&lt;/a&gt;</p>
+					        </div>
+						</div>
+					</fieldset>
+				</div>
+				<div id="tabs_content" style="display:none;"><!-- 内容规则 -->
+					<div class="tipbox tipbox-error mb10" style="background-color:#FFFCED;border:1px solid #FFBE7A;">
+					    <div class="tipbox-content" style="margin:10px 15px;">
+					        <p class="tipbox-explain"> 1、匹配规则请设置开始和结束符，具体内容使用“[内容]”做为通配符 。</p>
+					        <p class="tipbox-explain"> 2、过滤选项格式为“要过滤的内容[|]替换值”，要过滤的内容支持正则表达式，每行一条。</p>
+					    </div>
+					</div>
+					<fieldset>
+						<legend>标题规则</legend>
+						<div class="form-item" style="padding-bottom:10px;">
+							<label class="form-label" for="title_rule">匹配规则</label>
+							<div class="form-field">
+              					<textarea style="width:200px;height:50px;" cols="30" name="title_rule"><present name="_model">{$_model["title_rule"]}</present></textarea>
+              					<span>过滤选项</span>
+             					<textarea style="width:200px;height:50px;" cols="30" name=""></textarea>
+								<p class="form-explain">使用"[内容]"作为通配符</p>
+					        </div>
+						</div>
+					</fieldset>
+					<fieldset>
+						<legend>作者规则</legend>
+						<div class="form-item" style="padding-bottom:10px;">
+							<label class="form-label" for="author_rule">匹配规则</label>
+							<div class="form-field">
+              					<textarea style="width:200px;height:50px;" cols="30" name="author_rule"><present name="_model">{$_model["author_rule"]}</present></textarea>
+              					<span>过滤选项</span>
+             					<textarea style="width:200px;height:50px;" cols="30" name="author_html_rule"><present name="_model">{$_model["author_html_rule"]}</present></textarea>
+								<p class="form-explain">使用"[内容]"作为通配符</p>
+					        </div>
+						</div>
+					</fieldset>
+					<fieldset>
+						<legend>来源规则</legend>
+						<div class="form-item" style="padding-bottom:10px;">
+							<label class="form-label" for="comeform_rule">匹配规则</label>
+							<div class="form-field">
+              					<textarea style="width:200px;height:50px;" cols="30" name="comeform_rule"><present name="_model">{$_model["comeform_rule"]}</present></textarea>
+              					<span>过滤选项</span>
+             					<textarea style="width:200px;height:50px;" cols="30" name="comeform_html_rule"><present name="_model">{$_model["comeform_html_rule"]}</present></textarea>
+								<p class="form-explain">使用"[内容]"作为通配符</p>
+					        </div>
+						</div>
+					</fieldset>
+					<fieldset>
+						<legend>时间规则</legend>
+						<div class="form-item" style="padding-bottom:10px;">
+							<label class="form-label" for="time_rule">匹配规则</label>
+							<div class="form-field">
+              					<textarea style="width:200px;height:50px;" cols="30" name="time_rule"><present name="_model">{$_model["time_rule"]}</present></textarea>
+              					<span>过滤选项</span>
+             					<textarea style="width:200px;height:50px;" cols="30" name="time_html_rule"><present name="_model">{$_model["time_html_rule"]}</present></textarea>
+								<p class="form-explain">使用"[内容]"作为通配符</p>
+					        </div>
+						</div>
+					</fieldset>
+					<fieldset>
+						<legend>内容规则</legend>
+						<div class="form-item" style="padding-bottom:10px;">
+							<label class="form-label" for="content_rule">匹配规则</label>
+							<div class="form-field">
+              					<textarea style="width:200px;height:50px;" cols="30" name="content_rule"><present name="_model">{$_model["content_rule"]}</present></textarea>
+              					<span>过滤选项</span>
+             					<textarea style="width:200px;height:50px;" cols="30" name="content_html_rule"><present name="_model">{$_model["content_html_rule"]}</present></textarea>
+								<p class="form-explain">使用"[内容]"作为通配符</p>
+					        </div>
+						</div>
+					</fieldset>
+				</div>
+				<div id="tabs_customize" style="display:none;"><!-- 自定义规则 -->
+					<button type="button" class="btn btn-small mb20" onclick="add_caiji();">添加自定义规则</button>
+					<div id="customize_config">
+						<volist name="_model.customize_config" id="rs">
+							<div class="form-item" style="padding-bottom:10px;">
+								<label class="form-label">规则名</label>
+								<div class="form-field">
+									<input type="text" class="ipt-text" name="customize_config[name][]" value="{$_model['customize_config'][$key]['name']}" style="width:200px;">
+				  					<span style="width: 75px; display: inline-block; text-align: right;margin-right:15px;">规则英文名</span>
+									<input type="text" class="ipt-text" name="customize_config[en_name][]" value="{$_model['customize_config'][$key]['en_name']}" style="width:200px;">
+						       </div>
+							</div>
+							<div class="form-item" style="padding-bottom:10px;">
+								<label class="form-label">匹配规则</label>
+								<div class="form-field">
+									<textarea style="width:200px;height:50px;" cols="30" name="customize_config[rule][]">{$_model['customize_config'][$key]['rule']}</textarea>
+				  					<span style="width: 75px; display: inline-block; text-align: right;margin-right:15px;">过滤选项</span>
+									<textarea style="width:200px;height:50px;" cols="30" name="customize_config[html_rule][]">{$_model['customize_config'][$key]['html_rule']}</textarea>
+									<p class="form-explain">使用"[内容]"作为通配符</p>
+						       </div>
+							</div>
+						</volist>
+        			</div>
+				</div>
+				<div id="tabs_advanced" style="display:none;"><!-- 高级配置 -->
+					
+					<fieldset>
+						<legend>高级配置</legend>
+						<div class="form-item" style="padding-bottom:10px;">
+							<label class="form-label">下载图片</label>
+							<div class="form-field pt5">
+								<label class="mr10"><input type="radio" name="down_attachment" class="ipt-radio" value="1" checked="checked"> 下载图片</label>
+								<label><input type="radio" name="down_attachment" class="ipt-radio" value="0" <if condition="isset($_model) && $_model['down_attachment'] eq 0">checked="checked"</if>> 不下载</label>
+								<p class="form-explain">注意：下载的是“内容规则”中的远程图片</p>
+					        </div>
+						</div>
+						<div class="form-item" style="padding-bottom:10px;">
+							<label class="form-label">图片水印</label>
+							<div class="form-field pt5">
+								<label class="mr10"><input type="radio" name="watermark" class="ipt-radio" value="1" checked="checked"> 打水印</label>
+								<label><input type="radio" name="watermark" class="ipt-radio" value="0" <if condition="isset($_model) && $_model['watermark'] eq 0">checked="checked"</if>> 不打水印</label>
+					        </div>
+						</div>
+						<div class="form-item" style="padding-bottom:10px;">
+							<label class="form-label">内容分页</label>
+							<div class="form-field pt5">
+								<label class="mr10"><input type="radio" name="content_page" class="ipt-radio" value="0" checked="checked"> 不分页</label>
+								<label><input type="radio" name="content_page" class="ipt-radio" value="1" <if condition="isset($_model) && $_model['content_page'] eq 1">checked="checked"</if>> 按原文分页</label>
+					        </div>
+						</div>
+						<div class="form-item">
+							<label class="form-label">导入顺序</label>
+							<div class="form-field pt5">
+								<label class="mr10"><input type="radio" name="coll_order" class="ipt-radio" value="1" checked="checked"> 与目标站相同</label>
+								<label><input type="radio" name="coll_order" class="ipt-radio" value="2" <if condition="isset($_model) && $_model['coll_order'] eq 2">checked="checked"</if>> 与目标站相反</label>
+					        </div>
+						</div>
+					</fieldset>
+				</div>
+			</div>
+			
+			<div class="form-actions">
+		        <button type="submit" class="btn">保存</button>
+		    </div>
+		</form>
+
+	</div><!-- .container -->
+	<script type="text/javascript">
+		//自定义 添加采集项目
+		var i =0;
+		function add_caiji() {
+			
+			var html = ''+
+			'<div class="form-item" style="padding-bottom:10px;">'+
+			'	<label class="form-label">规则名</label>'+
+			'	<div class="form-field">'+
+			'		<input type="text" class="ipt-text" name="customize_config[name][]" value="" style="width:200px;">'+
+  			'		<span style="width: 75px; display: inline-block; text-align: right;margin-right:15px;">规则英文名</span>'+
+			'		<input type="text" class="ipt-text" name="customize_config[en_name][]" value="" style="width:200px;">'+
+		    '   </div>'+
+			'</div>'+
+			'<div class="form-item" style="padding-bottom:10px;">'+
+			'	<label class="form-label">匹配规则</label>'+
+			'	<div class="form-field">'+
+			'		<textarea style="width:200px;height:50px;" cols="30" name="customize_config[rule][]"></textarea>'+
+  			'		<span style="width: 75px; display: inline-block; text-align: right;margin-right:15px;">过滤选项</span>'+
+			'		<textarea style="width:200px;height:50px;" cols="30" name="customize_config[html_rule][]"></textarea>'+
+			'		<p class="form-explain">使用"[内容]"作为通配符</p>'+
+		    '   </div>'+
+			'</div>';
+			
+			$('#customize_config').append(html);
+			i++;
+		}
+	</script>
+<include file="Public:footer" />

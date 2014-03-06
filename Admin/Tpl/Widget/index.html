@@ -1,0 +1,248 @@
+<include file="Public:header" />
+	<style type="text/css">
+		/* iframe内透明遮层，防止被点击 */
+		.mask{background-color: #FFFFFF !important;opacity: 0 !important;}
+	</style>
+	<script type="text/javascript">
+		$(function(){
+			
+			var paglet_widget_url 	= '{:U("Widget/paglet_widget")}';
+			var install_url 		= '{:U("Widget/install_widget")}';
+			var widget_url 			= '{:U("Widget/index")}';
+			
+			// 显示在线挂件对话框
+			$("#add_online_widget").dialog({
+				remote: {
+					url: paglet_widget_url,
+					success: function($object){
+						$object.find('button').click(function(){
+							var $this = $(this);
+							var params = {};
+							params['widget_id'] = $this.data('id');
+							
+							$.ajax({
+								type	: 'POST',
+								url		: install_url,
+								dataType: 'json',
+								data	: params,
+								success	: function(json){
+									if(json && json.status==1){
+										$object.find('.dialog-close').trigger('click');
+										alert(json.info);
+										window.location.href = widget_url;
+									}else{
+										alert(json.info);
+									}
+								}
+							});
+						});
+					}
+				}
+			});
+			
+		});
+		
+		
+		// 显示子挂件管理对话框
+		function children_widget_manager(object){
+			var $this = $(object);
+			var title = $this.data('title');
+			var name = $this.data('name');
+			
+			var paglet_children_widget_url = '{:U("Widget/paglet_children_widget_manager")}';
+			$.dialog.show({
+				remote:{
+					url: paglet_children_widget_url,
+					data: {'title': title, 'name': name},
+					success: function($object){
+						
+					}
+				}
+			});
+			
+		}
+		
+		// 显示子挂件编辑配置对话框
+		function children_widget_config_dialog(object){
+			var $this = $(object);
+			var widget_name = $this.data('widget-name'); 	// ItemShow
+			var name 		= $this.data('name'); 			// recommend_scenic
+			
+			var paglet_children_widget_config_url = '{:U("Widget/paglet_children_widget_config")}';
+			$.dialog.show({
+				width:550,
+				remote:{
+					url: paglet_children_widget_config_url,
+					data: {'widget_name': widget_name, 'name': name},
+					success: function($object){
+						$object.find("#tabs").tabs();
+						
+						// 手动绑定确定事件
+						$object.find('[data-role=confirm]').click(function(){
+							$object.find("form").ajaxSubmit({
+								url: paglet_children_widget_config_url,
+								data: {'widget_name':widget_name, 'name':name},
+								dataType: "json",
+								success: function(json){
+									$object.find('[data-role=close]').trigger('click');
+								}
+							});
+						});
+						// 手动绑定取消事件
+						$object.find('[data-role=cancel]').click(function(){
+							$object.find('[data-role=close]').trigger('click');
+						});
+					}
+				}
+			});
+		}
+		
+		// 添加子挂件配置
+		function add_children_widget_config(object){
+			var $this = $(object);
+			var widget_name = $this.data('widget-name'); 	// ItemShow
+			
+			var paglet_add_children_widget_config_url = '{:U("Widget/paglet_add_children_widget_config")}';
+			$.dialog.show({
+				width:550,
+				remote:{
+					url: paglet_add_children_widget_config_url,
+					data: {'widget_name': widget_name},
+					success: function($object){
+						$object.find("#tabs").tabs();
+						
+						// 手动绑定确定事件
+						$object.find('[data-role=confirm]').click(function(){
+							$object.find("form").ajaxSubmit({
+								url: paglet_add_children_widget_config_url,
+								data: {'widget_name':widget_name},
+								dataType: "json",
+								success: function(json){
+									$object.find('[data-role=close]').trigger('click');
+								}
+							});
+						});
+						// 手动绑定取消事件
+						$object.find('[data-role=cancel]').click(function(){
+							$object.find('[data-role=close]').trigger('click');
+						});
+					}
+				}
+			});
+		}
+		
+		// 删除子挂件配置
+		function delete_children_widget_config(object){
+			var $this = $(object);
+			var widget_name = $this.data('widget-name'); 	// ItemShow
+			var name 		= $this.data('name'); 			// recommend_scenic
+			
+			var paglet_children_widget_config_url = '{:U("Widget/delete_children_widget_config")}';
+			$.ajax({
+				type	: "POST",
+				url		: paglet_children_widget_config_url,
+				data	: {'widget_name':widget_name, 'name':name},
+				dataType: "json",
+				success	: function(json){
+					if(json['status'] == 1){
+						var $ul = $this.closest('ul');
+						
+						$this.closest('li').remove();
+						if($ul.find('li').length == 0){
+							$ul.append('<li class="app"><div class="app-description">还没有添加任何子挂件</div></li>');
+						}
+					}
+				}
+			});
+			
+		}
+		
+	</script>
+	<div class="container">
+				
+		<div class="page-header">
+			<h2>挂件管理</h2>
+			<ul class="nav nav-pills">
+				<li class="active"><a href="{:U('Widget/index')}">挂件管理</a></li>
+				<li><a href="{:U('Widget/add')}">添加挂件</a></li>
+				<li><a href="javascript:;" id="add_online_widget">在线挂件</a></li>
+		    </ul>
+		</div><!-- .page-header -->
+		
+		<form action="" method="post">
+			<table class="table" cellspacing="0" cellpadding="0">
+				<thead>
+					<tr>
+						<th style="width:20px;"><input type="checkbox" class="ipt-checkbox" onclick="check_all('.table tbody', this.checked);" /></th>
+						<th style="width:60px;">显示顺序</th>
+						<th>挂件名称</th>
+						<th style="width:90px;" title="系统内唯一">挂件英文名</th>
+						<th style="width:60px;">当前版本</th>
+						<th style="width:30px;"></th>
+						<th style="width:200px;"></th>
+					</tr>
+				</thead>
+				<tbody>
+					<if condition="$list">
+					<volist name="list" id="rs">
+						<tr>
+							<td><input type="checkbox" name="ids[]" value="{$rs['id']}" /></td>
+							<td><input type="text" class="ipt-text ipt-text-orderid" name="orderid[{$rs['id']}]" value="<if condition="$rs['orderid'] neq 999999">{$rs['orderid']}</if>"></td>
+							<td>{$rs['title']}<br/><span class="txt-gray">{$rs['description']}</span></td>
+							<td>{$rs['name']}</td>
+							<td>{$rs['version']}</td>
+							<td>
+								<php>
+									$new_value = $rs['is_show'] ? 0 : 1;
+								</php>
+								<a href="javascript:;" onclick="toggle_field(this);"
+									data-table="widget"
+									data-field="is_show"
+									data-id="{$rs['id']}"
+									data-value="{$new_value}"
+									data-open-iconfont="&#x45;"
+									data-close-iconfont="&#x46;"
+									>
+									<eq name="rs.is_show" value="1"><i class="iconfont">&#x45;</i><else/><i class="iconfont">&#x46;</i></eq>
+								</a>
+							</td>
+							<td>
+								<a href="{:U('Widget/edit', array('id'=>$rs['id']))}">修改</a>
+								<!--
+								<span class="divider">|</span>
+								<a href="javascript:;" onclick="if(confirm('确定删除该挂件？'))window.location.href='{:U('Widget/delete', array('id'=>$rs['id']))}'">删除</a>
+								-->
+								<span class="divider">|</span>
+								<a href="javascript:;" onclick="add_children_widget_config(this);" data-widget-name="{$rs['name']}">添加子挂件</a>
+								<span class="divider">|</span>
+								<a href="javascript:;" onclick="children_widget_manager(this);" data-name="{$rs['name']}">管理子挂件</a>
+							</td>
+						</tr>
+					</volist>
+					<else/>
+						<tr>
+							<td colspan="7">还没有添加任何挂件</td>
+						</tr>
+					</if>
+				</tbody>
+				<tfoot>
+					<tr>
+						<td colspan="7">
+							<a href="javascript:;" onclick="check_all('.table tbody')">全选/取消</a>
+							<button type="submit" class="btn btn-small J_ajax_submit_btn" data-action="{:U('Widget/sort')}">排序</button>
+							<button type="submit" class="btn btn-small J_ajax_submit_btn" data-action="{:U('Widget/delete')}">批量删除</button>
+						</td>
+					</tr>
+				</tfoot>
+			</table>
+		</form>
+		
+		<div class="paging">
+			<div class="paging-inner">
+				{$page}
+			</div>
+		</div>
+
+	</div><!-- .container -->
+				
+<include file="Public:footer" />

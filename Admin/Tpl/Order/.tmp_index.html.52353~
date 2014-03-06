@@ -1,0 +1,76 @@
+<include file="Public:header" />
+<style type="text/css">
+	.tree {
+		margin: 0;
+		padding: 0 !important;
+	}
+</style>
+	<div class="container">
+		
+		<div class="page-header">
+			<h2>品牌介绍管理</h2>
+			<ul class="nav nav-pills">
+		    	<li class="active"><a href="{:U('Brand/index')}">品牌介绍管理</a></li>
+		    	<li><a href="{:U('Brand/add')}">添加品牌介绍</a></li>
+		    </ul>
+		</div><!-- .page-header -->
+		
+		<form action="" method="post">
+			<table class="table" cellspacing="0" cellpadding="0">
+				<thead>
+					<tr>
+						<th style="width:60px;">显示顺序</th>
+						<th>名称</th>
+						<th style="width:30px;"></th>
+						<th style="width:120px;"></th>
+					</tr>
+				</thead>
+				<tbody>
+					
+					<if condition="$list">
+					<volist name="list" id="rs">
+						<tr>
+							<td><input type="text" class="ipt-text ipt-text-orderid" name="orderid[{$rs['id']}]" value="<if condition="$rs['orderid'] neq 999999">{$rs['orderid']}</if>"></td>
+							<td>{$rs['name']}<present name="rs.image_url"><a class="img-preview" href="/{$rs['image_url']}"><i class="iconfont ml5">&#x47;</i></a></present></td>
+							<td>
+								<php>
+									$new_value = $rs['is_show'] ? 0 : 1;
+								</php>
+								<a href="javascript:;" onclick="toggle_field(this);"
+									data-table="brand"
+									data-field="is_show"
+									data-id="{$rs['id']}"
+									data-value="{$new_value}"
+									data-open-iconfont="&#x45;"
+									data-close-iconfont="&#x46;"
+									>
+									<eq name="rs.is_show" value="1"><i class="iconfont">&#x45;</i><else/><i class="iconfont">&#x46;</i></eq>
+								</a>
+							</td>
+							<td>
+								<a href="{:U('Brand/edit', array('id'=>$rs['id']))}">修改</a>
+								<span class="divider">|</span>
+								<a href="javascript:;" onclick="if(confirm('确定删除该品牌广告？'))window.location.href='{:U('Brand/delete', array('id'=>$rs['id']))}'">删除</a>
+							</td>
+						</tr>
+					</volist>
+					<else/>
+						<tr>
+							<td colspan="4">您还没有添加任何品牌介绍</td>
+						</tr>
+					</if>
+				</tbody>
+			</table>
+			
+			<button type="submit" class="btn">保存</button>
+		</form>
+		
+		<div class="paging">
+			<div class="paging-inner">
+				{$page}
+			</div>
+		</div>
+		
+	</div><!-- .container -->
+		
+<include file="Public:footer" />

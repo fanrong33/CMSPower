@@ -1,0 +1,199 @@
+<style type="text/css">
+	#upload_2 .table td{padding:4px 15px;white-space: nowrap;}
+	#upload_2 .table td a{overflow: hidden;width: 330px;display: inline-block;*display: inline;*zoom: 1;}
+	#upload_2 .table tr.selected{background-color:#FFFFCA;}
+	
+	/* 图片预览插件 */
+	#imgPreviewContainer{z-index: 1001;}
+</style>
+<div class="dialog-hd">附件上传</div>
+<div class="dialog-bd">
+	
+	<div id="J_upload_tabs">
+	    <ul class="nav nav-tabs mb10">
+	        <li class="active"><a href="#upload_1">上传附件</a></li>
+			<!--
+	        <li><a href="#upload_2">图库</a></li>
+			-->
+	    </ul>
+		
+	    <div id="upload_1" style="position: relative;">
+			<input type="file" name="file" id="file_upload">
+			<div style="position: absolute; right: 10px; top: 5px;">
+				最多上传 {$upload_limit} 个附件，文件大小不能超过 <span class="txt-impt">2M</span>，支持格式 <span class="txt-impt">{$exts}</span>
+			</div>
+			<div style="border: 1px solid #DDDDDD;margin-bottom:20px;position:relative;">
+				<ul id="cmspower_uploaded" class="uploaded-{$mode}" style="height: 280px;overflow-y: scroll;position: relative;"></ul>
+				<div id="queue" style="position: absolute; bottom: 0px; left: 0px;"></div>
+			</div>
+	    </div><!-- #upload_1 -->
+		
+	    <div id="upload_2" style="display:none;">
+			<p style="background:#F7F7F7;border:1px solid #DDD;height:26px;line-height:25px;margin-bottom:-1px;padding-left:15px;">当前目录：uploads/</p>
+			<div style="height:295px;overflow-y: scroll;border: 1px solid #DDDDDD;margin-bottom:20px;">
+		        <table class="table">
+		        	<thead>
+		        		<tr>
+		        			<th style="padding:0;"></th>
+		        			<th style="width:90px;padding:0;"></th>
+		        			<th style="width:90px;padding:0;"></th>
+		        		</tr>
+		        	</thead>		        	<tbody>
+		        		<volist name="file_list" id="rs">
+			        		<tr>			        			<td>
+			        				<if condition="$rs['type'] eq 'dir'">
+			        					<i class="icon-file-dir mr10"></i><a href="{$rs['filename']}" onclick="ajax_dir(event);">{$rs['filename']}</a>
+									<else/>
+										<i class="icon-file-{$rs['ext']} mr10"></i><a class="img-preview" href="" data-file-id="{$rs['id']}">{$rs['filename']}</a>
+									</if>
+								</td>			        			<td><if condition="$rs['type'] eq 'file'">{:byte_format($rs['size'], 0)}</if></td>			        			<td><if condition="$rs['type'] eq 'file'">{:date('m月d日', $rs['mtime'])}</if></td>			        		</tr>
+		        		</volist>		        	</tbody>		        </table>
+			</div>
+	    </div><!-- #upload_2 -->
+		
+	</div><!-- #J_upload_tabs -->
+	
+</div>
+<div class="dialog-ft">
+	<div class="dialog-confirm" data-role="confirm"><a class="dialog-btn-orange" onclick="confirm(this);" id="cmspower_upload_dialog_confirm">确定</a></div>
+	<div class="dialog-cancel" data-role="cancel"><a class="dialog-btn-white" onclick="cancel(this);">取消</a></div>
+</div>
+
+<script type="text/javascript" src="{:JS_PATH}paglet_upload.js"></script>
+<script type="text/javascript">
+	var CMSPOWER_SELECTED = new Array();
+	
+	var FIELD  = "{$field}";
+	<if condition="$multi">
+		var MULTI = true;
+	<else/>
+		var MULTI = false;
+	</if>
+	
+	var DIR 	= "{$dir}";
+	var MODE	= "{$mode}";
+	
+	$(document).ready(function(){
+		
+		$("#file_upload").uploadify({
+
+			'buttonImage' : '{:IMG_PATH}btn_uploadify_{$mode}.png',
+	        width		: 90,
+	        height		: 30,
+			
+	        swf			: '{:JS_PATH}thirdparty/uploadify/uploadify.swf',
+	        uploader	: PHP_FILE+'?m=util&a=uploadify',
+			formData	: { '<?php echo session_name();?>' : '<?php echo session_id();?>', 'dir':DIR},
+			
+			fileTypeDesc: 'Files',
+			fileTypeExts: '{$file_type_exts}',
+			queueID		: 'queue',
+			multi       : MULTI,
+			
+			'onUploadSuccess' : function(file, data, response) {
+				/* data:服务器返回的数据, response:成功的状态200 */
+				console.info(data);
+				// {"data":{"file_id":394,"uploaded_url":"uploads\/app\/20140209\/52f7a1709332a.zip","file_name":"example.zip","file_extension":"zip","file_size":"4.1 KB","width":"","height":""},"info":"","status":1}
+				var json = eval('('+data+')');
+				var data = json.data;
+				
+				if(json.status==1){
+					// 文件列表模式
+					if(MODE == 'list'){
+						var tpl =  
+						'<li class="selected" data-uploaded-url="<%= uploaded_url %>" data-file-id="<%= file_id %>" data-file-extension="<%= file_extension %>" data-file-name="<%= file_name %>" data-file-size="<%= file_size %>" style="cursor:pointer;">'+
+						'	<input type="hidden" name="uploaded_url" value="<%= uploaded_url %>">'+
+						'	<input type="hidden" name="file_id" value="<%= file_id %>">'+
+						'	<i class="icon-file-<%= file_extension %> mr5"></i>'+
+						'	<span><%= file_name %></span>'+
+						'	<span class="txt-gray">(<%= file_size %>)</span>'+
+						'</li>';
+					}
+					
+					// 图片预览模式
+					if(MODE == 'preview'){
+						var tpl =  
+						'<li class="selected" data-uploaded-url="<%= uploaded_url %>" data-file-id="<%= file_id %>" data-file-name="<%= file_name %>" data-width="<%= width %>" data-height="<%= height %>">'+
+						'	<input type="hidden" name="uploaded_url" value="<%= uploaded_url %>">'+
+						'	<input type="hidden" name="file_id" value="<%= file_id %>">'+
+						'	<div class="preview" style="cursor:pointer;">'+
+						'		<img <% if(width>height) {%>width="100"<% }else{ %>height="100"<% } %> src="/<%= uploaded_url %>">' +
+						'	</div>'+
+						'	<input type="text" value="<%= file_name %>">'+
+						'</li>';
+					}
+					
+					var render = template.compile(tpl);
+					var html = render(data);
+					
+					if(!MULTI){
+						// 如果最多上传 1 个附件，则选中前先清空
+						$("#cmspower_uploaded").find('li.selected').removeClass('selected');
+						CMSPOWER_SELECTED = new Array();
+					}
+					
+					$("#cmspower_uploaded").append(html).scrollTop(10000);
+					
+					// 选中图片将属性设置到cmspower_selected DOM对象中
+					CMSPOWER_SELECTED[data['file_id']] = data;
+					
+					var count = 0;
+					for(var i in CMSPOWER_SELECTED){
+						count++;
+					}
+					
+					// 确定按钮显示选中的数量
+					if(count == 0){
+						confirm_text = '确定';
+					}else{
+						confirm_text = '确定('+count+')';
+					}
+					$("#cmspower_upload_dialog_confirm").text(confirm_text);
+				}else{
+					$.notify(json.info, 'warn');
+				}
+		    }
+			
+	    });
+		
+	})
+
+
+	/**
+	 * ajax 远程获取目录
+	 */
+	function ajax_dir(event){
+		event.preventDefault ? event.preventDefault() : event.returnValue = false;
+		event.target = event.target ? event.target : event.srcElement;
+		
+		var $this = $(event.target);
+		var dirpath = $this.attr('href');
+		$.ajax({
+			type: 'GET',
+			url: '{:U("Util/ajax_dir")}',
+			data: { dirpath: dirpath },
+			dataType: 'json',
+			success: function(json){
+				$("#upload_2").empty().append(json.data);
+				
+				window.setTimeout(function(){
+					if($('#upload_2 a.img-preview').length > 0){
+						$('#upload_2 a.img-preview').preview({
+							imgCSS: { width: 200 },
+							onShow: function(link){
+								var image_size = get_image_size($(link).attr('href'));
+						        $('<span>' + image_size.width + ' x ' + image_size.height + '</span>').appendTo(this);
+						    },
+						    onHide: function(link){
+						        $('span', this).remove();
+						    }
+						});
+					}
+				}, 330);
+			}
+		});
+	}
+
+
+	
+</script>

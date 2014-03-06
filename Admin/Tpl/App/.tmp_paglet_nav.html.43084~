@@ -1,0 +1,70 @@
+<style type="text/css">
+	input{vertical-align: middle;}
+</style>
+<div class="dialog-hd">删除应用</div>
+<div class="dialog-bd">
+	<form action="" method="post" id="form">
+		<div class="tipbox tipbox-info tipbox-white">
+		    <div class="tipbox-content" style="margin-top:0;margin-left:0;">
+		        <h3 class="tipbox-title">您确定要删除“{$_model['title']}”后台应用吗？</h3>
+		        <p class="tipbox-explain"><input type="checkbox" class="ipt-checkbox" name="delete_relation" value="1" id="relation"><label for="relation"> 同时删除关联的文件和表数据</label></p>
+				<div id="structure_area" style="display:none;border: 1px solid #999999;height: 100px;overflow-y: auto;padding:0 10px;">
+					<input type="hidden" name="id" value="{$_GET['id']}">
+					<label><input type="checkbox" class="ipt-checkbox" onclick="check_all('#structure_area', this.checked);" /> 全选</label>
+					<volist name="_model.structure" id="rs">
+						<p style="margin-bottom:0;">
+							<label><input type="checkbox" name="structure[]" id="" value="{$rs}"> {$rs}</label>
+						</p>
+					</volist>
+				</div>
+		    </div>
+		</div>
+	</form>
+</div>
+<div class="dialog-ft">
+	<div class="dialog-confirm" data-role="confirm">
+		<a class="dialog-btn-orange">确定</a>
+	</div>
+	<div class="dialog-cancel" data-role="cancel">
+		<a class="dialog-btn-white">取消</a>
+	</div>
+</div>
+<script type="text/javascript">
+	$(function(){
+		
+		// 绑定点击“同时删除关联的文件和表数据”链接事件
+		$("#relation").click(function(){
+			if($(this).get(0).checked == true){
+				$(this).parent().next().show();
+			}else{
+				$(this).parent().next().hide();
+			}
+		});
+		
+		$("div[data-role=confirm]").click(function(){
+			var $this = $(this);
+			$.ajax({
+				type:"POST",
+				url: "/admin.php?m=app&a=delete_nav",
+				data: $("#form").serialize(),
+				dataType:"json",
+				success:function(json){
+					if(json.status==1){
+						alert('删除应用成功');
+						$this.closest('.dialog').find('.dialog-close').trigger('click');
+						$("#nav_{$_GET['id']}").slideUp('fast', function(){
+							$(this).remove();
+						});
+					}else{
+						alert(json.info);
+					}
+				}
+			});
+		});
+		
+		$("div[data-role=cancel]").click(function(){
+			$(this).closest('.dialog').find('.dialog-close').trigger('click');
+		});
+		
+	});
+</script>

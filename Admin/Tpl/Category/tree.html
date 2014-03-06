@@ -1,0 +1,55 @@
+<volist name="tree" id="rs">
+	<?php 
+		if($rs['level'] != 1){ $count = count($tree); }
+	?> 
+	<tr data-level="{$rs['level']}">
+		<td>
+			<if condition="$rs['level'] eq 1">
+				<a href="javascript:;" onclick="toggle(this);">[-]</a>
+			</if>
+		</td>
+		<td><input type="text" class="ipt-text ipt-text-orderid" name="orderid[{$rs['id']}]" value="<if condition="$rs['orderid'] neq 0">{$rs['orderid']}</if>"></td>
+		<td>
+			<?php
+				if($rs['level'] != 1){
+					if($rs['level'] == 2){
+						echo str_repeat('&nbsp;&nbsp;&nbsp;', $rs['level']-1);
+					}
+					if($rs['level'] == 3){
+						echo str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;', $rs['level']);
+					}
+					if($rs['level'] == 4){
+						echo str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;', $rs['level']);
+					}
+					//echo str_repeat('&nbsp;&nbsp;&nbsp;', $rs['level']-1);
+					
+					if( ($key+1) == $count ){
+						echo '└─';
+					}else{
+						echo '├─';
+					}
+				}
+			?>&nbsp;{$rs['title']}
+		</td>
+		<td>
+		    <?php $new_value = $rs['is_show'] ? 0 : 1; ?>
+		    <a href="javascript:;" onclick="toggle_field(this);"
+		        data-table="category"
+		        data-field="is_show"
+		        data-id="{$rs['id']}"
+		        data-value="{$new_value}"
+		        data-open-iconfont="&#x45;"
+		        data-close-iconfont="&#x46;">
+		        <eq name="rs.is_show" value="1"><i class="iconfont">&#x45;</i><else/><i class="iconfont">&#x46;</i></eq>
+		    </a>
+		</td>
+		<td>
+			<a href="{:U('Category/edit', array('id'=>$rs['id']))}">修改</a>
+			<span class="divider">|</span>
+			<a href="javascript:;" onclick="if(confirm('确定删除该分类？'))window.location.href='{:U('Category/delete', array('id'=>$rs['id']))}'">删除</a>
+		</td>
+	</tr>
+	<notempty name="rs['_child']">
+		{:R('Category/tree', array($rs['_child']))}
+	</notempty>
+</volist>

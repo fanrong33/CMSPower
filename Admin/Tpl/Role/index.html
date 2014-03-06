@@ -1,0 +1,64 @@
+<include file="Public:header" />
+	
+	<div class="container">
+		<include file="Public:aside" />
+		
+		<div class="main">
+			
+			<a class="btn btn-orange btn-add" href="{:U('Role/add')}">添加角色</a>
+			<ul class="nav nav-tabs mb10">
+				<li class="active"><a href="{:U('Role/index')}">角色管理</a></li>
+			</ul>
+			
+			<form action="" method="post">
+				<table class="table" cellspacing="0" cellpadding="0">
+					<thead>
+						<tr>
+							<th style="width:60px;">显示顺序</th>
+							<th style="width:100px;">角色名称 </th>
+							<th>描述</th>
+							<th style="width:120px;"></th>
+						</tr>
+					</thead>
+					<tbody>
+						
+						<if condition="$list">
+						<volist name="list" id="rs">
+							<tr>
+								<td><input type="text" class="ipt-text ipt-text-orderid" name="orderid[{$rs['id']}]" value="<if condition="$rs['orderid'] neq 0">{$rs['orderid']}</if>"></td>
+								<td>{$rs['name']}</td>
+								<td>{$rs['description']}</td>
+								<td>
+									<if condition="$rs['type'] neq '1' && $rs['type'] neq '2'">
+										<a href="{:U('Role/edit', array('id'=>$rs['id']))}">修改</a>
+										<span class="divider">|</span>
+										<a href="javascript:;" onclick="if(confirm('确定删除该角色？'))window.location.href='{:U('Role/delete', array('id'=>$rs['id']))}'">删除</a>
+									</if>
+								</td>
+							</tr>
+						</volist>
+						<else/>
+							<tr>
+								<td colspan="4">您还没有添加任何角色</td>
+							</tr>
+						</if>
+					</tbody>
+					<tfoot>
+						<tr>
+							<td colspan="4">
+								<button type="submit" class="btn btn-small J_ajax_submit_btn" data-action="{:U('Role/sort')}">排序</button>
+							</td>
+						</tr>
+					</tfoot>
+				</table>
+			</form>
+			
+			<div class="paging">
+				<div class="paging-inner">
+					{$page}
+				</div>
+			</div>
+		</div><!-- .main -->
+	</div><!-- .container -->
+		
+<include file="Public:footer" />

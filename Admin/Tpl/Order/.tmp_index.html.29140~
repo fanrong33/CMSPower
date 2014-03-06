@@ -1,0 +1,93 @@
+<include file="Public:header" />
+
+	<script type="text/javascript" src="{:JS_PATH}thirdparty/My97DatePicker/WdatePicker.js"></script>
+	
+	<div class="container">
+		<include file="Public:aside" />
+		
+		<div class="main">
+			
+			<ul class="nav nav-tabs">
+				<li <if condition="!isset($_GET['status'])">class="active"</if>><a href="{:U('Order/index')}">全部订单</a></li>
+			    <li <if condition="$_GET['status'] eq 1">class="active"</if>><a href="{:U('Order/index', array('status'=>1))}">未付款</a></li>
+			    <li <if condition="$_GET['status'] eq 2">class="active"</if>><a href="{:U('Order/index', array('status'=>2))}">已付款</a></li>
+			    <li <if condition="$_GET['status'] eq 3">class="active"</if>><a href="{:U('Order/index', array('status'=>3))}">已取消</a></li>
+			</ul>
+			<div class="search-box mb10">
+				<div class="search-box-inner">
+					<form action="{:U('Order/index')}" method="get" id="search_form">
+						<input type="hidden" name="m" value="order">
+						<input type="hidden" name="a" value="index">
+						<if condition="$status">
+							<input type="hidden" name="status" value="{$status}">
+						</if>
+						<input type="text" class="ipt-text" name="start_date" value="<?php if(isset($_GET['start_date'])){ echo $_GET['start_date']; }else{ echo date('Y-m-01'); } ?>" onclick="WdatePicker()" readonly="" style="width:70px;"><span>~</span>
+						<input type="text" class="ipt-text" name="end_date" value="<?php if(isset($_GET['end_date'])){ echo $_GET['end_date']; }else{ echo date('Y-m-d'); } ?>" onclick="WdatePicker()" readonly="" style="width:70px;">
+						<input type="text" class="ipt-text" name="keyword" value="{$keyword}" placeholder="订单编号, 商品名称关键字" style="width:160px;">
+						<button type="submit" class="btn btn-small">搜索</button>
+					</form>
+				</div>
+			</div>
+			
+			<form action="" method="post">
+				<table class="table" cellspacing="0" cellpadding="0">
+					<thead>
+						<tr>
+							<th style="width:20px;"></th>
+							<th>订单编号</th>
+							<th>商品名称</th>
+							<th style="width:50px;">价格</th>
+							<th style="width:70px;">下单时间</th>
+							<th style="width:40px;">状态</th>
+							<th style="width:100px;"></th>
+						</tr>
+					</thead>
+					<tbody>
+						
+						<if condition="$list">
+						<volist name="list" id="rs">
+							<tr>
+								<td><input type="checkbox" name="ids[]" value="{$rs['id']}" /></td>
+								<td>{:highlight($rs['number'])}</td>
+								<td>{:highlight($rs['name'])}</td>
+								<td>&yen; {$rs['price']}</td>
+								<td>{:date('Y-m-d', $rs['create_time'])}<br/>&nbsp;{:date('H:i:s', $rs['create_time'])}</td>
+								<td>
+									<?php
+										$status_map = array('1'=>'未付款', '2'=>'已付款', '3'=>'已取消');
+										echo $status_map[$rs['status']];
+									?>
+								</td>
+								<td>
+									<a href="{:U('Order/detail', array('id'=>$rs['id']))}">查看</a>
+								</td>
+							</tr>
+						</volist>
+						<else/>
+							<tr>
+								<td colspan="7">还没有任何订单</td>
+							</tr>
+						</if>
+					</tbody>
+					<tfoot>
+						<tr>
+							<td colspan="7">
+								<a href="javascript:;" onclick="check_all('.table tbody')">全选/取消</a>
+								<button type="submit" class="btn btn-small J_ajax_submit_btn" data-action="{:U('Order/delete')}" data-check="1">批量删除</button>
+							</td>
+						</tr>
+					</tfoot>
+				</table>
+			</form>
+			
+			<div class="paging">
+				<div class="paging-inner">
+					{$page}
+				</div>
+			</div>
+			
+		</div><!-- .main -->
+		
+	</div><!-- .container -->
+		
+<include file="Public:footer" />

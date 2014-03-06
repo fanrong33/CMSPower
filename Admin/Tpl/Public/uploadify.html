@@ -1,0 +1,30 @@
+<a href="javascript:;" onclick="flashupload('[dir]', [multi]);" class="btn btn-small">选择图片</a>
+<p class="form-explain"><span id="explain">[explain]</span></p>
+
+<div id="cmspower_image">
+	<if condition="[multi]">
+		<?php // 当为多文件上传时，将图片列表设置到$_model['image_list']中（约定）?>
+		<ul class="uploaded">
+			<if condition="isset($_model) && $_model['file_list']">
+			<volist name="_model.file_list" id="rs">
+				<li>
+					<input type="hidden" name="image_url[]" value="{$rs['image_url']}">
+					<input type="hidden" name="file_id[]" value="{$rs['file_id']}">
+					<div class="preview"><img src="/{$rs['image_url']}" alt="" width="100"></div>
+					<a class="delete" href="javascript:;" onclick="delete_img(this);"><i class="iconfont">&#x49;</i></a>
+				</li>
+			</volist>
+			</if>
+		</ul>
+	<else/>
+		<ul class="uploaded">
+			<if condition="isset($_model) && $_model['image_url']">				<li>
+					<input type="hidden" name="image_url" value="{$_model['image_url']}">
+					<input type="hidden" name="file_id" value="{$_model['file_id']}">
+					<div class="preview"><img src="/{$_model['image_url']}" width="100"></div>
+					<a class="delete" href="javascript:;" onclick="delete_attachment(this);"><i class="iconfont">&#x49;</i></a>
+				</li>
+			</if>
+		</ul>
+	</if>
+</div>

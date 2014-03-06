@@ -1,0 +1,26 @@
+<div class="dialog-hd">"{$widget_title}"子挂件管理</div>
+<div class="dialog-bd" style="height:330px; overflow-y:auto;">
+	<ul class="app-list">
+		<if condition="isset($list) && $list">
+			<volist name="list" id="rs">
+				<li class="app">
+					<div class="app-title">{$rs['title']}</div>
+					<div class="app-description">{$key}</div>
+					<div class="app-actions">
+						<a href="javascript:;" onclick="children_widget_config_dialog(this);" 
+							data-widget-name="{$widget_name}" 
+							data-name="{$key}">编辑</a>
+						<span class="divider">|</span>
+						<a href="javascript:;" onclick="if(confirm('确定删除该子挂件？')) delete_children_widget_config(this);"
+							data-widget-name="{$widget_name}" 
+							data-name="{$key}">删除</a>
+					</div>
+				</li>
+			</volist>
+		<else/>
+			<li class="app">
+				<div class="app-description">还没有添加任何子挂件</div>
+			</li>
+		</if>
+	</ul>
+</div>

@@ -1,0 +1,57 @@
+@charset "utf-8";
+html{overflow-y: scroll;
+overflow-x:visible;/*IE6,IE7下设置body{overflow:hidden;}失效Bug*/
+}
+
+body{background: #FFF;overflow:hidden;}
+
+.header-inner{width: 1000px;margin:0 auto;}
+.logo{margin: 10px 0;position:relative;height:55px;}
+.logo a{
+	position:absolute;
+	z-index:1;
+}
+
+.container{background:#5091D3;height: 420px;}
+.container-inner{width: 1000px;height: 420px;margin:0 auto;position: relative;}
+
+.cloud{
+	background: url("cloud.png") repeat scroll 0 0 transparent;
+width: 1000px;
+height: 420px;
+position: absolute;
+left:0;
+}
+.front{
+	margin-top:-60px;
+	position:absolute;
+}
+
+.mod-login{background: none repeat scroll 0 0 #6BA6DF;width: 330px;margin: 0;padding: 0;position: absolute;right: 50px;top: 40px;overflow: hidden;}
+.mod-login .mod-login-hd{color: #FFF;font-size: 14px;line-height: normal;overflow: hidden;padding: 10px 30px;}
+.mod-login .mod-login-bd{padding: 20px 20px;background:#FFF;	}
+.mod-login .form .form-item .form-label{font-size: 12px;width: 60px;}
+.mod-login .form .form-item .form-field {margin-left: 70px;}
+.mod-login .form .form-item .ipt-text{width: 180px;}
+
+.add-favorite {position: absolute;right: 33px;top: 32px;}
+
+/* 浏览器兼容性 */
+.compat{background: none repeat scroll 0 0 #F9F9F9;border-bottom: 1px solid #DDD;color: #444;padding: 20px;text-align: center;}
+.compat .browser{display: block;margin: 0 auto;}
+.compat .browser a{background-image: url("browser_icons.png");background-repeat: no-repeat;display: inline-block;font-size: 14px;padding-top: 52px;text-align: center;}
+.compat .browser a.w1{background-position:0 0;width: 45px;margin-right: 45px;}
+.compat .browser a.w2{background-position:-104px 0;width: 50px;margin-right: 40px;}
+.compat .browser a.w3{background-position:-203px 0;width: 70px;}
+
+.footer{color: #999;padding: 20px 0;text-align: center;}
+.footer a{color:#999;}
+
+
+/* 顶部 notify */
+#notify_wrapper{height: 0;margin: 0 auto;position: fixed;text-align: center;top: 28px;width: 100%;z-index:65535;}
+.notify{border-radius: 5px;padding: 2px 15px 3px;text-align: center;width: auto;display: inline-block;*display: inline;*zoom: 1;}
+.notify a{color:#FFFFFF;}
+.notify-success{background-color: #68AF02;color: #FFFFFF;}
+.notify-warn{background-color: #FC9608;color: #FFFFFF;}
+.notify-error{background-color: #FF0000;color: #FFFFFF;}

@@ -1,0 +1,75 @@
+<include file="Public:header" />
+	
+	<script type="text/javascript">
+		$(document).ready(function(){
+			// 表单验证
+			$("#form").validate({
+				submitHandler: function(form){
+					form.submit(); //使用form.submit()，而不是$(form).submit();
+				},
+				errorPlacement: function(error, element){
+					$(element).parent().append(error);
+				},
+	            errorElement: 'p',
+				ignore: "", // 验证隐藏域
+	            success: function(label){
+					label.remove();
+				},
+	            onkeyup: false,
+	        	rules: {
+					password:{required:true},
+					newpassword:{required:true},
+					repassword:{
+						required:true,
+						equalTo: "#newpassword"
+					},
+				},
+	            messages: {
+					password:{required: "请输入原密码"},
+					newpassword:{required: "请输入新密码"},
+					repassword:{
+						required:"请输入确认密码",
+						equalTo: "两次输入密码不一致"
+					}
+				}
+	    	});
+		});
+	</script>
+	
+	<div class="container">
+		
+		<include file="Public:aside" />
+		
+		<div class="main">
+			<div class="page-header">
+				<h5>修改密码</h5>
+			</div><!-- .page-header -->
+			<form action="" method="post" class="form" id="form">
+				
+				<div class="form-item">
+					<label class="form-label">原密码</label>
+					<div class="form-field">
+						<input type="password" class="ipt-text" name="password"/>
+		          	</div>
+		        </div>
+				<div class="form-item">
+					<label class="form-label">新密码</label>
+					<div class="form-field">
+						<input type="password" class="ipt-text" name="newpassword" id="newpassword"/>
+		          	</div>
+		        </div>
+				<div class="form-item">
+					<label class="form-label">确认密码</label>
+					<div class="form-field">
+						<input type="password" class="ipt-text" name="repassword"/>
+		          	</div>
+		        </div>			
+		        <div class="form-actions">
+		        	<button type="submit" class="btn">保存</button>
+		        </div>
+			</form>
+		</div><!-- .main -->
+		
+	</div><!-- .container -->
+
+<include file="Public:footer" />

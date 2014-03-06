@@ -1,0 +1,47 @@
+<if condition="isset($channel_tree) && $channel_tree">
+	<?php
+		if($rs['level'] != 1){ $count = count($tree); }
+	?>
+<volist name="tree" id="rs">
+	<tr>
+		<td><input type="text" class="ipt-text ipt-text-orderid" name="orderid[{$rs['id']}]" value="<if condition="$rs['orderid'] neq 0">{$rs['orderid']}</if>"></td>
+		<td>
+			<?php
+				if($rs['level'] != 1){
+					if($rs['level'] == 2){
+						echo str_repeat('&nbsp;&nbsp;', $rs['level']-1);
+					}
+					if($rs['level'] == 3){
+						echo str_repeat('&nbsp;&nbsp;&nbsp;', $rs['level']);
+					}
+					if($rs['level'] == 4){
+						echo str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;', $rs['level']);
+					}
+					//echo str_repeat('&nbsp;&nbsp;&nbsp;', $rs['level']-1);
+					
+					if( ($key+1) == $count ){
+						echo '└─&nbsp;';
+					}else{
+						echo '├─&nbsp;';
+					}
+				}
+			?>{$rs['title']}
+		</td>
+		<td>{$rs['name']}</td>
+			<php>
+				$color = '';
+				if($rs['type']=='2') $color = 'color:#0000FF;';
+				if($rs['type']=='3') $color = 'color:#DC0000;';
+			</php>
+		<td><span style="{$color}">{:to_status('channel', $rs['type'])}</span></td>
+		<td>{$rs['module_title']}</td>
+		<td>
+			<a href="{:U('Channel/edit', array('id'=>$rs['id']))}">修改</a>
+			<span class="divider">|</span>
+			<a href="javascript:;" onclick="if(confirm('确定删除该栏目？'))window.location.href='{:U('Channel/delete', array('id'=>$rs['id']))}'">删除</a>
+		</td>
+	</tr>
+	<notempty name="rs['_child']">
+		{:R('Channel/tree', array($rs['_child']))}
+	</notempty>
+</volist>

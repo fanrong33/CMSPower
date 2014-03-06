@@ -1,0 +1,121 @@
+<include file="Public:header" />
+	<style type="text/css">
+		/* iframe内透明遮层，防止被点击 */
+		.mask{background-color: #FFFFFF !important;opacity: 0 !important;}
+	</style>
+	<script type="text/javascript">
+		$(function(){
+			var paglet_collector_url 	= '{:U("Collector/paglet_collector")}';
+			var install_collector_url 	= '{:U("Collector/install_collector")}';
+			var collector_url 			= '{:U("Collector/index")}';
+			
+			$("#add_online_collector").dialog({
+				remote: {
+					url: paglet_collector_url,
+					success: function($object){
+						$object.find('button').click(function(){
+							var $this = $(this);
+							var params = {};
+							params['collector_id'] = $this.data('id');
+							$.ajax({
+								type	: "POST",
+								url		: install_collector_url,
+								dataType: "json",
+								data	: params,
+								success	: function(json){
+									if(json && json.status==1){
+										$object.find('.dialog-close').trigger('click');
+										alert(json.info);
+										
+										window.location.href=collector_url;
+									}else{
+										alert(json.info);
+									}
+								}
+							});
+						});
+					}
+				}
+			});
+		});
+	</script>
+	
+	<div class="container">
+		
+		<div class="page-header">
+			<h2>采集管理</h2>
+			<ul class="nav nav-pills">
+		    	<li class="active"><a href="{:U('Collector/index')}">采集管理</a></li>
+		    	<li><a href="{:U('Collector/add')}">添加采集点</a></li>
+				<li><a href="javascript:;" id="add_online_collector">在线采集节点</a></li>
+		    </ul>
+			<div style="position:absolute;right:0px;bottom:10px;">
+				<form action="" method="get" id="search_form">
+					<input type="hidden" name="search" value="1" />
+					<input type="text" class="ipt-text" name="keyword" value="<if condition="isset($_GET['keyword']) && $_GET['keyword']">{$keyword}</if>" placeholder="输入想搜索的采集点名称" style="border-radius: 2px 0px 0px 2px; padding: 4px 9px 5px; width: 160px;"><a class="btn btn-blue btn-small" style="border-radius: 0px 3px 3px 0px;" onclick="$('#search_form').submit();">搜索</a>
+				</form>
+			</div>
+		</div><!-- .page-header -->
+		
+		<form action="" method="post">
+			<table class="table" cellspacing="0" cellpadding="0">
+				<thead>
+					<tr>
+						<th style="width:20px;"><input type="checkbox" class="ipt-checkbox" onclick="check_all('.table tbody', this.checked);" /></th>
+						<th>名称</th>
+						<th style="width:150px;">最后采集时间</th>
+						<th style="width:190px;">内容操作</th>
+						<th style="width:150px;"></th>
+					</tr>
+				</thead>
+				<tbody>
+					
+					<if condition="$list">
+					<volist name="list" id="rs">
+						<tr>
+							<td><input type="checkbox" name="ids[]" value="{$rs['id']}" /></td>
+							<td>{:highlight($rs['title'])}</td>
+							<td><if condition="$rs['last_time']">{:date('Y-m-d H:i:s', $rs['last_time'])}<else/>还没有采集过</if></td>
+							<td><a href="{:U('Collector/col_url_list', array('id'=>$rs['id']))}">采集网址</a> › <a href="{:U('Collector/col_content', array('id'=>$rs['id']))}">采集内容</a> › <a href="{:U('Collector/publist', array('id'=>$rs['id']))}">内容发布</a></td>
+							<td>
+								<a href="{:U('Collector/public_test', array('id'=>$rs['id']))}" target="_blank">测试</a>
+								<span class="divider">|</span>
+								<a href="{:U('Collector/edit', array('id'=>$rs['id']))}">修改</a>
+								<span class="divider">|</span>
+								<a href="{:U('Collector/copy', array('id'=>$rs['id']))}">复制</a>
+								<!--
+								<span class="divider">|</span>
+								<a href="javascript:;" onclick="if(confirm('确定删除该采集器？'))window.location.href='{:U('Collector/delete', array('id'=>$rs['id']))}'">删除</a>
+								-->
+							</td>
+						</tr>
+					</volist>
+					<else/>
+						<tr>
+							<td colspan="5">
+								<if condition="!isset($_GET['search'])">您还没有添加任何采集点<else/>没有找到符合条件的结果</if>
+							</td>
+						</tr>
+					</if>
+				</tbody>
+				<tfoot>
+					<tr>
+						<td colspan="5">
+							<a href="javascript:;" onclick="check_all('.table tbody')">全选/取消</a>
+							<button type="submit" class="btn btn-small J_ajax_submit_btn" data-action="{:U(MODULE_NAME.'/delete')}">批量删除</button>
+						</td>
+					</tr>
+				</tfoot>
+			</table>
+			
+		</form>
+		
+		<div class="paging">
+			<div class="paging-inner">
+				{$page}
+			</div>
+		</div>
+		
+	</div><!-- .container -->
+
+<include file="Public:footer" />

@@ -1,0 +1,90 @@
+<include file="Public:header" />
+	<style type="text/css">
+		/* iframe内透明遮层，防止被点击 */
+		.mask{background-color: #FFFFFF !important;opacity: 0 !important;}
+	</style>
+	<script type="text/javascript">
+		$(function(){
+			
+			var paglet_widget_url 	= '{:U("Widget/paglet_widget")}';
+			var install_url 		= '{:U("Widget/install_widget")}';
+			var widget_url 			= '{:U("Widget/index")}';
+			
+			// 显示在线挂件对话框
+			$("#add_online_widget").dialog({
+				remote: {
+					url: paglet_widget_url,
+					success: function($object){
+						$object.find('button').click(function(){
+							var $this = $(this);
+							var params = {};
+							params['widget_id'] = $this.data('id');
+							
+							$.ajax({
+								type	: 'POST',
+								url		: install_url,
+								dataType: 'json',
+								data	: params,
+								success	: function(json){
+									if(json && json.status==1){
+										$object.find('.dialog-close').trigger('click');
+										alert(json.info);
+										window.location.href = widget_url;
+									}else{
+										alert(json.info);
+									}
+								}
+							});
+						});
+					}
+				}
+			});
+			
+		});
+	</script>
+	
+	<div class="container">
+		
+		<div class="page-header">
+			<h2>挂件管理</h2>
+			<ul class="nav nav-pills">
+		    	<li><a href="{:U('Widget/index')}">挂件管理</a></li>
+		    	<li <if condition="ACTION_NAME eq 'add'">class="active"</if>><a href="{:U('Widget/add')}">添加挂件</a></li>
+				<li><a href="javascript:;" id="add_online_widget">在线挂件</a></li>
+		    </ul>
+		</div><!-- .page-header -->
+		
+		<form action="" method="post" class="form">
+			<present name="_model">
+				<input type="hidden" name="id" value="{$_model['id']}">
+			</present>
+			
+			<div class="form-item">
+				<label class="form-label" for="title">名称</label>
+				<div class="form-field">
+					<input type="text" class="ipt-text" name="title" id="title" value="<present name="_model">{$_model["title"]}</present>" placeholder="例如：天气">
+	          	</div>
+	        </div>
+			<div class="form-item">
+				<label class="form-label" for="name">英文名</label>
+				<div class="form-field">
+					<input type="text" class="ipt-text" name="name" id="name" value="<present name="_model">{$_model["name"]}</present>" placeholder="例如：Weather">
+	          	</div>
+	        </div>
+			<div class="form-item">
+				<label class="form-label" for="description">描述</label>
+				<div class="form-field">
+					<textarea name="description" id="description" cols="30" style="width:400px;height:60px;" placeholder="例如：查看国内各地的天气"><present name="_model">{$_model["description"]}</present></textarea>
+					<p class="form-explain">挂件 需继承自 ParentWidget，所属配置$_config</p>
+	          	</div>
+	        </div>
+			
+	        <div class="form-actions">
+	        	<button type="submit" class="btn">保存</button>
+	        </div>
+		</form>
+		
+		
+	</div><!-- .container -->
+
+<include file="Public:footer" />
