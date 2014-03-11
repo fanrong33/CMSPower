@@ -110,8 +110,8 @@ class AppAction extends AdminCommonAction{
 			}
 			
 			$nav = D("Nav")->find($id);
-			if($nav['type'] == 'header' && $nav['title'] == '内容 CONTENT'){
-				$this->ajaxReturn(null, '内容 CONTENT 不允许删除', 0);
+			if($nav['type'] == 'header' && $nav['title'] == '内容管理'){
+				$this->ajaxReturn(null, '内容管理 不允许删除', 0);
 			}
 			
 			

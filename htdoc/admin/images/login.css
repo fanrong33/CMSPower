@@ -27,7 +27,7 @@ left:0;
 	position:absolute;
 }
 
-.mod-login{background: none repeat scroll 0 0 #6BA6DF;width: 330px;margin: 0;padding: 0;position: absolute;right: 50px;top: 40px;overflow: hidden;}
+.mod-login{background: none repeat scroll 0 0 #6BA6DF;width: 330px;margin: 0;padding: 0;position: absolute;right: 50px;top: 40px;overflow: hidden; box-shadow: 2px 2px 8px rgba(0,0,0,0.1);}
 .mod-login .mod-login-hd{color: #FFF;font-size: 14px;line-height: normal;overflow: hidden;padding: 10px 30px;}
 .mod-login .mod-login-bd{padding: 20px 20px;background:#FFF;	}
 .mod-login .form .form-item .form-label{font-size: 12px;width: 60px;}

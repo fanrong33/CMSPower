@@ -36,7 +36,7 @@ class AdminCommonAction extends Action{
 		}
 		
 		$admin	= cache_get('Admin', $this->_admin_id, 60*10);
-		$role 	= cache_get('Role', $admin['role_id'], 60*10);
+		$role 	= cache_get('Role', $admin['role_id'], 60);
 		$admin['role_name'] = $role['name'];
 		$this->_admin = $admin;
 		
@@ -65,7 +65,6 @@ class AdminCommonAction extends Action{
 		}
 		$nav_tree = $tmp_nav_tree;
 		unset($tmp_nav_tree);
-
 		
 		// 根据当前的navbar得到当前的nav_child
 		$nav_child = array();

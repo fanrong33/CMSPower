@@ -5,7 +5,7 @@
  +----------------------------------------------------------------------------
  * @category 后台应用
  * @author fanrong33 <fanrong33#qq.com>
- * @version v1.1.1 Build 20140306
+ * @version v1.1.2 Build 20140307
  +------------------------------------------------------------------------------
  */
 class ModuleAction extends AdminCommonAction{
@@ -260,16 +260,17 @@ class ModuleAction extends AdminCommonAction{
 						$data = array();
 						$data['description'] 	= $module['description'];
 						$data['structure'] 		= $module['structure'];
+						$data['code'] 			= $module['code'];
 						$data['version'] 		= $module['version'];
 						$data['update_time'] 	= $module['update_time'];
 						D("Module")->where(array('id'=>$installed_module['id']))->save($data);
 						
-						$nav = array();
-						$nav['update'] 	= true;
-						$result['name'] = $module['name'];
-						$result['title']= $module['title'];
-						$nav['sql']		= $module['sql'];
-						$this->ajaxReturn($nav, '升级成功', 1);
+						$result = array();
+						$result['update'] 	= true;
+						$result['name'] 	= $module['name'];
+						$result['title']	= $module['title'];
+						$result['sql']		= $module['sql'];
+						$this->ajaxReturn($result, '升级成功', 1);
 					}
 				}
 			}else{

@@ -3,8 +3,8 @@
  * js公共函数库
  +----------------------------------------------------------------------------
  * @category 后台应用
- * @author fanrong33
- * @version v1.1.0 Build 20140224
+ * @author fanrong33 <fanrong33#qq.com>
+ * @version v1.1.1 Build 20140307
  +------------------------------------------------------------------------------
  */
 $(document).ready(function(){
@@ -135,6 +135,31 @@ $(document).ready(function(){
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 // 固定采用一种方式，否则会造成混乱，采用onclick方式产生交互
+
+/**
+ * 过滤条件
+ * @param {Object} object
+ * @example onchange="filter_condition(this)"
+ */
+function filter_condition(object){
+	var $this = $(object);
+	
+	var params = new Array();
+	for(var i=1; i<arguments.length; i=i+2){
+		params.push(arguments[i] + '=' + arguments[i+1]);
+	}
+	
+	// 默认获取本身的条件
+	var key = $this.attr('name');
+	var id = $this.val();
+	params.push(key + '=' + id);
+	var search = "?" + params.join('&');
+	
+	//window.location.protocol + window.location.host + window.location.pathname
+	window.location.href = window.location.pathname + search; // 必须是pathinfo模式
+	//window.location.href=PHP_FILE+"?m=url&a=index&is_show="+is_show+"&ad_position_id="+id;  X(out)
+}
+
 
 /**
  * 获取图片尺寸

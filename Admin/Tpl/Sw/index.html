@@ -1,38 +1,12 @@
 <include file="Public:header" />
 
-	<script type="text/javascript">
-		/**
-		 * 过滤条件
-		 * @param {Object} object
-		 * @example onchange="filter_condition(this)"
-		 */
-		function filter_condition(object){
-			var $this = $(object);
-			
-			var params = new Array();
-			for(var i=1; i<arguments.length; i=i+2){
-				params.push(arguments[i] + '=' + arguments[i+1]);
-			}
-			
-			// 默认获取本身的条件
-			var key = $this.attr('name');
-			var id = $this.val();
-			params.push(key + '=' + id);
-			var search = "?" + params.join('&');
-			
-			//window.location.protocol + window.location.host + window.location.pathname
-			window.location.href = window.location.pathname + search; // 必须是pathinfo模式
-			//window.location.href=PHP_FILE+"?m=url&a=index&is_show="+is_show+"&ad_position_id="+id;  X(out)
-		}
-	</script>
-	
 	<div class="container">
 		<include file="Public:aside" />
 		
 		<div class="main">
 			<a href="{:U('Sw/add')}" class="btn btn-orange btn-add">添加广告</a>
 			<ul class="nav nav-tabs">
-				<li><a href="{:U('Sw/index')}">广告管理</a></li>
+				<li class="active"><a href="{:U('Sw/index')}">广告管理</a></li>
 			</ul>
 			<div class="search-box mb10">
 				<div class="search-box-inner">

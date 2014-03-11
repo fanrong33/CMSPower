@@ -5,7 +5,7 @@
 if (!defined('THINK_PATH')) exit();
 return array(
 
-    'CMSPOWER_VERSION'		=> 'v0.3.4 Release 20140123',
+    'CMSPOWER_VERSION'		=> 'v0.5.0 Release 20140307',
     
 	/* 数据库设置 */
     'DB_TYPE'               => 'mysql',     	// 数据库类型

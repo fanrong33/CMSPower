@@ -5,13 +5,14 @@
  +----------------------------------------------------------------------------
  * @category 后台应用
  * @author fanrong33 <fanrong33#qq.com>
- * @version v1.0.5 Build 20140305
+ * @version v1.0.6 Build 20140307
  +------------------------------------------------------------------------------
  */
 class AboutUsAction extends AdminCommonAction{
 
 	/**
 	 * 关于我们
+	 * fanrong33 <fanrong33#qq.com>
 	 */
 	public function index(){
 		

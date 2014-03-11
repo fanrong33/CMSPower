@@ -3,8 +3,8 @@
  +----------------------------------------------------------------------------
  * 基于角色的数据库方式验证 类
  +----------------------------------------------------------------------------
- * @author fanrong33
- * @version v2.2.1 Build 20130404
+ * @author fanrong33 <fanrong33#qq.com>
+ * @version v2.2.2 Build 20140307
  +------------------------------------------------------------------------------
  */
 class RBAC{
@@ -149,10 +149,10 @@ class RBAC{
 	 * 根据拥有的后台应用资源权限，反向组装得到nav tree
 	 */
 	public static function getRoleNavTree($role_id){
-		
-		$cache_key = generate_cache_key('role_nav_tree', $role_id);
-		$nav_tree = S($cache_key);
-		if(!$nav_tree){
+//		TODO 若对整个结果缓存，（包括active=true），就会出现错误，当点击不同的navbar，active还是旧的，导致权限出错
+//		$cache_key = generate_cache_key('role_nav_tree', $role_id);
+//		$nav_tree = S($cache_key);
+//		if(!$nav_tree){
 			// 1. 获取后台管理员权限角色所拥有的权限（不存储pid，因为那些都是灵活可配置的，会过时）
 			$role = D("Role")->find($role_id);
 			$has_resource_array = unserialize($role['resources']);
@@ -210,7 +210,7 @@ class RBAC{
 							continue;
 						}
 						
-						if($nav['type'] == 'header' && $nav['title'] == '内容 CONTENT' && $has_channel_right){
+						if($nav['type'] == 'header' && $nav['title'] == '内容管理' && $has_channel_right){
 							$tmp[$navbar['id']] = $navbar; // 以id为索引，保证只添加一次
 						}
 					}
@@ -230,7 +230,7 @@ class RBAC{
 					foreach($navbar['_child'] as $nav){
 						
 						// 如果存在栏目资源权限，则显示内容CONTENT???
-						if($nav['title'] == '内容 CONTENT' && $has_channel_right){
+						if($nav['title'] == '内容管理' && $has_channel_right){
 							$nav_child_tmp[] = $nav;
 							$last_nav_type = 'channel_tree';
 						}
@@ -265,8 +265,8 @@ class RBAC{
 			$nav_tree = $tmp;
 			unset($tmp);
 			
-			S($cache_key, $nav_tree, 60*10);
-		}
+//			S($cache_key, $nav_tree, 60*10);
+//		}
 		
 		return $nav_tree;
 	}

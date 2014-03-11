@@ -4,14 +4,15 @@
  * 角色管理 控制器类
  +----------------------------------------------------------------------------
  * @category 后台应用
- * @author fanrong33
- * @version v1.2.4 Build 20140224
+ * @author fanrong33 <fanrong33#qq.com>
+ * @version v1.2.5 Build 20140307
  +------------------------------------------------------------------------------
  */
 class RoleAction extends AdminCommonAction{
 	
 	/**
 	 * 角色管理
+	 * @author fanrong33 <fanrong33#qq.com>
 	 */
 	public function index(){
 		$name = $this->getActionName();
@@ -23,9 +24,9 @@ class RoleAction extends AdminCommonAction{
 		$this->display();
 	}
 	
-	
 	/**
 	 * 保存排序
+	 * @author fanrong33 <fanrong33#qq.com>
 	 */
 	public function sort(){
 		$name = $this->getActionName();
@@ -40,9 +41,9 @@ class RoleAction extends AdminCommonAction{
 		}
 	}
 	
-	
 	/**
 	 * 添加角色
+	 * @author fanrong33 <fanrong33#qq.com>
 	 */
 	public function add(){
 		$name = $this->getActionName();
@@ -104,7 +105,7 @@ class RoleAction extends AdminCommonAction{
 select a.*,b.name as module_name,b.title as module_title 
 from $channel_table a left join $module_table b 
 on a.module_id=b.id 
-order by orderid asc 
+order by orderid asc ,id desc
 EOF;
 		
 		$list = $model->query($sql);
@@ -116,9 +117,9 @@ EOF;
 		$this->display('edit');
 	}
 	
-	
 	/**
 	 * 修改角色
+	 * @author fanrong33 <fanrong33#qq.com>
 	 */
 	public function edit(){
 		$name = $this->getActionName();
@@ -195,9 +196,9 @@ EOF;
 		$this->display();
 	}
 	
-	
 	/**
 	 * 删除角色
+	 * @author fanrong33 <fanrong33#qq.com>
 	 */
 	public function delete(){
 		$name = $this->getActionName();
@@ -205,7 +206,7 @@ EOF;
 		
 		$id = intval($_GET['id']);
 		if(!$id){
-			$this->error('id参数为空');
+			$this->error('参数id不能为空');
 		}
 		$role = $model->find($id);
 		if($role['type'] != '3'){
@@ -226,4 +227,9 @@ EOF;
 	
 }
 
+/**
+ * TODO
+ * 1、修改角色页面，栏目改为递归展示
+ */
+ 
 ?>

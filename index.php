@@ -10,7 +10,6 @@ define('APP_PATH'	, 'Home/');
 define('ROOT_PATH'	, rtrim(dirname(__FILE__), '/\\') . DIRECTORY_SEPARATOR);
 define('THINK_PATH'	, 'ThinkPHP/');
 
-
 // 定义资源路径
 define('HTDOC_PATH'	, '/htdoc/');
 define('CSS_PATH'	, '/htdoc/home/images/');

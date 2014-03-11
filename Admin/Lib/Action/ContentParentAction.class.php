@@ -6,7 +6,7 @@
  +----------------------------------------------------------------------------
  * @category 内容管理模块父类
  * @author fanrong33 <fanrong33#qq.com>
- * @version v1.2.0 Build 20140306
+ * @version v1.2.1 Build 20140307
  +------------------------------------------------------------------------------
  */
 class ContentParentAction extends AdminCommonAction {
@@ -20,7 +20,7 @@ class ContentParentAction extends AdminCommonAction {
 	public function _initialize(){
 		parent::_initialize();
 		
-	 	$ch = trim($_GET['ch']);
+	 	$ch = trim($this->_get('ch'));
 	 	if(!$ch){
 	 		$this->error('栏目参数未设置');	
 	 	}
@@ -29,13 +29,13 @@ class ContentParentAction extends AdminCommonAction {
 	 	import('@.ORG.Util.RBAC');
 	 	$admin = D("Admin")->find($this->_admin_id);
 	 	
+	 	// 获取栏目，设为ContentParent变量
+	 	$this->_channel = D("Channel")->where(array('name'=>$ch))->find();
+	 	
 		if(!RBAC::accessRightContent($admin['role_id'], $this->_channel['id'])){
 			$this->error('没有权限，拒绝访问');
 		}
 		
-	 	// 获取栏目，设为ContentParent变量
-	 	$this->_channel = D("Channel")->where(array('name'=>$ch))->find();
-	 	
 	 	$this->_channel_path = "[ {$this->_channel['title']} ]"; // [ 关于 > 公司介绍 ]
 	 	$pid = $this->_channel['pid'];
 	 	if($pid != 0){
