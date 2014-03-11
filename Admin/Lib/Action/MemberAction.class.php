@@ -5,7 +5,7 @@
  +----------------------------------------------------------------------------
  * @category 后台应用
  * @author fanrong33
- * @version v1.0.5 Build 20140304
+ * @version v1.0.6 Build 20140311
  +------------------------------------------------------------------------------
  */
 class MemberAction extends AdminCommonAction{
@@ -16,7 +16,8 @@ class MemberAction extends AdminCommonAction{
 	public function index(){
 		$keyword = $_GET['keyword'] ? htmlspecialchars(trim($_GET['keyword'])) : '';
 		
-		$model = D("Member");
+		$name = $this->getActionName();
+		$model = D($name);
 		
 		$map = array();
 		if($keyword != ''){
@@ -32,23 +33,6 @@ class MemberAction extends AdminCommonAction{
 		$list = $this->_list($model, $map, 'id', 'desc');
 		
 		$this->display();
-	}
-	
-	/**
-	 * 保存排序
-	 */
-	public function sort(){
-		$name = $this->getActionName();
-		$model = D($name);
-		
-		if($this->isPost()){
-			
-			if($_POST['orderid']){
-				// 保存排序
-				$this->_sort($model, $_POST['orderid']);
-			}
-			$this->ajaxReturn('', '保存排序成功', 1);
-		}
 	}
 	
 	/**
@@ -168,8 +152,6 @@ class MemberAction extends AdminCommonAction{
 		import('@.ORG.Util.ExcelUtil');
 		ExcelUtil::export($header_map, $member_list, 'member用户');
 	}
-	
-	
 	
 }
 ?>

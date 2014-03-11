@@ -17,7 +17,7 @@ return array(
 	'DB_PREFIX'             => 't_',    		// 数据库表前缀
 	'DB_SUFFIX'             => '',          	// 数据库表后缀
 	
-	'AUTH_CODE'				=> 'KsdCDuRE',		// 缓存前缀，不使用域名，否则容易被破解
+	'AUTH_CODE'				=> 'KsdCDuGG',		// 缓存前缀，不使用域名，否则容易被破解
 	
 	/* 数据缓存设置 */
     'DATA_CACHE_TIME'       => 0,      		// 数据缓存有效期 0表示永久缓存
