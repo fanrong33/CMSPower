@@ -1,1 +1,6 @@
 .project
+*.log
+
+#过滤文件夹
+Admin/Runtime
+Home/Runtime
