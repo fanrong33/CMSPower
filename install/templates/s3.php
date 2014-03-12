@@ -303,7 +303,7 @@ $(function(){
 			var dbname = $("#dbname").val();
 			// 存在数据库，则进行提示，防止误操作！
 			if(g_exist_db){
-				if(confirm('警告： 数据库“'+dbname+'”已存在，确定删除数据库并重建？')){
+				if(confirm('警告： 数据库“'+dbname+'”已存在，继续将删除相同表并重建？')){
 					form.submit();
 				}
 			}else{

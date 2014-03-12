@@ -145,6 +145,7 @@ switch ($step) {
 
     case '4': // 安装详细过程
         if (intval($_GET['install'])) {
+        	
             $n = intval($_GET['n']);
             $arr = array();
             
