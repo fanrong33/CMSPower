@@ -63,6 +63,7 @@ switch ($step) {
         $os 				= PHP_OS;
         
         $gd_info 			= function_exists('gd_info') ? gd_info() : array();
+        $curl_version		= function_exists('curl_version') ? curl_version() : array();
         $server 			= $_SERVER["SERVER_SOFTWARE"];
         $host 				= (empty($_SERVER["SERVER_ADDR"]) ? $_SERVER["SERVER_HOST"] : $_SERVER["SERVER_ADDR"]);
         $name 				= $_SERVER["SERVER_NAME"];
@@ -77,6 +78,20 @@ switch ($step) {
             $error++;
         } else {
             $gd = '<span class="correct_span">&radic;</span> ' . $gd_info['GD Version'];
+        }
+        //curl
+        if(empty($curl_version['version'])){
+        	$curl = '<span class="correct_span error_span">&radic;</span> 未开启';
+        	$error++;
+        }else{
+        	$curl = '<span class="correct_span">&radic;</span> ' . $curl_version['version'];
+        }
+        //memcache
+        if ( !extension_loaded('memcache') ) {
+            $memcache = '<span class="correct_span error_span">&radic;</span> 未开启';
+        	$error++;
+        }else{
+        	$memcache = '<span class="correct_span">&radic;</span> 已开启';
         }
         if (function_exists('mysql_connect')) {
             $mysql = '<span class="correct_span">&radic;</span> 已安装';
@@ -101,7 +116,6 @@ switch ($step) {
 //			'/',
             'Admin',
             'Home',
-            'install',
             'uploads'
         );
         include_once ("./templates/s2.php");

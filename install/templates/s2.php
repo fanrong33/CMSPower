@@ -31,19 +31,31 @@
           			<td>不限制</td>
         		</tr>
         		<tr>
-          			<td>PHP版本</td>
+          			<td>PHP 版本</td>
           			<td>>5.3.x</td>
           			<td><span class="correct_span">&radic;</span> <?php echo $php_version; ?></td>
           			<td>5.2.0</td>
         		</tr>
         		<tr>
-          			<td>GD版本</td>
+          			<td>GD 版本</td>
           			<td>开启</td>
           			<td><?php echo $gd; ?></td>
           			<td>开启</td>
         		</tr>
         		<tr>
-          			<td>Mysql版本（client）</td>
+          			<td>curl 版本</td>
+          			<td>开启</td>
+          			<td><?php echo $curl; ?></td>
+          			<td>开启</td>
+        		</tr>
+        		<tr>
+          			<td>memcache 版本</td>
+          			<td>开启</td>
+          			<td><?php echo $memcache; ?></td>
+          			<td>开启</td>
+        		</tr>
+        		<tr>
+          			<td>Mysql 版本（client）</td>
           			<td>>5.x.x</td>
           			<td><?php echo $mysql; ?></td>
           			<td>4.2</td>
