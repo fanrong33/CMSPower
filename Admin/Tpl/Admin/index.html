@@ -43,19 +43,7 @@
 								<td><if condition="$rs['last_login_time']">{:date('Y-m-d H:i', $rs['last_login_time'])}<else/>该用户还没登录过</if></td>
 								<td>
 									<if condition="$rs['id'] neq 1">
-										<php>
-											$new_value = $rs['is_lock'] ? 0 : 1;
-										</php>
-										<a href="javascript:;" onclick="toggle_field(this);"
-											data-table="admin"
-											data-field="is_lock"
-											data-id="{$rs['id']}"
-											data-value="{$new_value}"
-											data-open-iconfont="&#x42;"
-											data-close-iconfont="&#x4b;"
-											>
-											<eq name="rs.is_lock" value="1"><i class="iconfont">&#x42;</i><else/><i class="iconfont">&#x4b;</i></eq>
-										</a>
+										{:html_toggle_field(MODULE_NAME, 'enabled', $rs['id'], $rs['enabled'])}
 									</if>
 								</td>
 								<td>
@@ -77,7 +65,7 @@
 					</tbody>
 					<tfoot>
 						<tr>
-							<td colspan="6">
+							<td colspan="7">
 								<a href="javascript:;" onclick="check_all('.table tbody')">全选/取消</a>
 								<button type="submit" class="btn btn-small J_ajax_submit_btn" data-action="{:U(MODULE_NAME.'/delete')}" data-check="1">批量删除</button>
 							</td>
@@ -86,7 +74,7 @@
 				</table>
 			</form>
 			
-			<div class="paging" style="margin-top:0;">
+			<div class="paging">
 				<div class="paging-inner">
 					{$page}
 				</div>

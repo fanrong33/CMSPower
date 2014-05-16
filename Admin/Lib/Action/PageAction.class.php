@@ -5,7 +5,7 @@
  +----------------------------------------------------------------------------
  * @category 内容管理模块(CMSPower内置)
  * @author fanrong33 <fanrong33#qq.com>
- * @version v1.0.2 Build 20140306
+ * @version v1.0.3 Build 20140516
  +----------------------------------------------------------------------------
  */
 class PageAction extends ContentParentAction {
