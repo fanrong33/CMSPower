@@ -4,7 +4,7 @@
  * 栏目管理 控制器类
  +----------------------------------------------------------------------------
  * @author fanrong33 <fanrong33#qq.com>
- * @version v1.3.2 Build 20140306
+ * @version v1.3.3 Build 20140514
  +------------------------------------------------------------------------------
  */
 class ChannelAction extends AdminCommonAction{
@@ -155,7 +155,11 @@ EOF;
 		
 		
 		// 获取关联模型列表
-		$module_list = D("Module")->order('orderid asc, id desc')->select();
+		$cond = array();
+		if($type == 1){ // 栏目，过滤掉单页模型
+			$cond['name'] = array('neq', 'Page');
+		}
+		$module_list = D("Module")->where($cond)->order('orderid asc, id desc')->select();
 		
 		// 添加单网页时，获取Page模型对应模板文件
 		if($type==2){
@@ -251,8 +255,12 @@ EOF;
 		$category_str = "<option value=\$id \$selected>\$spacer \$title</option>";
 
 		
-		// 获取模型列表
-		$module_list = D("Module")->order('orderid asc, id desc')->select();
+		// 获取关联模型列表
+		$cond = array();
+		if($channel['type'] == 1){ // 栏目，过滤掉单页模型
+			$cond['name'] = array('neq', 'Page');
+		}
+		$module_list = D("Module")->where($cond)->order('orderid asc, id desc')->select();
 		
 		// 获取模型对应模板文件
 		if($channel['type'] == 1 || $channel['type'] == 2){

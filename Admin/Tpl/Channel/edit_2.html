@@ -55,8 +55,8 @@
 						<div class="form-item">
 							<label class="form-label">是否在导航显示</label>
 							<div class="form-field pt5">
-								<input type="radio" name="is_nav" class="ipt-radio" value="1" id="is_nav_1" checked="checked"><label for="is_nav_1" style="margin-right:10px;"> 是</label>
-								<input type="radio" name="is_nav" class="ipt-radio" value="0" id="is_nav_0" <if condition="isset($_model) && $_model['is_nav'] eq '0'">checked="checked"</if>><label for="is_nav_0"> 否</label>
+								<input type="radio" name="is_nav" class="ipt-radio" value="1" id="is_nav_1" <if condition="$_model['is_nav'] eq '1'">checked="checked"</if>><label for="is_nav_1" style="margin-right:10px;"> 是</label>
+								<input type="radio" name="is_nav" class="ipt-radio" value="0" id="is_nav_0" <if condition="!isset($_model) || $_model['is_nav'] eq '0'">checked="checked"</if>><label for="is_nav_0"> 否</label>
 				          	</div>
 				        </div>
 					</div><!-- .基本选项 -->

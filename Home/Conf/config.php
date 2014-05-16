@@ -5,6 +5,10 @@
 if (!defined('THINK_PATH')) exit();
 return array(
 
+	'APP_AUTOLOAD_PATH'		=> '@.Widget',
+	
+	'AUTH_CODE'				=> 'KsdCDuGG',		// 缓存前缀，不使用域名，否则容易被破解
+	
 	/* 数据库设置 */
     'DB_TYPE'               => 'mysql',     	// 数据库类型
 	'DB_HOST'               => 'localhost', 	// 服务器地址

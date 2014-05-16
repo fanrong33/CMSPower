@@ -297,6 +297,35 @@ function list_to_tree($list, $pk='id',$pid = 'pid',$child = '_child',$root=0){
     return $tree;
 }
 
+/**
+ +----------------------------------------------------------
+ * 把返回的数据集转换成Tree,并将$field作为key
+ +----------------------------------------------------------
+ */
+function list_to_tree_key($list , $field = 'id', $pk = 'id' , $pid = 'pid', $child = '_child', $root = 0) {
+    // 创建Tree
+    $tree = array ();
+    if (is_array ( $list )) {
+        // 创建基于主键的数组引用
+        $refer = array ();
+        foreach ( $list as $key => $data ) {
+            $refer [$data [$pk ]] = & $list [$key];
+        }
+        foreach ( $list as $key => $data ) {
+            // 判断是否存在parent
+            $parentId = $data [$pid ];
+            if ($root == $parentId) {
+                $tree [$data [$field ]] = & $list [$key];
+            } else {
+                if (isset ( $refer [$parentId] )) {
+                    $parent = & $refer [$parentId ];
+                    $parent [$child ] [$data [$field]] = & $list [$key ];
+                }
+            }
+        }
+    }
+    return $tree ;
+}
 
 /**
  +----------------------------------------------------------
@@ -389,7 +418,42 @@ function dir_is_empty($dir){
  * UI控件相关函数
  +------------------------------------------------------------------------------
  */
- 
+
+/**
+ * 开关启用状态控件
+ * @param string $model_name 	 模型名称
+ * @param string $field		 	 要开关的字段
+ * @param integer $id		 	 对象id
+ * @param integer $value	 	 当前值
+ * @param string $open_iconfont  启用图标字体
+ * @param string $close_iconfont 禁用图标字体
+ * @author fanrong33
+ * @version v1.0.0 Build 20140401
+ */
+function html_toggle_field($model_name, $field, $id, $value, $open_iconfont='&#x4b;', $close_iconfont='&#x42;'){
+	ob_start();
+	$html = '';
+	
+	$html = ''.
+		'<a href="javascript:;" onclick="toggle_field(this);"'.
+		'	data-model="'.$model_name.'"'.
+		'	data-field="'.$field.'"'.
+		'	data-id="'.$id.'"'.
+		'	data-value="'.$value.'"'.
+		'	data-open-iconfont="'.$open_iconfont.'"'.
+		'	data-close-iconfont="'.$close_iconfont.'"'.
+		'	>';
+	if($value == 1){
+		$html .= '<i class="iconfont">'.$open_iconfont.'</i>';
+	}else{
+		$html .= '<i class="iconfont">'.$close_iconfont.'</i>';
+	}
+	
+	$html .= '</a>';
+	
+	echo $html;
+	return ob_get_clean();
+}
 
 /**
  * 生成排序链接，暂不支持搜索条件
@@ -488,7 +552,7 @@ function html_uploadify($field, $dir='sw', $multi=false, $mode='preview', $exts=
 						'	<input type="hidden" name="'.$field.'[]" value="'.$file['save_path'].$file['save_name'].'">'.
 						'	<input type="hidden" name="'.$field.'_file_id[]" value="'.$file['file_id'].'">'.
 						'	<i class="icon-file-'.get_file($file['file_id'], 'extension').' mr5"></i>'.
-						'	<span>'.get_file($file['file_id'], 'name').'</span>'.
+						'	<span><a href="/'.$file['save_path'].$file['save_name'].'" style="text-decoration: none;">'.get_file($file['file_id'], 'name').'</a></span>'.
 						'	<span class="txt-gray">('.byte_format(get_file($file['file_id'], 'size')).')</span>'.
 						'	<a class="delete" href="javascript:;" onclick="delete_attachment(this);"><i class="iconfont">&#x49;</i></a>'.
 						'</li>';
@@ -504,7 +568,7 @@ function html_uploadify($field, $dir='sw', $multi=false, $mode='preview', $exts=
 					'	<input type="hidden" name="'.$field.'" value="'.$_model[$field].'">'.
 					'	<input type="hidden" name="'.$field.'_file_id" value="'.$_model[$field.'_file_id'].'">'.
 					'	<i class="icon-file-'.get_file($_model[$field.'_file_id'], 'extension').' mr5"></i>'.
-					'	<span>'.get_file($_model[$field.'_file_id'], 'name').'</span>'.
+					'	<span><a href="/'.$_model[$field].'" style="text-decoration: none;">'.get_file($_model[$field.'_file_id'], 'name').'</a></span>'.
 					'	<span class="txt-gray">('.byte_format(get_file($_model[$field.'_file_id'], 'size')).')</span>'.
 					'	<a class="delete" href="javascript:;" onclick="delete_attachment(this);"><i class="iconfont">&#x49;</i></a>'.
 					'</li>';

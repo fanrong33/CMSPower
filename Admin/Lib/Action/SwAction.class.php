@@ -6,7 +6,7 @@
  +----------------------------------------------------------------------------
  * @category 后台应用
  * @author fanrong33
- * @version v1.5.2 Build 20140307
+ * @version v1.5.4 Build 20140514
  +------------------------------------------------------------------------------
  */
 class SwAction extends AdminCommonAction{
@@ -16,20 +16,20 @@ class SwAction extends AdminCommonAction{
 	 */
 	public function index(){
 		$ad_position_id = $_GET['ad_position_id'] ? $this->_get('ad_position_id') : '';
-		$is_show  		= isset($_GET['is_show']) ? $this->_get('is_show') : '1';
+		$enabled  		= isset($_GET['enabled']) ? $this->_get('enabled') : 1;
 		$is_expire		= isset($_GET['is_expire']) ? $this->_get('is_expire') : '';
 		$keyword  		= $_GET['keyword'] ? trim($this->_get('keyword')) : '';
 		
 		$model = D("AdView");
 		
 		$cond = array();
-		$cond['is_show'] 	= $is_show;
+		$cond['enabled'] 	= $enabled;
 		$cond['start_date'] = array('elt', date('Y-m-d'));
 		$cond['_string'] 	= "end_date is NULL OR end_date >= '".date('Y-m-d')."'";
 		// 如果为过期的，则不考虑显示隐藏
 		if($is_expire == 1){
-			$is_show = '';
-			unset($cond['is_show']);
+			$enabled = '';
+			unset($cond['enabled']);
 			unset($cond['start_date']);
 			unset($cond['_string']);
 			$cond['end_date'] = array('lt', date('Y-m-d'));
@@ -54,7 +54,7 @@ class SwAction extends AdminCommonAction{
 		$ad_position_list = D("AdPosition")->field('id,title')->order('orderid asc')->select();
 		
 		$this->assign('ad_position_id'	, $ad_position_id);
-		$this->assign('is_show'			, $is_show);
+		$this->assign('enabled'			, $enabled);
 		$this->assign('is_expire'		, $is_expire);
 		$this->assign('keyword'			, $keyword);
 		$this->assign('ad_position_list', $ad_position_list);
@@ -68,15 +68,15 @@ class SwAction extends AdminCommonAction{
 		$model = D("Ad");
 		
 		$cond = array();
-		$cond['is_show'] = '1';
+		$cond['enabled'] 	= 1;
 		$cond['start_date'] = array('elt', date('Y-m-d'));
-		$cond['_string'] = "end_date is NULL OR end_date >= '".date('Y-m-d')."'";
+		$cond['_string'] 	= "end_date is NULL OR end_date >= '".date('Y-m-d')."'";
 		$show_count = $model->where($cond)->count();
 		
-		$cond['is_show'] = '0';
+		$cond['enabled'] = 0;
 		$hide_count = $model->where($cond)->count();
 		
-		unset($cond['is_show']);
+		unset($cond['enabled']);
 		unset($cond['start_date']);
 		unset($cond['_string']);
 		$cond['end_date'] = array('lt', date('Y-m-d'));
@@ -126,14 +126,14 @@ class SwAction extends AdminCommonAction{
 			if(false === $data = $model->validate($_validate)->create()){
 				$this->error($model->getError());
 			}
-			if($data['url'] && strpos($data['url'], 'http://') === false){
+			$data['url'] = trim($data['url']);
+			if($data['url'] && $data['url'] != '#' && strpos($data['url'], 'http://') === false){
 				$data['url'] = 'http://'.$data['url'];
-			}
+			} 
 			$data['orderid'] = 0;
 			$data['create_time'] = time();
 			$insert_id = $model->add($data);
 			if($insert_id > 0){
-				//"保存并继续添加"
 				if($_POST['submit_continue']){
 					$this->success('添加成功');
 				}else{
@@ -181,7 +181,8 @@ class SwAction extends AdminCommonAction{
 			if(false === $data = $model->validate($_validate)->create()){
 				$this->error($model->getError());
 			}
-			if($data['url'] && strpos($data['url'], 'http://') === false){
+			$data['url'] = trim($data['url']);
+			if($data['url'] && $data['url'] != '#' && strpos($data['url'], 'http://') === false){
 				$data['url'] = 'http://'.$data['url'];
 			}
 			
@@ -243,12 +244,12 @@ class SwAction extends AdminCommonAction{
 	 * 上架下架
 	 */
 	public function toggle(){
-		$is_show = $this->_get('is_show');
+		$enabled = $this->_get('enabled');
 		
 		if($this->isPost()){
 			// 批量下架上架
 			if($_POST['ids']){
-				$this->_toggle_field(D('Ad'), $_POST['ids'], $is_show, 'is_show');
+				$this->_toggle_field(D('Ad'), $_POST['ids'], $enabled, 'enabled');
 			}
 			$this->ajaxReturn('', '更新成功', 1);
 		}

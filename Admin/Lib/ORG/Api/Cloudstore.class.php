@@ -69,7 +69,7 @@ class cloudstorePHP
 			'oauth_consumer_key'=>$this->appid,
 			'format'=>'json'
 		);
-		$url='http://www.cmspower.cn/app.php/cloud_store/get_app_list';
+		$url='http://cmspower2.com/app.php/cloud_store/get_app_list';
 		return $this->api($url, $params);
 	}
 	
@@ -85,7 +85,7 @@ class cloudstorePHP
 			'oauth_consumer_key'=>$this->appid,
 			'format'=>'json'
 		);
-		$url='http://www.cmspower.cn/app.php/cloud_store/get_app';
+		$url='http://cmspower2.com/app.php/cloud_store/get_app';
 		return $this->api($url, $params);
 	}
 	
@@ -97,7 +97,7 @@ class cloudstorePHP
 			'oauth_consumer_key'=>$this->appid,
 			'format'=>'json'
 		);
-		$url='http://www.cmspower.cn/app.php/cloud_store/get_module_list';
+		$url='http://cmspower2.com/app.php/cloud_store/get_module_list';
 		return $this->api($url, $params);
 	}
 	
@@ -113,7 +113,7 @@ class cloudstorePHP
 			'oauth_consumer_key'=>$this->appid,
 			'format'=>'json'
 		);
-		$url='http://www.cmspower.cn/app.php/cloud_store/get_module';
+		$url='http://cmspower2.com/app.php/cloud_store/get_module';
 		return $this->api($url, $params);
 	}
 	
@@ -127,7 +127,7 @@ class cloudstorePHP
 			'oauth_consumer_key'=>$this->appid,
 			'format'=>'json'
 		);
-		$url='http://www.cmspower.cn/app.php/cloud_store/get_widget_list';
+		$url='http://cmspower2.com/app.php/cloud_store/get_widget_list';
 		return $this->api($url, $params);
 	}
 	
@@ -143,7 +143,7 @@ class cloudstorePHP
 			'oauth_consumer_key'=>$this->appid,
 			'format'=>'json'
 		);
-		$url='http://www.cmspower.cn/app.php/cloud_store/get_widget';
+		$url='http://cmspower2.com/app.php/cloud_store/get_widget';
 		return $this->api($url, $params);
 	}
 	
@@ -156,7 +156,7 @@ class cloudstorePHP
 			'oauth_consumer_key'=>$this->appid,
 			'format'=>'json'
 		);
-		$url='http://www.cmspower.cn/app.php/cloud_store/get_collector_list';
+		$url='http://cmspower2.com/app.php/cloud_store/get_collector_list';
 		return $this->api($url, $params);
 	}
 	
@@ -172,7 +172,7 @@ class cloudstorePHP
 			'oauth_consumer_key'=>$this->appid,
 			'format'=>'json'
 		);
-		$url='http://www.cmspower.cn/app.php/cloud_store/get_collector';
+		$url='http://cmspower2.com/app.php/cloud_store/get_collector';
 		return $this->api($url, $params);
 	}
 	

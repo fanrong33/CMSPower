@@ -5,7 +5,7 @@
  +----------------------------------------------------------------------------
  * @category 后台控制器（CMSPower内置）
  * @author fanrong33 <fanrong33#qq.com>
- * @version v1.2.6 Build 20140306
+ * @version v1.2.7 Build 20140401
  +------------------------------------------------------------------------------
  */
 class UtilAction extends Action{
@@ -170,19 +170,19 @@ class UtilAction extends Action{
 	
 	
 	/**
-	 * ajax更新enum类型字段值
+	 * ajax开关启用状态
 	 */
 	public function toggle_field(){
 		if($this->isPost()){
 			
-			$table 	= $_POST['table'];
+			$model 	= $_POST['model'];
 			$field 	= $_POST['field'];
 			$id 	= intval($_POST['id']);
-			$value 	= $_POST['value'];
+			$value 	= ($_POST['value'] == 1) ? 0 : 1;
 			
 			$data = array();
 			$data[$field] = $value;
-			$effect = D(ucfirst($table))->where(array('id'=>$id))->save($data);
+			$effect = D(ucfirst($model))->where(array('id'=>$id))->save($data);
 			if($effect){
 				$this->ajaxReturn(null, '更新成功', 1);
 			}else{

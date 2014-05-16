@@ -281,6 +281,36 @@ function list_to_tree($list, $pk='id',$pid = 'pid',$child = '_child',$root=0){
     return $tree;
 }
 
+/**
+ +----------------------------------------------------------
+ * 把返回的数据集转换成Tree,并将$field作为key
+ +----------------------------------------------------------
+ */
+function list_to_tree_key($list , $field = 'id', $pk = 'id' , $pid = 'pid', $child = '_child', $root = 0) {
+    // 创建Tree
+    $tree = array ();
+    if (is_array ( $list )) {
+        // 创建基于主键的数组引用
+        $refer = array ();
+        foreach ( $list as $key => $data ) {
+            $refer [$data [$pk ]] = & $list [$key];
+        }
+        foreach ( $list as $key => $data ) {
+            // 判断是否存在parent
+            $parentId = $data [$pid ];
+            if ($root == $parentId) {
+                $tree [$data [$field ]] = & $list [$key];
+            } else {
+                if (isset ( $refer [$parentId] )) {
+                    $parent = & $refer [$parentId ];
+                    $parent [$child ] [$data [$field]] = & $list [$key ];
+                }
+            }
+        }
+    }
+    return $tree ;
+}
+
 
 /**
  +----------------------------------------------------------
@@ -405,29 +435,25 @@ function GF($name, $value='', $path=DATA_PATH) {
 /**
  * 获取系统配置信息
  * @param string $name 所要获取的配置信息
+ * @param string $default 默认值
  * 
  * example：
  * 	GS('base_site_name') 或 GS('base.site_name')效果一致
  * 	GS(null) 删除配置缓存
  */
-function GS($name = ''){
+function GS($name = '', $default=''){
 	static $setting = null;
-	$prefix = C('DATA_CACHE_PREFIX');
-	if(empty($prefix)){
-		throw_exception('数据缓存设置 DATA_CACHE_PREFIX 选项不能为空，提高memcache安全性');
-	}
-	$key = C('DATA_CACHE_PREFIX').'GLOBAL_SETTING';
+	
+	$cache_key = generate_cache_key('global_setting');
 	
 	if(null === $name){
-		S(md5($key), null);
+		S($cache_key, null);
 		return;
 	}
 	
 	if($setting === null){
-		
-		$setting = S(md5($key));
+		$setting = S($cache_key);
 		if(false === $setting){
-
 			// 不存在，查询配置进行缓存，这里不采用将方法写到模型，函数高内聚，可维护
 			$list = D("System")->order('type')->select();
 			$cache_list = array();
@@ -437,19 +463,62 @@ function GS($name = ''){
 				}
 			}
 			$setting = $cache_list;
-			S(md5($key), $cache_list);
+			S($cache_key, $cache_list);
 		}
 	}
 	
 	if ($name === '')
 		return $setting;
 	$name = str_replace('.', '_', $name);
-	if(!isset($setting[$name])){
-		throw_exception("系统设置中不存在该键值：GS('".$name."')");
-	}
 	
-	return isset($setting[$name]) ? $setting[$name] : null;
+	return isset($setting[$name]) ? $setting[$name] : $default;
 }
 
+/**
+ * 生成md5后的缓存cache_key
+ * 
+ * 用法：generate_cache_key('product', 1, ...)  // md5(cache_product_1_xxxxxx)
+ */
+function generate_cache_key(){
+	$prefix = C('AUTH_CODE');
+	if(empty($prefix)){
+		throw_exception('数据缓存设置 AUTH_CODE 选项不能为空，提高memcache安全性');
+	}
+	
+	$args = func_get_args();
+	
+	array_unshift($args, 'cache');
+	array_push($args, $prefix);
+	$cache_key = join('_', $args);
+	return md5($cache_key);
+}
+
+/**
+ * 获取基础的缓存对象（单对象）
+ * @param string $name 模型名
+ * @param integer $primary_id 主键ID值
+ * @param integer $expire 缓存有效期（秒）
+ */
+function cache_get($name, $primary_id, $expire=null){
+    $result = null;
+    
+    $cache_key = generate_cache_key($name, $primary_id);
+    $result = S($cache_key);
+    if(!$result){
+        $result = D($name)->find($primary_id);
+        // 默认缓存3600秒
+        $expire = is_null($expire) ? 3600 : $expire;
+        S($cache_key, $result, $expire);
+    }
+    return $result;
+}
+
+/**
+ * 删除缓存对象（单对象）
+ */
+function cache_rm($name, $primary_id) {
+	$cache_key = generate_cache_key($name, $primary_id);
+    S($cache_key, null);
+}
 
 ?>

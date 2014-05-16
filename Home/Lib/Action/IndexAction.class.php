@@ -8,12 +8,12 @@
  * @version v1.0.1 Build 20140112
  +------------------------------------------------------------------------------
  */
-class IndexAction extends CommonAction {
+class IndexAction extends Action {
 	
     public function index(){
     	echo 'Hello CMSPower';
     	exit;
-		//$this->display();
+//		$this->display();
     }
     
 }

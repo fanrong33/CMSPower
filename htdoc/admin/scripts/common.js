@@ -179,39 +179,42 @@ function get_image_size(file_path){
 }
 
 /**
- * ajax更新切换enum类型字段值，is_xxx
+ * ajax更新启用状态，is_xxx,enabled...
  * @param {Object} object DOM对象
  * @param {Object} table 更改模型表名
  * @param {Object} field 字段
  * @param {Object} value 新的值
  * 
+ * @author fanrong33 <fanrong33#qq.com>
+ * @version v1.1.0 Build 20140401
  */
 function toggle_field(object){
 	var $this = $(object);
 	
 	var params = {};
-	params['table'] = $this.data('table');
+	params['model'] = $this.data('model');
 	params['field'] = $this.data('field');
 	params['id'] 	= $this.data('id');
 	params['value'] = $this.data('value');
 	
 	$.ajax({
 		type:"POST",
-		url: "/admin.php/util/toggle_field",
+		url: PHP_FILE+"?m=util&a=toggle_field",
 		data: params,
 		dataType: "json",
 		success:function(json){
 			if(json.status==1){
 				$.notify(json.info, 'success');
 				
-				var iconfont = params['value'] == 1 ? $this.data('open-iconfont') : $this.data('close-iconfont');
+				var iconfont = params['value'] == 1 ? $this.data('close-iconfont') : $this.data('open-iconfont');
 				$this.find("i").text(iconfont);
 				
 				// 切换1/0
+				console.info(params['value']);
 				$this.data('value', params['value'] == 1 ? 0 : 1);
+				console.info($this.data('value'));
 			}else{
 				$.notify(json.info, 'warn');
-				//alert(json.info);
 			}
 		}
 	});

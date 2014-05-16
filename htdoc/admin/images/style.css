@@ -17,20 +17,13 @@ body{background-color:#FFFFFF;}
 .table-hover{background-color:#FAFAFA;}
 .table tbody tr.table-selected{background-color:#FFFFCA;}
 
-/**
- * 表单 extra
- */
+/* 表单 extra */
 .required{color: #FF0000;vertical-align: middle;}
+.form select{margin-top:5px;}
 .form p.error{color:#EE0000;margin-top:0;margin-bottom:0;}
+.btn-add{position:absolute !important;right:0;top:0;	}
 
-.btn-add{
-position:absolute !important;
-right:0;top:0;	
-}
-
-.nav-pills {
-    height: 26px;
-}
+.nav-pills {height: 26px;}
 	
 .header {border-bottom: 3px solid #EEEEEE;color: #3693CF;margin-bottom:10px;background-color:#3693CF;}
 .header-inner{width: 1000px;margin: 0 auto;position: relative;}
@@ -44,41 +37,19 @@ right:0;top:0;
 .navbar-inner {padding-left: 0;}
 .navbar .nav li a {padding: 0 20px;}
 
-.container{width: 1000px;margin: 0 auto;overflow:hidden;}
+.container{width: 1000px;margin: 0 auto;overflow:hidden;min-height: 500px;}
 .aside{float:left;display:inline;width: 170px;}
 .main{float: right;display: inline;width: 820px;position:relative;}
-.footer{
-	color:#999999;
-	border-top: 2px solid #EEEEEE;
-	text-align:center;
-	width: 1000px;
-	margin: 0px auto;
-	padding: 20px 0;
-	overflow:hidden;
-}
-.footer a{
-	color:#999999;
-}
+.footer{color:#999999;border-top: 2px solid #EEEEEE;text-align:center;width: 1000px;margin: 0px auto;padding: 20px 0;overflow:hidden;}
+.footer a{color:#999999;}
 
-
-
-.search-box .search-box-inner span {
-  display: inline;
-  float: left;
-  margin-right: 5px;
-}
+.search-box .search-box-inner span {display: inline;float: left;margin-right: 5px;}
 
 .table th {padding: 10px;}
 .table .ipt-text {padding: 4px 9px;}
-.table tfoot td{
-	overflow:hidden;
-}
+.table tfoot td{overflow:hidden;}
 .table tfoot td a,
-.table tfoot td button{
-	float:left;
-	display:inline;
-	margin-right:5px;
-}
+.table tfoot td button{float:left;display:inline;margin-right:5px;}
 
 .form .form-item .form-label{font-size: 12px;}
 
@@ -104,33 +75,14 @@ right:0;top:0;
 
 /* 上传列表 */
 .uploaded-list{overflow: hidden;}
-.uploaded-list li{
-	padding:5px 8px;
-	background-color:#E8ECF2;
-	border-bottom: 1px solid #F4F6F8;
-}
-.uploaded-list li.selected {
-  background-color: #FFFFCA;
-}
-.uploaded-list li i{
-	vertical-align: text-bottom;
-}
-.uploaded-list li a.delete{
-	line-height:normal;
-	display: none;
-}
-.uploaded-list li.hover a.delete{
-	display: inline-block;
-}
-.uploaded-list li a.delete:hover{
-	text-decoration: none;
-}
-.uploaded-list li a.delete i.iconfont{
-	color: #999999;cursor:pointer;
-}
-.uploaded-list li a.delete:hover i.iconfont{
-	color: #EE4A4A;
-}
+.uploaded-list li{padding:5px 8px;background-color:#E8ECF2;border-bottom: 1px solid #F4F6F8;}
+.uploaded-list li.selected {background-color: #FFFFCA;}
+.uploaded-list li i{vertical-align: text-bottom;}
+.uploaded-list li a.delete{line-height:normal;display: none;}
+.uploaded-list li.hover a.delete{display: inline-block;}
+.uploaded-list li a.delete:hover{text-decoration: none;}
+.uploaded-list li a.delete i.iconfont{color: #999999;cursor:pointer;}
+.uploaded-list li a.delete:hover i.iconfont{color: #EE4A4A;}
 
 
 .uploaded-preview{overflow:hidden;}
@@ -156,6 +108,7 @@ a.img-preview .iconfont{cursor: pointer;}
 #imgPreviewContainer img{max-width:200px; max-height:200px;}
 #imgPreviewContainer span {color: #000;padding: 5px 0 2px;text-align: center;display: block;}
 
+
 /* 文件图标 */
 .icon-file-7z,
 .icon-file-rar,
@@ -170,7 +123,6 @@ a.img-preview .iconfont{cursor: pointer;}
 .icon-file-jpg{background-position:0 -32px;}
 .icon-file-jpeg{background-position:0 -32px;}
 .icon-file-png{background-position:-64px -32px;}
-
 
 
 /* 应用管理 */
