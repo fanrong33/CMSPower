@@ -5,3 +5,6 @@
 #过滤文件夹
 Admin/Runtime
 Home/Runtime
+*.sublime-workspace
+
+*.sublime-project

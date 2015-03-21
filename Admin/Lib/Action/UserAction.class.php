@@ -1,13 +1,10 @@
 <?php
 /**
- +----------------------------------------------------------------------------
  * 后台用户 控制器类
  * 
  * 后台用户登录的接口为 $_SESSION['admin_id']
- +----------------------------------------------------------------------------
  * @author fanrong33
- * @version v1.2.0 Build 20140122
- +------------------------------------------------------------------------------
+ * @version v1.2.1 Build 20150321
  */
 class UserAction extends Action {
 	
@@ -19,14 +16,19 @@ class UserAction extends Action {
      * 登录
      */
     public function login(){
-    	
+    	//dump(GS('base.site_name'));
+
     	if($this->isPost()){
     		$username = trim($_POST['username']);
     		$password = $_POST['password'];
     		$verify	  = $_POST['verify'];
-    		if($verify == ''){
-    			$this->error('验证码不能为空');
+
+            $need_to_verify = GS('base.need_to_verify', false); // 默认不验证 //TODO 系统配置加入base.need_to_verify
+
+    		if($need_to_verify && $verify == ''){
+                $this->error('验证码不能为空');
     		}
+
     		if($username=='' || $password==''){
     			
     			if($username != ''){
@@ -39,14 +41,11 @@ class UserAction extends Action {
     			}
     			$this->error('用户名和密码不能为空');
     		}
-    		if(md5($verify) != $_SESSION['verify']){
+    		if($need_to_verify && md5($verify) != $_SESSION['verify']){
     			$this->error('验证码错误');
     		}
     		
-    		$cond = array();
-    		$cond['username'] = $username;
-    		$admin = D("Admin")->where($cond)->find();
-    		
+    		$admin = D("Admin")->where(array('username'=>$username))->find();
     		if($admin && encrypt_pwd($password) == $admin['password']){
     			if($admin['id'] != 1 && $admin['is_lock'] == '1'){
 	    			try {
